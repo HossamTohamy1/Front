@@ -1,0 +1,23 @@
+<div class="space-y-4">
+    <div class="bg-card border border-border rounded-2xl overflow-hidden mb-4">
+        <div class="p-4 bg-muted/30 border-b border-border font-medium flex justify-between items-center">
+            <span>{{ 'DASHBOARD.AUTO_STR_208' | translate }}</span>
+            <input type="checkbox" [ngModel]="config().showHero" (ngModelChange)="updateConfig('showHero', $event)" class="lk-checkbox" />
+        </div>
+        @if (config().showHero) {
+            <div class="p-4 space-y-3">
+                <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'COMMON.ADDRESS' | translate }}</span><input type="text" [ngModel]="config().heroTitle" (ngModelChange)="updateConfig('heroTitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
+                <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'PRODUCT.DESCRIPTION' | translate }}</span><input type="text" [ngModel]="config().heroSubtitle" (ngModelChange)="updateConfig('heroSubtitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
+            </div>
+        }
+    </div>
+
+    <div class="bg-card border border-border rounded-2xl overflow-hidden mb-4">
+        <div class="p-4 bg-muted/30 border-b border-border font-medium">{{ 'DASHBOARD.AUTO_STR_401' | translate }}</div>
+        <div class="p-4 space-y-3">
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_187' | translate }}</span><input type="text" [ngModel]="config().currentOffersTitle" (ngModelChange)="updateConfig('currentOffersTitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_246' | translate }}</span><input type="text" [ngModel]="config().bundlesTitle" (ngModelChange)="updateConfig('bundlesTitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_332' | translate }}</span><input type="text" [ngModel]="config().bundlesSubtitle" (ngModelChange)="updateConfig('bundlesSubtitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
+    <div class="text-center mb-4">
+        <h2 class="text-xl font-bold text-gray-900 mb-1">{{ 'POLICIES.TITLE' | translate }}</h2>
+        <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_103' | translate }}</p>
+    </div>
+
+    <app-section-card 
+        title='DASHBOARD.AUTO_STR_353' 
+        [index]="0" 
+        [enabled]="true" 
+        [isFirst]="true" 
+        [isLast]="false">
+        
+        <div class="flex flex-col gap-1.5 mb-2">
+            <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
+            <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().title" (ngModelChange)="updateConfig({title: $event})" />
+        </div>
+        <div class="flex flex-col gap-1.5 mb-2">
+            <span class="text-xs font-bold text-gray-700">{{ 'PRODUCT.DESCRIPTION' | translate }}</span>
+            <textarea class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().subtitle" (ngModelChange)="updateConfig({subtitle: $event})" rows="2"></textarea>
+        </div>
+    </app-section-card>
+
+    <app-section-card 
+        title='DASHBOARD.AUTO_STR_209' 
+        [index]="1" 
+        [enabled]="true" 
+        [isFirst]="false" 
+        [isLast]="true" 
+        [addAction]="{ label: 'DASHBOARD.AUTO_STR_333', onClick: addPolicy }">
+        
+        <div class="flex flex-col gap-4">
+            @for (policy of config().policies; track policy.key; let idx = $index) {
+                <div class="flex flex-col gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3 relative">
+                    <div class="flex flex-col gap-1.5 mb-2">
+                        <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_245' | translate }}</span>
+                        <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="policy.gridTitle" (ngModelChange)="updatePolicy(idx, { gridTitle: $event })" />
+                    </div>
+                    <div class="flex flex-col gap-1.5 mb-2">
+                        <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_334' | translate }}</span>
+                        <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="policy.gridDescription" (ngModelChange)="updatePolicy(idx, { gridDescription: $event })" />
+                    </div>
+                    
+                    <hr class="my-2 border-gray-200" />
+                    
+                    <div class="flex flex-col gap-1.5 mb-2">
+                        <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_51' | translate }}</span>
+                        <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="policy.title" (ngModelChange)="updatePolicy(idx, { title: $event })" />
+                    </div>
+                    <div class="flex flex-col gap-1.5 mb-2">
+                        <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_166' | translate }}</span>
+                        <textarea class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="policy.subtitle" (ngModelChange)="updatePolicy(idx, { subtitle: $event })" rows="2"></textarea>
+                    </div>
+                    
+                    <label class="flex items-center justify-between p-2 bg-white rounded-md border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors mt-2">
+                        <span class="text-sm text-gray-700">{{ 'DASHBOARD.AUTO_STR_84' | translate }}</span>
+                        <div class="relative inline-flex items-center">
+                            <input type="checkbox" class="sr-only peer" [ngModel]="policy.showWhatsApp" (ngModelChange)="updatePolicy(idx, { showWhatsApp: $event })" />
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                        </div>
+                    </label>
+
+                    <button (click)="removePolicy(idx)" class="absolute top-3 left-3 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md bg-white border border-red-100">
+                        <lucide-icon [img]="Trash2" size="16"></lucide-icon>
+                    </button>
+                </div>
+            }
+        </div>
+    </app-section-card>
+</div>

@@ -1,0 +1,107 @@
+<app-store-layout [showFloatingChat]="false">
+  <main class="lk-order-track-page" dir="rtl">
+    <section class="lk-order-track-shell">
+      <header class="lk-order-track-hero">
+        <h1>{{ config.headerTitle | translate}}</h1>
+        <p>{{ config.headerSubtitle | translate}}</p>
+      </header>
+
+      <form class="lk-order-track-form" (submit)="handleSubmit($event)">
+        <label class="lk-order-track-field">
+          <span class="lk-order-track-field__icon" aria-hidden="true">
+            <lucide-icon name="phone"></lucide-icon>
+          </span>
+          <input type="tel" inputmode="numeric" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone" [placeholder]="config.phonePlaceholder" aria-label='CHECKOUT.PHONE'>
+        </label>
+
+        <label class="lk-order-track-field">
+          <span class="lk-order-track-field__icon" aria-hidden="true">
+            <lucide-icon name="file-text"></lucide-icon>
+          </span>
+          <input type="text" [ngModel]="orderNumber()" (ngModelChange)="orderNumber.set($event)" name="orderNumber" [placeholder]="config.orderPlaceholder" aria-label='ORDERS.ORDER_NUMBER'>
+        </label>
+
+        <button type="submit" class="lk-order-track-button">{{ config.buttonText | translate }}</button>
+      </form>
+
+      @if (showEmptyState()) {
+        <section class="lk-order-track-empty" aria-label='STOREFRONT.AUTO_STR_175'>
+          <div class="lk-order-track-empty__icon" aria-hidden="true">
+            <lucide-icon name="package-search"></lucide-icon>
+          </div>
+          <h2>{{ config.emptyTitle | translate }}</h2>
+          <p>{{ config.emptyText | translate }}</p>
+          <a routerLink="/all-shapers" class="lk-order-track-empty__action">
+            <lucide-icon name="shopping-bag" aria-hidden="true"></lucide-icon>
+            {{ config.emptyCta | translate }}
+            <lucide-icon name="arrow-left" aria-hidden="true"></lucide-icon>
+          </a>
+        </section>
+      } @else if (showNotFound()) {
+        <section class="lk-order-track-empty" aria-label='DASHBOARD.AUTO_STR_50'>
+          <div class="lk-order-track-empty__icon" aria-hidden="true">
+            <lucide-icon name="file-text"></lucide-icon>
+          </div>
+          <h2>{{ config.notFoundTitle | translate }}</h2>
+          <p>{{ config.notFoundText | translate }}</p>
+        </section>
+      } @else if (foundOrder()) {
+        <section class="lk-order-track-card" [attr.aria-label]="'تفاصيل الطلب ' + foundOrder()!.orderNumber">
+          <header class="lk-order-track-card__header">
+            <p>{{ formatRelativeUpdate(foundOrder()!.updatedAt) }}</p>
+            <h2>الطلب #{{ getDisplayOrderNumber(foundOrder()!.orderNumber) }}</h2>
+          </header>
+
+          <div class="lk-order-track-card__body">
+            <div class="lk-order-track-card__details">
+              <h3>{{ foundOrder()!.items[0].name | translate}}</h3>
+              <p>
+                المقاس : {{ foundOrder()!.items[0].size }}
+                <span aria-hidden="true"> | </span>
+                اللون : {{ foundOrder()!.items[0].color }}
+              </p>
+            </div>
+            <div class="lk-order-track-card__image-wrap">
+              <img [src]="foundOrder()!.items[0].image" [alt]="foundOrder()!.items[0].name" class="lk-order-track-card__image">
+            </div>
+          </div>
+
+          <div class="lk-order-track-status" aria-label='STOREFRONT.AUTO_STR_396'>
+            <ol class="lk-order-track-status__list">
+              @for (step of trackingSteps; track step.key; let i = $index) {
+                <li class="lk-order-track-step" 
+                    [class.is-active]="i <= getCurrentIndex(foundOrder()!.status)"
+                    [class.is-pending]="i > getCurrentIndex(foundOrder()!.status)"
+                    [class.is-last]="i === trackingSteps.length - 1"
+                    [class.is-connector-active]="i < getCurrentIndex(foundOrder()!.status)">
+                  <span class="lk-order-track-step__circle" aria-hidden="true">
+                    <lucide-icon [img]="step.icon"></lucide-icon>
+                  </span>
+                  <span class="lk-order-track-step__label">{{ step.label | translate}}</span>
+                </li>
+              }
+            </ol>
+          </div>
+        </section>
+
+        @if (config.showSupportCard) {
+          <a routerLink="/contact" class="lk-order-track-support" dir="ltr">
+            <span class="lk-order-track-support__icon" aria-hidden="true">
+              <lucide-icon name="message-circle" class="lk-order-track-support__bubble"></lucide-icon>
+              <svg class="lk-order-track-support__phone-filled" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M6.62 10.79a15.46 15.46 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/>
+              </svg>
+            </span>
+            <div class="lk-order-track-support__content" dir="rtl">
+              <strong>{{ config.supportTitle | translate }}</strong>
+              <span>{{ config.supportText | translate }}</span>
+            </div>
+            <span class="lk-order-track-support__arrow" aria-hidden="true">
+              <lucide-icon name="chevron-right"></lucide-icon>
+            </span>
+          </a>
+        }
+      }
+    </section>
+  </main>
+</app-store-layout>

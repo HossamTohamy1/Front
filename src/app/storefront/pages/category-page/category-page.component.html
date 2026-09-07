@@ -1,0 +1,133 @@
+<app-store-layout>
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="mb-2 animate-fade-in">
+      <p class="text-xs text-muted-foreground mb-1">
+        {{ lang() === 'ar' ? 'NAV.HOME' : 'Home' }} / 
+        {{ category() ? (lang() === 'ar' ? category()!.nameAr : category()!.nameEn) : (lang() === 'ar' ? 'COMMON.ALL' : 'All Products') }}
+      </p>
+    </div>
+    
+    <div class="mb-6 animate-fade-in">
+      <h1 class="font-display font-bold text-2xl">
+        {{ queryString() ? '"' + queryString() + '"' : category() ? (lang() === 'ar' ? category()!.nameAr : category()!.nameEn) : (lang() === 'ar' ? 'STOREFRONT.AUTO_STR_298' : 'All Products') }}
+      </h1>
+      <p class="text-sm text-muted-foreground mt-1">
+        {{ isLoading() ? '...' : filtered().length + ' ' + (lang() === 'ar' ? 'STOREFRONT.AUTO_STR_471' : 'products') }}
+      </p>
+    </div>
+
+    <div class="flex items-center justify-between gap-3 mb-6 relative z-20">
+      <app-button variant="outline" size="sm" (click)="filterOpen.set(true)">
+        <lucide-icon leftIcon name="sliders-horizontal" [img]="SlidersHorizontal" [size]="15"></lucide-icon>
+        {{t('filter', lang())}}
+      </app-button>
+
+      <div class="flex items-center gap-2 ms-auto">
+        <div class="relative">
+          <button (click)="showSortDropdown.set(!showSortDropdown())" class="flex items-center gap-2 h-9 px-3 rounded-xl border border-border text-sm hover:bg-muted transition-colors tap-highlight">
+            <span class="hidden sm:inline text-muted-foreground">{{t('sort', lang())}}:</span>
+            {{ lang() === 'ar' ? currentSort()?.ar : currentSort()?.en }}
+            <lucide-icon name="chevron-down" [img]="ChevronDown" [size]="14"></lucide-icon>
+          </button>
+          
+          <ng-container *ngIf="showSortDropdown()">
+            <div class="fixed inset-0 z-10" (click)="showSortDropdown.set(false)"></div>
+            <div class="absolute end-0 top-10 z-20 bg-card border border-border rounded-2xl shadow-xl w-48 py-1 animate-fade-in">
+              <button *ngFor="let opt of sortOptions"
+                      (click)="sortBy.set(opt.value); showSortDropdown.set(false)"
+                      class="w-full text-start px-4 py-2.5 text-sm hover:bg-muted transition-colors tap-highlight"
+                      [class.text-brand]="sortBy() === opt.value"
+                      [class.font-semibold]="sortBy() === opt.value">
+                {{ lang() === 'ar' ? opt.ar : opt.en }}
+              </button>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1 mb-6">
+      <a routerLink="/category/all"
+         (mouseenter)="prefetchCategory('all')"
+         class="shrink-0 flex items-center h-8 px-4 rounded-full text-sm font-medium border transition-all tap-highlight"
+         [ngClass]="slug() === 'all' ? 'bg-brand border-brand text-[#0E0E11]' : 'border-border text-muted-foreground hover:border-brand hover:text-brand'">
+        {{ lang() === 'ar' ? 'COMMON.ALL' : 'All' }}
+      </a>
+      <a *ngFor="let cat of categories"
+         [routerLink]="'/category/' + cat.slug"
+         (mouseenter)="prefetchCategory(cat.slug)"
+         class="shrink-0 flex items-center h-8 px-4 rounded-full text-sm font-medium border transition-all tap-highlight"
+         [ngClass]="slug() === cat.slug ? 'bg-brand border-brand text-[#0E0E11]' : 'border-border text-muted-foreground hover:border-brand hover:text-brand'">
+        {{ lang() === 'ar' ? cat.nameAr : cat.nameEn }}
+      </a>
+    </div>
+
+    <ng-container *ngIf="isLoading(); else contentTpl">
+      <div class="py-32 flex flex-col items-center justify-center text-brand animate-fade-in">
+        <lucide-icon name="loader-2" [img]="Loader2" [size]="40" class="animate-spin mb-4"></lucide-icon>
+        <p class="text-muted-foreground font-medium text-sm">
+          {{ lang() === 'ar' ? 'جاري جلب المنتجات...' : 'Fetching products...' }}
+        </p>
+      </div>
+    </ng-container>
+
+    <ng-template #contentTpl>
+      <ng-container *ngIf="filtered().length > 0; else emptyTpl">
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 transition-opacity duration-300 opacity-100 md:grid-cols-3 lg:grid-cols-4">
+          <app-product-card *ngFor="let p of paginatedProducts()" [product]="p"></app-product-card>
+        </div>
+
+        <div *ngIf="hasMore()" class="flex justify-center mt-10 animate-fade-in">
+          <app-button variant="outline" size="lg" (click)="page.set(page() + 1)" className="rounded-full px-8">
+            {{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_391' : 'Load More' }}
+          </app-button>
+        </div>
+      </ng-container>
+      
+      <ng-template #emptyTpl>
+        <div class="text-center py-20 text-muted-foreground animate-fade-in">
+          <div class="text-5xl mb-3">🔍</div>
+          <p class="font-semibold">{{ lang() === 'ar' ? 'COMMON.NO_RESULTS' : 'No results found' }}</p>
+          <p class="text-sm mt-1">{{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_225' : 'Try a different search' }}</p>
+        </div>
+      </ng-template>
+    </ng-template>
+
+  </div>
+
+  <app-modal [open]="filterOpen()" (onClose)="filterOpen.set(false)" [title]="t('filter', lang())" size="sm">
+    <div class="space-y-5">
+      <div>
+        <p class="font-semibold text-sm mb-3">{{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_392' : 'Price Range' }}</p>
+        <div class="flex items-center gap-3">
+          <input type="number" [value]="priceRange()[0]" (input)="setPriceMin($event)" class="flex-1 h-9 px-3 rounded-xl bg-muted text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Min" />
+          <span class="text-muted-foreground">—</span>
+          <input type="number" [value]="priceRange()[1]" (input)="setPriceMax($event)" class="flex-1 h-9 px-3 rounded-xl bg-muted text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Max" />
+        </div>
+      </div>
+
+      <div>
+        <p class="font-semibold text-sm mb-3">{{ lang() === 'ar' ? 'COMMON.CATEGORY' : 'Category' }}</p>
+        <div class="space-y-2">
+          <a *ngFor="let cat of categories"
+             [routerLink]="'/category/' + cat.slug"
+             (mouseenter)="prefetchCategory(cat.slug)"
+             class="flex items-center justify-between py-1 hover:text-brand transition-colors tap-highlight"
+             (click)="filterOpen.set(false)">
+            <span class="text-sm">{{ lang() === 'ar' ? cat.nameAr : cat.nameEn }}</span>
+            <span class="text-xs text-muted-foreground">{{ cat.productCount }}</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <app-button variant="outline" size="md" [fullWidth]="true" (click)="resetFilter()">
+          {{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_356' : 'Reset' }}
+        </app-button>
+        <app-button variant="primary" size="md" [fullWidth]="true" (click)="filterOpen.set(false)">
+          {{ lang() === 'ar' ? 'COMMON.APPLY' : 'Apply' }}
+        </app-button>
+      </div>
+    </div>
+  </app-modal>
+</app-store-layout>

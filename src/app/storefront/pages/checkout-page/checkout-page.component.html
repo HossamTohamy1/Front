@@ -1,0 +1,345 @@
+<app-wallet-payment-flow
+  *ngIf="isWalletPaymentFlow() && walletPaymentSession()"
+  [session]="walletPaymentSession()"
+  (onBack)="onWalletBack()"
+  (onComplete)="onWalletComplete()"
+></app-wallet-payment-flow>
+
+<app-store-layout *ngIf="!(isWalletPaymentFlow() && walletPaymentSession())" [showFloatingChat]="false">
+  
+
+  <main class="lk-checkout-page" dir="rtl">
+    <section class="lk-checkout-page__hero">
+      <div class="lk-checkout-page__title-wrap">
+        <h1>{{ config.headerTitle | translate}}</h1>
+        <p>{{ config.headerSubtitle | translate}}</p>
+      </div>
+
+      <a routerLink="/cart" class="lk-checkout-page__back-link">
+        <lucide-icon name="arrow-left" aria-hidden="true"></lucide-icon>{{ 'CHECKOUT.BACK_TO_CART' | translate }}</a>
+    </section>
+
+    <ng-container *ngIf="displayItems().length === 0; else checkoutContent">
+      <section class="lk-checkout-empty" aria-label='CART.EMPTY'>
+        <div class="lk-checkout-empty__icon" aria-hidden="true">
+          <lucide-icon name="package-check"></lucide-icon>
+        </div>
+        <h2>{{ config.emptyStateTitle | translate }}</h2>
+        <p>{{ config.emptyStateText | translate }}</p>
+        <a routerLink="/cart">{{ config.emptyStateCta | translate }}</a>
+      </section>
+    </ng-container>
+
+    <ng-template #checkoutContent>
+      <div class="lk-checkout-layout">
+        <form class="lk-checkout-form-card" (ngSubmit)="handleSubmit()">
+          <section class="lk-checkout-section">
+            <div class="lk-checkout-section__heading">
+              <span class="lk-checkout-step">1</span>
+              <h2>{{ config.customerInfoTitle | translate }}</h2>
+            </div>
+
+            <label class="lk-checkout-field">
+              <span>{{ 'COMMON.FULLNAME' | translate }}<b class="lk-checkout-required">*</b></span>
+              <div class="lk-checkout-field__input">
+                <lucide-icon name="user-round" aria-hidden="true"></lucide-icon>
+                <input
+                  type="text"
+                  [(ngModel)]="fullName"
+                  name="fullName"
+                  placeholder='STOREFRONT.AUTO_STR_226'
+                  required
+                  autocomplete="name"
+                />
+              </div>
+            </label>
+
+            <label class="lk-checkout-field">
+              <span>{{ 'CHECKOUT.PHONE' | translate }}<b class="lk-checkout-required">*</b></span>
+              <div class="lk-checkout-field__input">
+                <lucide-icon name="phone" aria-hidden="true"></lucide-icon>
+                <input
+                  type="tel"
+                  [(ngModel)]="phone"
+                  name="phone"
+                  placeholder="05XXXXXXXX"
+                  required
+                  minlength="8"
+                  inputmode="tel"
+                  autocomplete="tel"
+                />
+              </div>
+            </label>
+
+            <div class="lk-checkout-field-grid">
+              <label class="lk-checkout-field">
+                <span>{{ 'CHECKOUT.CITY' | translate }}</span>
+                <div class="lk-checkout-field__input is-select">
+                  <lucide-icon name="map-pin" aria-hidden="true"></lucide-icon>
+                  <select [(ngModel)]="city" name="city">
+                    <option value="">{{ 'STOREFRONT.AUTO_STR_330' | translate }}</option>
+                    <option *ngIf="city() && !CHECKOUT_CITY_OPTIONS.includes(city())" [value]="city()">{{ city() }}</option>
+                    <option *ngFor="let option of CHECKOUT_CITY_OPTIONS" [value]="option">{{ option }}</option>
+                  </select>
+                </div>
+              </label>
+
+              <label class="lk-checkout-field">
+                <span>{{ 'DASHBOARD.AUTO_STR_393' | translate }}</span>
+                <div class="lk-checkout-field__input is-select">
+                  <lucide-icon name="map" aria-hidden="true"></lucide-icon>
+                  <select [(ngModel)]="area" name="area">
+                    <option value="">{{ 'STOREFRONT.AUTO_STR_331' | translate }}</option>
+                    <option *ngIf="area() && !CHECKOUT_AREA_OPTIONS.includes(area())" [value]="area()">{{ area() }}</option>
+                    <option *ngFor="let option of CHECKOUT_AREA_OPTIONS" [value]="option">{{ option }}</option>
+                  </select>
+                </div>
+              </label>
+            </div>
+
+            <label class="lk-checkout-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_227' | translate }}<b class="lk-checkout-required">*</b></span>
+              <div class="lk-checkout-field__textarea">
+                <textarea
+                  rows="4"
+                  [(ngModel)]="address"
+                  name="address"
+                  placeholder="اكتب عنوانك بالتفصيل (الشارع، المعلم، رقم المنزل...)"
+                  required
+                  minlength="5"
+                  autocomplete="street-address"
+                ></textarea>
+              </div>
+            </label>
+
+            <label class="lk-checkout-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_299' | translate }}<em>(اختياري)</em></span>
+              <div class="lk-checkout-field__textarea is-small">
+                <textarea
+                  rows="3"
+                  [(ngModel)]="notes"
+                  name="notes"
+                  placeholder='STOREFRONT.AUTO_STR_107'
+                ></textarea>
+              </div>
+            </label>
+          </section>
+
+          <section class="lk-checkout-section lk-checkout-payment">
+            <div class="lk-checkout-section__heading">
+              <span class="lk-checkout-step">2</span>
+              <h2>{{ config.paymentInfoTitle | translate }}</h2>
+            </div>
+
+            <label class="lk-payment-card" [class.is-active]="paymentMethod() === 'cod'">
+              <input
+                type="radio"
+                name="payment"
+                [value]="'cod'"
+                [(ngModel)]="paymentMethod"
+              />
+              <span class="lk-payment-card__radio" aria-hidden="true"></span>
+              <div class="lk-payment-card__content">
+                <strong>{{ 'COMMON.CASHONDELIVERY' | translate }}</strong>
+                <small>{{ 'STOREFRONT.AUTO_STR_161' | translate }}</small>
+              </div>
+              <lucide-icon name="hand-coins" aria-hidden="true"></lucide-icon>
+            </label>
+
+            <label class="lk-payment-card" [class.is-active]="paymentMethod() === 'bank'">
+              <input
+                type="radio"
+                name="payment"
+                [value]="'bank'"
+                [(ngModel)]="paymentMethod"
+              />
+              <span class="lk-payment-card__radio" aria-hidden="true"></span>
+              <div class="lk-payment-card__content">
+                <strong>{{ 'CHECKOUT.BANK_TRANSFER' | translate }}</strong>
+                <small>{{ 'STOREFRONT.AUTO_STR_108' | translate }}</small>
+              </div>
+              <lucide-icon name="landmark" aria-hidden="true"></lucide-icon>
+            </label>
+
+            <label class="lk-payment-card" [class.is-active]="paymentMethod() === 'wallet'">
+              <input
+                type="radio"
+                name="payment"
+                [value]="'wallet'"
+                [(ngModel)]="paymentMethod"
+              />
+              <span class="lk-payment-card__radio" aria-hidden="true"></span>
+              <div class="lk-payment-card__content">
+                <strong>{{ 'STOREFRONT.AUTO_STR_246' | translate }}</strong>
+                <small>{{ 'STOREFRONT.AUTO_STR_78' | translate }}</small>
+              </div>
+              <lucide-icon name="wallet-cards" aria-hidden="true"></lucide-icon>
+            </label>
+
+            <div class="lk-wallet-panel" *ngIf="paymentMethod() === 'wallet'">
+              <div class="lk-wallet-panel__heading">
+                <button
+                  type="button"
+                  class="lk-wallet-panel__back"
+                  (click)="paymentMethod.set('cod')"
+                >
+                  <lucide-icon name="arrow-left" aria-hidden="true"></lucide-icon>
+                  <span>{{ 'STOREFRONT.AUTO_STR_473' | translate }}</span>
+                </button>
+                <h3>{{ 'STOREFRONT.AUTO_STR_173' | translate }}</h3>
+                <span aria-hidden="true"></span>
+              </div>
+
+              <div class="lk-wallet-options" role="radiogroup" aria-label='STOREFRONT.AUTO_STR_112'>
+                <label
+                  *ngFor="let option of walletOptions"
+                  class="lk-wallet-option"
+                  [class.is-active]="walletProvider() === option.id"
+                >
+                  <input
+                    type="radio"
+                    name="wallet-provider"
+                    [value]="option.id"
+                    [(ngModel)]="walletProvider"
+                  />
+                  <span class="lk-wallet-option__radio" aria-hidden="true"></span>
+                  <img [src]="option.image" [alt]="option.label" class="lk-wallet-option__logo" />
+                  <lucide-icon name="chevron-right" class="lk-wallet-option__chevron" aria-hidden="true"></lucide-icon>
+                </label>
+              </div>
+
+              <div class="lk-wallet-panel__footer">
+                <p><lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_96' | translate }}</p>
+                <img src="/assets/payment/payment-security-logos.png" alt='STOREFRONT.AUTO_STR_228' />
+                <button type="button" (click)="startWalletPayment()">
+                  <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_358' | translate }}</button>
+              </div>
+            </div>
+
+            <div class="lk-bank-transfer-panel" *ngIf="paymentMethod() === 'bank'">
+              <h3>{{ 'STOREFRONT.AUTO_STR_162' | translate }}</h3>
+
+              <dl class="lk-bank-transfer-details">
+                <div>
+                  <dt>{{ 'STOREFRONT.AUTO_STR_421' | translate }}</dt>
+                  <dd>{{ BANK_TRANSFER_DETAILS.bankName }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'STOREFRONT.AUTO_STR_332' | translate }}</dt>
+                  <dd>{{ BANK_TRANSFER_DETAILS.beneficiaryName }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'STOREFRONT.AUTO_STR_393' | translate }}</dt>
+                  <dd dir="ltr">{{ BANK_TRANSFER_DETAILS.accountNumber }}</dd>
+                </div>
+                <div>
+                  <dt>IBAN</dt>
+                  <dd dir="ltr">{{ BANK_TRANSFER_DETAILS.iban }}</dd>
+                </div>
+                <div>
+                  <dt>{{ 'STOREFRONT.AUTO_STR_247' | translate }}</dt>
+                  <dd>{{ BANK_TRANSFER_DETAILS.transferNote }}</dd>
+                </div>
+              </dl>
+
+              <p class="lk-bank-transfer-hint">
+                <lucide-icon name="info" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_26' | translate }}</p>
+
+              <label
+                class="lk-bank-receipt-upload"
+                [class.has-file]="bankReceipt()"
+                (dragover)="$event.preventDefault()"
+                (drop)="onDropBankReceipt($event)"
+              >
+                <input
+                  type="file"
+                  required
+                  accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                  (change)="onBankReceiptChange($event)"
+                />
+                <span class="lk-bank-receipt-upload__icon" aria-hidden="true">
+                  <lucide-icon *ngIf="bankReceipt()" name="file-check-2"></lucide-icon>
+                  <lucide-icon *ngIf="!bankReceipt()" name="cloud-upload"></lucide-icon>
+                </span>
+                <span class="lk-bank-receipt-upload__copy">
+                  <strong>{{ bankReceipt() ? bankReceipt()!.name : 'إرفاق إيصال التحويل (مطلوب)' }}</strong>
+                  <small>
+                    {{ bankReceipt() ? (bankReceipt()!.size / 1024 / 1024 | number:'1.2-2') + ' MB' : 'STOREFRONT.AUTO_STR_55' }}
+                  </small>
+                  <em>الحد الأقصى 5MB — JPG, PNG, PDF</em>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <ng-container *ngIf="paymentMethod() !== 'wallet'">
+            <button type="submit" class="lk-checkout-confirm-button">
+              <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>{{ 'COMMON.PLACEORDER' | translate }}</button>
+
+            <p class="lk-checkout-terms">{{ 'STOREFRONT.AUTO_STR_50' | translate }}<a routerLink="/about">{{ 'STOREFRONT.AUTO_STR_249' | translate }}</a>
+            </p>
+          </ng-container>
+        </form>
+
+        <aside class="lk-checkout-sidebar">
+          <section class="lk-checkout-summary-card">
+            <div class="lk-checkout-summary-card__heading">
+              <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>
+              <div>
+                <h2>{{ config.summaryTitle | translate }}</h2>
+                <span>({{ itemCount() }} منتجات)</span>
+              </div>
+            </div>
+
+            <div class="lk-checkout-summary-list">
+              <article class="lk-checkout-summary-item" *ngFor="let item of displayItems()">
+                <a [routerLink]="['/product', item.cartItem.product.id]" class="lk-checkout-summary-item__image">
+                  <img [src]="item.image" [alt]="item.name" loading="lazy" decoding="async" />
+                  <span>{{ item.cartItem.quantity }}x</span>
+                </a>
+
+                <div class="lk-checkout-summary-item__content">
+                  <a [routerLink]="['/product', item.cartItem.product.id]">
+                    <h3>{{ item.name | translate}}</h3>
+                  </a>
+                  <p>اللون: {{ item.color }}</p>
+                  <p>المقاس: {{ item.cartItem.size }}</p>
+                  <strong>{{ item.price }} ر.س</strong>
+                </div>
+              </article>
+            </div>
+
+            <div class="lk-checkout-summary-totals">
+              <div><span>{{ 'COMMON.SUBTOTAL' | translate }}</span><strong>{{ subtotal() | number }} ر.س</strong></div>
+              <div><span>{{ 'STOREFRONT.AUTO_STR_288' | translate }}</span><strong>{{ shipping() | number }} ر.س</strong></div>
+              <div class="is-discount"><span>{{ 'COMMON.DISCOUNT' | translate }}</span><strong>- {{ discount() | number }} ر.س</strong></div>
+              <div class="lk-checkout-summary-totals__grand">
+                <span>{{ 'STOREFRONT.AUTO_STR_219' | translate }}</span>
+                <strong>{{ total() | number }} ر.س</strong>
+              </div>
+              <small>{{ 'STOREFRONT.AUTO_STR_117' | translate }}</small>
+            </div>
+          </section>
+
+          <section class="lk-checkout-safe-card" *ngIf="config.showSafeShopping">
+            <lucide-icon name="shield-check" aria-hidden="true"></lucide-icon>
+            <div>
+              <h3>{{ config.safeShoppingTitle | translate }}</h3>
+              <p>{{ config.safeShoppingText | translate }}</p>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </ng-template>
+
+    <section class="lk-checkout-trust" aria-label='DASHBOARD.AUTO_STR_232' *ngIf="config.showTrustBadges">
+      <div *ngFor="let badge of config.trustBadges">
+        <lucide-icon *ngIf="badge.icon === 'BadgeCheck'" name="badge-check" aria-hidden="true"></lucide-icon>
+        <lucide-icon *ngIf="badge.icon === 'Truck'" name="truck" aria-hidden="true"></lucide-icon>
+        <lucide-icon *ngIf="badge.icon === 'RotateCcw'" name="rotate-ccw" aria-hidden="true"></lucide-icon>
+        <lucide-icon *ngIf="badge.icon === 'ShieldCheck'" name="shield-check" aria-hidden="true"></lucide-icon>
+        <span><strong>{{ badge.title | translate}}</strong><small>{{ badge.subtitle | translate}}</small></span>
+      </div>
+    </section>
+  </main>
+</app-store-layout>

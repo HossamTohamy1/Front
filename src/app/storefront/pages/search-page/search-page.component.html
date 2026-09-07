@@ -1,0 +1,205 @@
+<app-store-layout [hasCustomHeader]="true" [showBottomNav]="false" [showFloatingChat]="false">
+  <ng-container header>
+    <header class="lk-search-page-header">
+      <div class="lk-search-page-header__inner">
+        <button type="button" (click)="closeSearch()" aria-label='STOREFRONT.AUTO_STR_237'>
+          <lucide-icon [img]="X" aria-hidden="true"></lucide-icon>
+        </button>
+
+        <a routerLink="/" class="lk-search-page-header__logo" aria-label='SHARED.AUTO_STR_28'>
+          <img [src]="logoHeader" alt='SHARED.AUTO_STR_72' />
+        </a>
+
+        <a routerLink="/cart" class="lk-search-page-header__cart" aria-label='CART.TITLE'>
+          <lucide-icon [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
+          <span>{{ displayedCartCount() > 9 ? '9+' : displayedCartCount() }}</span>
+        </a>
+      </div>
+    </header>
+  </ng-container>
+
+  <main class="lk-search-page" dir="rtl">
+    <div *ngIf="feedback()" class="lk-search-feedback-toast" [ngClass]="{'is-success': feedback()!.type === 'success', 'is-error': feedback()!.type === 'error'}" role="status" aria-live="polite">
+      <button type="button" (click)="closeFeedback()" aria-label='STOREFRONT.AUTO_STR_316'>
+        <lucide-icon [img]="X" aria-hidden="true"></lucide-icon>
+      </button>
+
+      <span class="lk-search-feedback-toast__icon" aria-hidden="true">
+        <lucide-icon [img]="feedback()!.type === 'success' ? Check : X"></lucide-icon>
+      </span>
+
+      <div>
+        <strong>{{ feedback()!.title | translate}}</strong>
+        <p>{{ feedback()!.message | translate }}</p>
+      </div>
+    </div>
+
+    <section class="lk-search-intro">
+      <h1>{{ 'SHARED.AUTO_STR_98' | translate }}</h1>
+      <p>{{ 'STOREFRONT.AUTO_STR_106' | translate }}</p>
+    </section>
+
+    <form class="lk-search-form" (ngSubmit)="submitSearch($event)">
+      <div class="lk-search-form__field">
+        <lucide-icon [img]="Search" class="lk-search-form__search-icon" aria-hidden="true"></lucide-icon>
+        <input
+          #inputRef
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          name="query"
+          placeholder="ابحث عن مشد خصر، مشد نسائي..."
+          aria-label='STOREFRONT.AUTO_STR_238'
+          autofocus
+        />
+        <button *ngIf="query()" type="button" (click)="clearInput()" aria-label='STOREFRONT.AUTO_STR_284'>
+          <lucide-icon [img]="X" aria-hidden="true"></lucide-icon>
+        </button>
+      </div>
+    </form>
+
+    <section class="lk-search-block" aria-labelledby="quick-search-title">
+      <h2 id="quick-search-title">{{ 'STOREFRONT.AUTO_STR_285' | translate }}</h2>
+      <div class="lk-search-chips">
+        <button *ngFor="let suggestion of pageConfig().quickSuggestions" type="button" (click)="runSearch(suggestion)">
+          <lucide-icon [img]="Search" aria-hidden="true"></lucide-icon>
+          <span>{{ suggestion }}</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="lk-search-block" aria-labelledby="history-title">
+      <div class="lk-search-block__heading">
+        <h2 id="history-title">{{ 'STOREFRONT.AUTO_STR_239' | translate }}</h2>
+        <button *ngIf="history().length > 0" type="button" class="lk-search-clear-history" (click)="clearHistory()">
+          <lucide-icon [img]="Trash2" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_441' | translate }}</button>
+      </div>
+
+      <div *ngIf="history().length > 0; else noHistory" class="lk-search-chips lk-search-chips--history">
+        <div class="lk-search-history-chip" *ngFor="let item of history()">
+          <button type="button" (click)="runSearch(item.query)">
+            {{ item.query }}
+          </button>
+          <button
+            type="button"
+            (click)="removeSearch(item.query)"
+            [attr.aria-label]="'حذف ' + item.query + ' من سجل البحث'"
+          >
+            <lucide-icon [img]="X" aria-hidden="true"></lucide-icon>
+          </button>
+        </div>
+      </div>
+      <ng-template #noHistory>
+        <p class="lk-search-empty-history">لا توجد عمليات بحث سابقة لهذا الحساب حتى الآن.</p>
+      </ng-template>
+    </section>
+
+    <section class="lk-search-results" aria-labelledby="search-results-title">
+      <div class="lk-search-results__heading">
+        <h2 id="search-results-title">
+          {{ resultHeading().label | translate}}
+          <span *ngIf="resultHeading().count" class="lk-search-results__count">({{ resultHeading().count }})</span>
+        </h2>
+        <a [routerLink]="['/category/all']" [queryParams]="submittedQuery() ? {q: submittedQuery()} : {}">{{ 'COMMON.SEEALL' | translate }}<lucide-icon [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+        </a>
+      </div>
+
+      <div class="lk-search-results__grid">
+        <a *ngFor="let product of visibleProducts()" [routerLink]="['/product', product.id]" class="lk-search-product-card">
+          <div class="lk-search-product-card__visual">
+            <span *ngIf="getSearchProductDisplay(product).discount > 0" class="lk-search-product-card__discount">
+              -{{ getSearchProductDisplay(product).discount }}%
+            </span>
+
+            <button
+              type="button"
+              [class.is-active]="isFavorite(product.id)"
+              class="lk-search-product-card__favorite"
+              (click)="toggleFavorite($event, product)"
+              [attr.aria-label]="isFavorite(product.id) ? 'STOREFRONT.AUTO_STR_222' : 'STOREFRONT.AUTO_STR_206'"
+            >
+              <lucide-icon [img]="Heart" [attr.fill]="isFavorite(product.id) ? 'currentColor' : 'none'" aria-hidden="true"></lucide-icon>
+            </button>
+
+            <img [src]="getSearchProductDisplay(product).image" [alt]="getSearchProductDisplay(product).name" loading="lazy" decoding="async" />
+          </div>
+
+          <div class="lk-search-product-card__body">
+            <h3>{{ getSearchProductDisplay(product).name | translate}}</h3>
+
+            <div class="lk-search-product-card__colors" aria-label='STOREFRONT.AUTO_STR_260'>
+              <span *ngFor="let color of getProductColors(product)" [style.backgroundColor]="color"></span>
+            </div>
+
+            <p>
+              المقاس: {{ getFirstSize(product) }} - {{ getLastSize(product) }}
+            </p>
+
+            <div class="lk-search-product-card__price">
+              <strong>{{ getSearchProductDisplay(product).price }} ر.س</strong>
+              <del *ngIf="getSearchProductDisplay(product).oldPrice > getSearchProductDisplay(product).price">
+                {{ getSearchProductDisplay(product).oldPrice }} ر.س
+              </del>
+            </div>
+
+            <button type="button" class="lk-search-product-card__cart" (click)="addProductToCart($event, product)">
+              <lucide-icon [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
+              <span class="sr-only">{{ 'STOREFRONT.AUTO_STR_256' | translate }}</span>
+            </button>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section *ngIf="mode() === 'suggestions'" class="lk-search-no-match" aria-label='SHARED.AUTO_STR_22'>
+      <div class="lk-search-no-match__illustration" aria-hidden="true">
+        <svg class="lk-search-empty-illustration-svg" viewBox="0 0 240 190" fill="none" aria-hidden="true">
+          <circle cx="101" cy="83" r="66" fill="#F7FAFD" />
+          <circle cx="101" cy="83" r="51" stroke="#303944" strokeWidth="3" />
+          <circle cx="101" cy="83" r="39" stroke="#8C96A3" strokeWidth="2" />
+    
+          <path d="M141 122L180 161" stroke="#303944" strokeWidth="13" strokeLinecap="round" />
+          <path d="M145 126L181 162" stroke="#596473" strokeWidth="7" strokeLinecap="round" />
+    
+          <path d="M77 72L101 59L125 72V98L101 111L77 98V72Z" fill="#DCE2EA" />
+          <path d="M77 72L101 85L125 72" stroke="#B8C0CC" strokeWidth="2" />
+          <path d="M101 85V111" stroke="#B8C0CC" strokeWidth="2" />
+          <path d="M87 67L111 80" stroke="#F1F4F8" strokeWidth="4" strokeLinecap="round" />
+    
+          <circle cx="38" cy="41" r="4" fill="#48BAE1" />
+          <circle cx="177" cy="36" r="3.5" fill="#48BAE1" />
+          <circle cx="51" cy="138" r="3" fill="#48BAE1" />
+          <circle cx="193" cy="112" r="3" fill="#48BAE1" />
+    
+          <path d="M159 55H171M165 49V61" stroke="#81CFE9" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M31 100H41M36 95V105" stroke="#B3DFF0" strokeWidth="2.3" strokeLinecap="round" />
+          <path d="M199 65L205 71M205 65L199 71" stroke="#A7DDF0" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M70 24L75 29M75 24L70 29" stroke="#A7DDF0" strokeWidth="2.2" strokeLinecap="round" />
+        </svg>
+      </div>
+      <div class="lk-search-no-match__content">
+        <h2>{{ 'SHARED.AUTO_STR_22' | translate }}</h2>
+        <p>
+          لم نتمكن من العثور على منتجات تطابق بحثك عن «{{ submittedQuery() }}».
+          <br />
+          جرّب البحث بكلمة أخرى أو تحقق من الإملاء.
+        </p>
+        <button type="button" (click)="searchAgain()">
+          <lucide-icon [img]="Search" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_240' | translate }}</button>
+      </div>
+    </section>
+
+    <section class="lk-search-support">
+      <div>
+        <lucide-icon [img]="Headphones" aria-hidden="true"></lucide-icon>
+        <span>
+          <strong>{{ 'SEARCH.NOT_FOUND' | translate }}</strong>
+          <small>{{ 'STOREFRONT.AUTO_STR_28' | translate }}</small>
+        </span>
+      </div>
+      <a routerLink="/chat">
+        <lucide-icon [img]="MessageCircle" aria-hidden="true"></lucide-icon>
+        <span>{{ 'CONTACT.TITLE' | translate }}</span>
+      </a>
+    </section>
+  </main>
+</app-store-layout>

@@ -1,0 +1,111 @@
+const categoryMen = '/assets/home/category-men-hd.png';
+const categoryPostpartum = '/assets/home/category-postpartum-hd.png';
+const categorySport = '/assets/home/category-sport-hd.png';
+const categoryWomen = '/assets/home/category-women-hd.png';
+
+const productClassicBlack = '/assets/home/product-classic-black-hd.png';
+const productBeigeSquare = '/assets/home/product-beige-square-hd.png';
+const productSportBlack = '/assets/home/product-sport-black-hd.png';
+const productPostpartumBeige = '/assets/home/product-postpartum-beige-hd.png';
+const productFullBody = '/assets/home/product-full-body-hd.png';
+
+export type HomeCategory = {
+    id: string
+    label: string
+    image: string
+    path: string
+}
+
+export type HomeProduct = {
+    id: string
+    productId: string
+    name: string
+    image: string
+    price: number
+    oldPrice: number
+    rating: number
+    reviews: number
+    discount?: number
+}
+
+export const homeCategories: HomeCategory[] = [
+    {
+        id: 'women',
+        label: 'COMMON.WOMENS',
+        image: categoryWomen,
+        path: '/categories',
+    },
+    {
+        id: 'sport',
+        label: 'SHARED.AUTO_STR_99',
+        image: categorySport,
+        path: '/categories',
+    },
+    {
+        id: 'postpartum',
+        label: 'SHARED.AUTO_STR_68',
+        image: categoryPostpartum,
+        path: '/categories',
+    },
+    {
+        id: 'men',
+        label: 'COMMON.MENS',
+        image: categoryMen,
+        path: '/categories',
+    },
+]
+
+export const homeProducts: HomeProduct[] = [
+    {
+        id: 'home-product-1',
+        productId: 'prod-2',
+        name: 'SHARED.AUTO_STR_50',
+        image: productFullBody,
+        price: 260,
+        oldPrice: 320,
+        rating: 4.9,
+        reviews: 112,
+    },
+    {
+        id: 'home-product-2',
+        productId: 'prod-3',
+        name: 'SHARED.AUTO_STR_46',
+        image: productPostpartumBeige,
+        price: 210,
+        oldPrice: 250,
+        rating: 4.8,
+        reviews: 96,
+    },
+    {
+        id: 'home-product-3',
+        productId: 'prod-4',
+        name: 'SHARED.AUTO_STR_75',
+        image: productSportBlack,
+        price: 230,
+        oldPrice: 270,
+        rating: 4.7,
+        reviews: 86,
+        discount: 15,
+    },
+    {
+        id: 'home-product-4',
+        productId: 'prod-6',
+        name: 'SHARED.AUTO_STR_56',
+        image: productBeigeSquare,
+        price: 195,
+        oldPrice: 250,
+        rating: 4.7,
+        reviews: 96,
+    },
+    {
+        id: 'home-product-5',
+        productId: 'prod-1',
+        name: 'SHARED.AUTO_STR_51',
+        image: productClassicBlack,
+        price: 200,
+        oldPrice: 250,
+        rating: 4.8,
+        reviews: 126,
+        discount: 20,
+    },
+]

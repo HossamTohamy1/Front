@@ -1,0 +1,232 @@
+<div class="dashboard-home dashboard-layout-page" dir="rtl">
+  <header class="dashboard-home__header dashboard-layout-page__header">
+    <button
+      type="button"
+      class="dashboard-home__menu"
+      (click)="isSidebarOpen = true"
+      aria-label='DASHBOARD.AUTO_STR_301'
+    >
+      <lucide-icon [img]="MenuIcon" size="27" strokeWidth="2"></lucide-icon>
+    </button>
+
+    <div class="dashboard-home__brand" aria-label="LOXX KING">
+      <span class="dashboard-home__brand-primary">LOXX</span>
+      <span class="dashboard-home__brand-secondary">KING</span>
+    </div>
+
+    <div class="dashboard-home__header-actions" aria-label='DASHBOARD.AUTO_STR_48'>
+      <button type="button" (click)="router.navigateByUrl('/admin/products')">{{ 'DASHBOARD.AUTO_STR_302' | translate }}</button>
+      <button type="button" (click)="router.navigateByUrl('/admin/products')">{{ 'DASHBOARD.AUTO_STR_260' | translate }}</button>
+      <button type="button" (click)="router.navigateByUrl('/admin')">{{ 'DASHBOARD.AUTO_STR_340' | translate }}</button>
+    </div>
+  </header>
+
+  <main class="dashboard-layout-page__content">
+    <ng-content></ng-content>
+  </main>
+
+  <div class="dashboard-sidebar-layer" *ngIf="isSidebarOpen">
+    <button
+      type="button"
+      class="dashboard-sidebar-layer__backdrop"
+      (click)="closeSidebar()"
+      aria-label='DASHBOARD.AUTO_STR_221'
+    ></button>
+
+    <aside class="dashboard-sidebar" dir="rtl" aria-label='DASHBOARD.AUTO_STR_20'>
+      <header class="dashboard-sidebar__hero">
+        <input
+          #avatarInput
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          class="dashboard-sidebar__avatar-input"
+          (change)="handleAvatarChange($event)"
+        />
+
+        <button
+          type="button"
+          class="dashboard-sidebar__avatar"
+          (click)="isAvatarActionsOpen = true"
+          aria-label='SHARED.AUTO_STR_15'
+        >
+          <ng-container *ngIf="activeAccount.avatar; else noAvatar">
+            <img [src]="activeAccount.avatar" [alt]="activeAccount.name" />
+          </ng-container>
+          <ng-template #noAvatar>
+            <span>{{ initials(activeAccount.name) }}</span>
+          </ng-template>
+          <small><lucide-icon [img]="CameraIcon" size="13"></lucide-icon></small>
+        </button>
+
+        <div class="dashboard-sidebar__identity dashboard-sidebar__identity--name-only">
+          <strong>{{ activeAccount.name }}</strong>
+        </div>
+
+        <button
+          *ngIf="isRootAdmin; else noSwitchButton"
+          type="button"
+          class="dashboard-sidebar__switch-button"
+          (click)="openAccounts()"
+          aria-label='SHARED.AUTO_STR_25'
+          title='SHARED.AUTO_STR_25'
+        >
+          <lucide-icon [img]="ArrowLeftRightIcon" size="23" strokeWidth="2.4"></lucide-icon>
+        </button>
+        <ng-template #noSwitchButton>
+          <span class="dashboard-sidebar__switch-placeholder"></span>
+        </ng-template>
+      </header>
+
+      <ng-container *ngIf="sidebarView === 'menu'">
+        <label class="dashboard-sidebar__search">
+          <lucide-icon [img]="SearchIcon" size="16"></lucide-icon>
+          <input
+            [value]="menuSearch"
+            (input)="updateMenuSearch($event)"
+            placeholder="ابحث في القائمة..."
+          />
+        </label>
+
+        <nav class="dashboard-sidebar__nav">
+          <ng-container *ngFor="let item of visibleLinks">
+            <div class="dashboard-sidebar__nav-group" [class.has-children]="item.children?.length">
+              <button
+                type="button"
+                class="dashboard-sidebar__nav-row"
+                [class.is-active]="isRouteActive(pathname, item.path || '') || (item.children && item.children.length > 0 && isRouteActive(pathname, item.children[0].path))"
+                (click)="item.children?.length ? openSubmenu(item.key) : (item.path && openPage(item.path))"
+              >
+                <span class="dashboard-sidebar__nav-main">
+                  <lucide-icon [img]="item.icon" size="17"></lucide-icon>
+                  <span>{{ item.label }}</span>
+                </span>
+                <lucide-icon [img]="ChevronLeftIcon" size="15"></lucide-icon>
+              </button>
+            </div>
+          </ng-container>
+
+          <p class="dashboard-sidebar__empty" *ngIf="visibleLinks.length === 0">لا توجد نتائج مطابقة.</p>
+        </nav>
+      </ng-container>
+
+      <section class="dashboard-sidebar__submenu-view" *ngIf="sidebarView === 'submenu' && activeSubmenu">
+        <button
+          type="button"
+          class="dashboard-sidebar__submenu-back"
+          (click)="returnToMainMenu()"
+        >
+          <lucide-icon [img]="ChevronRightIcon" size="16"></lucide-icon>
+          <span>{{ 'COMMON.BACK' | translate }}</span>
+        </button>
+
+        <div class="dashboard-sidebar__submenu-title">
+          <span class="dashboard-sidebar__submenu-title-icon">
+            <lucide-icon [img]="activeSubmenu.icon" size="18"></lucide-icon>
+          </span>
+          <strong>{{ activeSubmenu.label }}</strong>
+        </div>
+
+        <div class="dashboard-sidebar__submenu-list">
+          <button
+            *ngFor="let child of activeSubmenu.children"
+            type="button"
+            class="dashboard-sidebar__submenu-page-row"
+            [class.is-active]="isRouteActive(pathname, child.path)"
+            (click)="openPage(child.path)"
+          >
+            <span class="dashboard-sidebar__submenu-page-icon">
+              <ng-container *ngIf="child.key.includes('add'); else submenuIcon">
+                +
+              </ng-container>
+              <ng-template #submenuIcon>
+                <lucide-icon [img]="activeSubmenu.icon" size="15"></lucide-icon>
+              </ng-template>
+            </span>
+            <span>{{ child.label }}</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="dashboard-sidebar__accounts-view" *ngIf="sidebarView === 'accounts'">
+        <button
+          type="button"
+          class="dashboard-sidebar__accounts-back"
+          (click)="returnToMainMenu()"
+        >
+          <lucide-icon [img]="ChevronRightIcon" size="16"></lucide-icon>
+          <span>{{ 'SHARED.AUTO_STR_39' | translate }}</span>
+        </button>
+
+        <label class="dashboard-sidebar__search dashboard-sidebar__search--accounts">
+          <lucide-icon [img]="SearchIcon" size="16"></lucide-icon>
+          <input
+            [value]="accountSearch"
+            (input)="updateAccountSearch($event)"
+            placeholder="ابحث باسم الموظف أو البريد..."
+            autofocus
+          />
+        </label>
+
+        <div class="dashboard-sidebar__accounts-list">
+          <button
+            *ngFor="let account of visibleAccounts"
+            type="button"
+            class="dashboard-sidebar__account-card"
+            [class.is-current]="account.id === activeAccount.id"
+            (click)="chooseAccount(account)"
+          >
+            <span class="dashboard-sidebar__account-avatar">
+              <ng-container *ngIf="account.avatar; else noListAvatar">
+                <img [src]="account.avatar" alt="" />
+              </ng-container>
+              <ng-template #noListAvatar>
+                {{ initials(account.name) }}
+              </ng-template>
+            </span>
+            <span class="dashboard-sidebar__account-info">
+              <strong>{{ account.name }}</strong>
+              <small>{{ account.roleLabel }}</small>
+              <em>{{ account.email }}</em>
+            </span>
+            <lucide-icon *ngIf="account.id === activeAccount.id" [img]="CheckCircle2Icon" size="17"></lucide-icon>
+          </button>
+
+          <p class="dashboard-sidebar__empty" *ngIf="visibleAccounts.length === 0">لا يوجد حساب بهذا الاسم.</p>
+        </div>
+      </section>
+
+      <button type="button" class="dashboard-sidebar__logout" (click)="logout()">
+        <span>{{ 'DASHBOARD.AUTO_STR_445' | translate }}</span>
+        <lucide-icon [img]="LogOutIcon" size="17"></lucide-icon>
+      </button>
+
+      <div class="dashboard-sidebar__avatar-sheet-layer" *ngIf="isAvatarActionsOpen">
+        <button
+          type="button"
+          class="dashboard-sidebar__avatar-sheet-backdrop"
+          (click)="isAvatarActionsOpen = false"
+          aria-label='SHARED.AUTO_STR_26'
+        ></button>
+        <section class="dashboard-sidebar__avatar-sheet" role="dialog" aria-modal="true">
+          <h3>{{ 'SHARED.AUTO_STR_64' | translate }}</h3>
+          <button
+            type="button"
+            (click)="avatarInputRef.nativeElement.click()"
+            [disabled]="isAvatarLoading"
+          >
+            <lucide-icon [img]="CameraIcon" size="17"></lucide-icon>
+            <span>{{ isAvatarLoading ? 'جاري تجهيز الصورة...' : 'DASHBOARD.AUTO_STR_284' }}</span>
+          </button>
+          <button *ngIf="activeAccount.avatar" type="button" class="is-danger" (click)="removeAvatar()">
+            <lucide-icon [img]="Trash2Icon" size="17"></lucide-icon>
+            <span>{{ 'SHARED.AUTO_STR_69' | translate }}</span>
+          </button>
+          <button type="button" (click)="isAvatarActionsOpen = false">
+            <lucide-icon [img]="XIcon" size="17"></lucide-icon>
+            <span>{{ 'COMMON.CANCEL' | translate }}</span>
+          </button>
+        </section>
+      </div>
+    </aside>
+  </div>
+</div>

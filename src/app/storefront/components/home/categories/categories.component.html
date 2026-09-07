@@ -1,0 +1,26 @@
+<section class="lk-home-section lk-category-section" aria-labelledby="categories-heading">
+  @if (title) {
+    <div id="categories-heading" class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold">{{ title | translate }}</h2>
+      <a routerLink="/categories" class="text-sm font-medium hover:underline text-gray-600">{{ 'COMMON.SEEALL' | translate }}</a>
+    </div>
+  }
+  
+  <div class="lk-category-grid">
+    @for (category of displayCategories; track category.id) {
+      <a [routerLink]="getCategoryPath(category)" class="lk-category-card">
+        <span class="lk-category-card__image">
+          <img
+            [src]="category.image"
+            [alt]="getCategoryLabel(category)"
+            width="900"
+            height="520"
+            loading="lazy"
+            decoding="async"
+          />
+        </span>
+        <strong>{{ getCategoryLabel(category) | translate }}</strong>
+      </a>
+    }
+  </div>
+</section>

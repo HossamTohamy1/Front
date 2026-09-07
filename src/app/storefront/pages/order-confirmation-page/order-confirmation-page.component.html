@@ -1,0 +1,47 @@
+<app-store-layout>
+  <div class="max-w-lg mx-auto px-4 py-16 text-center">
+    <!-- Success Icon -->
+    <div class="transition-all duration-700" [ngClass]="show() ? 'opacity-100 scale-100' : 'opacity-0 scale-50'">
+      <div class="w-24 h-24 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-6">
+        <lucide-icon name="check-circle" [size]="48" class="text-green-500"></lucide-icon>
+      </div>
+    </div>
+
+    <div class="transition-all duration-700 delay-300" [ngClass]="show() ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'">
+      <h1 class="font-display font-black text-3xl mb-2">{{ t('orderPlaced', lang()) }}</h1>
+      <p class="text-muted-foreground mb-2">{{ t('orderSent', lang()) }}</p>
+
+      <div class="bg-muted rounded-2xl px-6 py-4 inline-block my-6">
+        <p class="text-xs text-muted-foreground mb-1">{{ t('orderNumber', lang()) }}</p>
+        <p class="font-display font-black text-2xl text-brand">{{ orderNumber() }}</p>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-card border border-border rounded-2xl p-4">
+          <lucide-icon name="package" [size]="24" class="text-brand mb-2 mx-auto"></lucide-icon>
+          <p class="font-semibold text-sm">{{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_251' : 'Expected Delivery' }}</p>
+          <p class="text-xs text-muted-foreground mt-1">3–5 {{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_439' : 'Business Days' }}</p>
+        </div>
+        <div class="bg-card border border-border rounded-2xl p-4">
+          <lucide-icon name="message-circle" [size]="24" class="text-brand mb-2 mx-auto"></lucide-icon>
+          <p class="font-semibold text-sm">WhatsApp</p>
+          <p class="text-xs text-muted-foreground mt-1">{{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_371' : 'Confirmation sent' }}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <a routerLink="/orders" class="w-full block">
+          <button class="w-full inline-flex items-center justify-center rounded-xl bg-black text-white hover:bg-black/90 h-12 px-8 font-medium">
+            {{ t('trackOrder', lang()) }}
+          </button>
+        </a>
+        <a routerLink="/" class="w-full block">
+          <button class="w-full inline-flex items-center justify-center rounded-xl border border-input bg-background hover:bg-accent hover:text-accent-foreground h-12 px-8 font-medium">
+            {{ t('continueShopping', lang()) }}
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+</app-store-layout>

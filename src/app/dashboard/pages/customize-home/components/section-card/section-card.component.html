@@ -1,0 +1,53 @@
+<div class="mb-4 bg-white rounded-xl border border-gray-200 overflow-visible transition-shadow hover:shadow-md">
+    <div class="flex items-center p-3 bg-gray-50/50 border-b border-gray-100 cursor-grab active:cursor-grabbing">
+        <div class="text-gray-400 ml-2">
+            <lucide-icon [img]="GripVertical" size="16"></lucide-icon>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="font-bold text-gray-900 ml-1">{{ index + 1 }}.</span>
+            <h3 class="font-bold text-gray-900">{{ title }}</h3>
+        </div>
+        
+        <!-- Spacer -->
+        <div class="flex-1"></div>
+
+        <!-- Optional Add Button -->
+        @if (addAction) {
+            <div class="ml-3">
+                <button (click)="addAction.onClick()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-md font-medium transition-colors border border-blue-100">{{ addAction.label }}</button>
+            </div>
+        }
+        
+        <!-- Reorder Arrows -->
+        <div class="flex items-center gap-1 bg-white border border-gray-200 rounded-md p-1 ml-2">
+            <button (click)="moveUp.emit()" [disabled]="isFirst" class="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:hover:text-gray-400">
+                <lucide-icon [img]="ArrowUp" size="14"></lucide-icon>
+            </button>
+            <div class="w-[1px] h-4 bg-gray-200"></div>
+            <button (click)="moveDown.emit()" [disabled]="isLast" class="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:hover:text-gray-400">
+                <lucide-icon [img]="ArrowDown" size="14"></lucide-icon>
+            </button>
+        </div>
+
+        <!-- Copy/Delete -->
+        <button (click)="duplicate.emit()" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors ml-1" title='DASHBOARD.AUTO_STR_423'>
+            <lucide-icon [img]="Copy" size="16"></lucide-icon>
+        </button>
+        <button (click)="delete.emit()" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors ml-2" title='COMMON.DELETE'>
+            <lucide-icon [img]="Trash2" size="16"></lucide-icon>
+        </button>
+
+        <!-- Toggle -->
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                class="sr-only peer"
+                [checked]="enabled"
+                (change)="onToggle($event)"
+            />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+        </label>
+    </div>
+    
+    <div class="p-3"><ng-content></ng-content></div>
+</div>

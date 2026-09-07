@@ -1,0 +1,113 @@
+<app-admin-layout>
+  <div class="max-w-6xl mx-auto space-y-5">
+    <div class="flex items-center justify-between">
+      <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'COMMON.ORDERSMANAGEMENT' : 'Orders' }}</h1>
+      @if (selected().length > 0) {
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-muted-foreground">{{ selected().length }} {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_459' : 'selected' }}</span>
+          <select class="h-9 px-3 rounded-xl bg-muted border border-border text-sm outline-none">
+            <option>{{ lang() === 'ar' ? 'COMMON.BULKACTION' : 'Bulk Action' }}</option>
+            <option>{{ lang() === 'ar' ? 'COMMON.CONFIRM' : 'Confirm' }}</option>
+            <option>{{ lang() === 'ar' ? 'COMMON.CANCEL' : 'Cancel' }}</option>
+          </select>
+        </div>
+      }
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex flex-wrap gap-3">
+      <div class="relative flex-1 min-w-[208px]">
+        <lucide-icon [img]="SearchIcon" [size]="15" class="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground"></lucide-icon>
+        <input
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          [placeholder]="lang() === 'ar' ? 'ابحث بالرقم أو الاسم...' : 'Search by number or name...'"
+          class="w-full h-9 ps-9 pe-4 rounded-xl bg-card border border-border text-sm outline-none focus:ring-2 focus:ring-ring"
+        />
+      </div>
+      <div class="flex items-center gap-2">
+        <lucide-icon [img]="FilterIcon" [size]="14" class="text-muted-foreground"></lucide-icon>
+        <div class="flex gap-1 overflow-x-auto no-scrollbar">
+          @for (s of statuses; track s) {
+            <button
+              (click)="filterStatus.set(s)"
+              class="shrink-0 h-9 px-3 rounded-xl text-xs font-medium transition-all tap-highlight"
+              [ngClass]="filterStatus() === s ? 'bg-brand text-[#0E0E11]' : 'bg-card border border-border text-muted-foreground hover:border-brand'"
+            >
+              {{ getStatusLabel(s, lang() === 'ar') }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm whitespace-nowrap">
+          <thead>
+            <tr class="border-b border-border bg-muted/40">
+              <th class="px-4 py-3 w-10">
+                <input
+                  type="checkbox"
+                  class="accent-brand"
+                  [checked]="isAllSelected()"
+                  (change)="toggleAll($any($event.target).checked)"
+                />
+              </th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.ORDER_NUMBER' : 'Order #' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_408' : 'Customer' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground hidden sm:table-cell">{{ lang() === 'ar' ? 'CHECKOUT.COUNTRY' : 'Country' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_409' : 'Total' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.STATUS' : 'Status' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground hidden md:table-cell">{{ lang() === 'ar' ? 'COMMON.STEP2' : 'Payment' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_407' : 'Date' }}</th>
+              <th class="w-10"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of filtered(); track order.id) {
+              <tr class="border-b border-border last:border-0 hover:bg-muted/30 transition-colors" [class.bg-secondary]="selected().includes(order.id)">
+                <td class="px-4 py-3">
+                  <input type="checkbox" class="accent-brand" [checked]="selected().includes(order.id)" (change)="toggleSelect(order.id)" />
+                </td>
+                <td class="px-4 py-3">
+                  <a [routerLink]="['/admin/orders', order.id]" class="font-mono font-semibold text-brand hover:underline">
+                    {{ order.orderNumber }}
+                  </a>
+                </td>
+                <td class="px-4 py-3">
+                  <p class="font-medium">{{ order.customerName }}</p>
+                  <p class="text-xs text-muted-foreground">{{ order.customerPhone }}</p>
+                </td>
+                <td class="px-4 py-3 hidden sm:table-cell text-muted-foreground">{{ order.country }}</td>
+                <td class="px-4 py-3 font-bold">${{ order.total.toFixed(2) }}</td>
+                <td class="px-4 py-3">
+                  <app-badge [variant]="getVariant(order.status)">{{ getStatusLabel(order.status, lang() === 'ar') }}</app-badge>
+                </td>
+                <td class="px-4 py-3 hidden md:table-cell">
+                  <span class="text-xs font-medium" [ngClass]="order.paymentStatus === 'paid' ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'">
+                    {{ order.paymentStatus === 'paid' ? (lang() === 'ar' ? 'DASHBOARD.AUTO_STR_436' : 'Paid') : (lang() === 'ar' ? 'DASHBOARD.AUTO_STR_458' : 'Pending') }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-muted-foreground text-xs">
+                  {{ order.createdAt | date:(lang() === 'ar' ? 'mediumDate' : 'mediumDate') }}
+                </td>
+                <td class="px-4 py-3">
+                  <a [routerLink]="['/admin/orders', order.id]" class="text-muted-foreground hover:text-brand transition-colors tap-highlight">
+                    <lucide-icon [img]="ChevronRightIcon" [size]="16" [class.rotate-180]="dir() === 'rtl'"></lucide-icon>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (filtered().length === 0) {
+        <div class="text-center py-12 text-muted-foreground">
+          <p>{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_244' : 'No orders found' }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</app-admin-layout>

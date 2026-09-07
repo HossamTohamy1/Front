@@ -1,0 +1,119 @@
+<div class="dashboard-home" dir="rtl">
+  <!-- Copy Notification Toast -->
+  <div class="dashboard-copy-notice" *ngIf="copyNotice" role="status">
+    {{ copyNotice }}
+  </div>
+
+  <!-- 1. Header -->
+  <app-dashboard-header
+    [pendingApprovalsCount]="pendingApprovalsCount"
+    (openMenu)="openSidebar()"
+    (openPrices)="catalogModal = 'prices'"
+    (openProducts)="catalogModal = 'products'"
+    (openApprovals)="isApprovalsOpen = true"
+  ></app-dashboard-header>
+
+  <main class="dashboard-home__main">
+    <!-- Active Employee Title -->
+    <div class="dashboard-home__employee">{{ activeAccount.name }}</div>
+
+    <!-- 2. 9 Filter Cards Grid -->
+    <app-dashboard-filters
+      [filterShortcuts]="filterShortcuts"
+      [filterKeyMap]="filterKeyMap"
+      [filterSelections]="filterSelections"
+      [openFilterKey]="openFilterKey"
+      [filterSearchQuery]="filterSearchQuery"
+      [activeFilterOptions]="activeFilterOptions"
+      [totalOrdersCount]="orders.length"
+      (filterToggle)="toggleFilter($event)"
+      (filterSelect)="selectFilterOption($event.key, $event.value)"
+      (filterClear)="clearFilter($event)"
+      (searchChange)="filterSearchQuery = $event"
+    ></app-dashboard-filters>
+
+    <!-- Quick Action Pills Row -->
+    <section class="dashboard-quick-actions" aria-label='DASHBOARD.AUTO_STR_188'>
+      <button type="button" class="dashboard-quick-action" (click)="downloadOrders()">{{ 'DASHBOARD.AUTO_STR_251' | translate }}<span class="dashboard-quick-action__count dashboard-number" *ngIf="newOrdersCount > 0">{{ newOrdersCount }}</span>
+      </button>
+      <button type="button" class="dashboard-quick-action" (click)="openBulkStatusModal()">{{ 'DASHBOARD.AUTO_STR_252' | translate }}</button>
+      <button type="button" class="dashboard-quick-action" (click)="openPotentialCustomersModal()">{{ 'DASHBOARD.AUTO_STR_149' | translate }}</button>
+    </section>
+
+    <!-- 3. Table Tools (Entries, Search, Date Filter) -->
+    <app-dashboard-table-tools
+      [itemsPerPage]="itemsPerPage"
+      [searchQuery]="searchQuery"
+      [selectedDate]="selectedDate"
+      [isDatePickerOpen]="isDatePickerOpen"
+      [calendarYear]="calendarYear"
+      [calendarMonth]="calendarMonth"
+      [calendarCells]="calendarCells"
+      (itemsPerPageChange)="itemsPerPage = $event; ordersPage = 1"
+      (searchQueryChange)="searchQuery = $event"
+      (toggleDatePicker)="toggleDatePicker()"
+      (clearDate)="clearDateFilter()"
+      (changeMonth)="changeCalendarMonth($event)"
+      (selectDate)="chooseCalendarDate($event)"
+    ></app-dashboard-table-tools>
+
+    <!-- 4. Main Orders Table -->
+    <app-dashboard-orders-table
+      [orders]="paginatedOrders"
+      [expandedOrderId]="expandedOrderId"
+      [activeProductsPopoverOrderId]="activeProductsPopoverOrderId"
+      [ordersPage]="ordersPage"
+      [totalPages]="totalPages"
+      (copyValue)="copyOrderValue($event.value, $event.label)"
+      (toggleExpand)="toggleExpandRow($event)"
+      (toggleProductsPopover)="toggleProductsPopover($event)"
+      (rowAction)="openRowAction($event.orderId, $event.kind)"
+      (pageChange)="ordersPage = $event"
+    ></app-dashboard-orders-table>
+  </main>
+
+  <!-- 5. Sidebar Drawer -->
+  <app-dashboard-sidebar
+    [isOpen]="isSidebarOpen"
+    [activeAccount]="activeAccount"
+    (close)="closeSidebar()"
+    (navigate)="navigateMenu($event)"
+    (logout)="logout()"
+  ></app-dashboard-sidebar>
+
+  <!-- 6. Modals & Dialogs -->
+  <app-dashboard-modals
+    [catalogModal]="catalogModal"
+    [isApprovalsOpen]="isApprovalsOpen"
+    [isPotentialCustomersOpen]="isPotentialCustomersOpen"
+    [isBulkStatusOpen]="isBulkStatusOpen"
+    [bulkStatusTarget]="bulkStatusTarget"
+    [rowActionDialog]="rowActionDialog"
+    [rowEditDraft]="rowEditDraft"
+    [rowActionValue]="rowActionValue"
+    [selectedBankReceipt]="selectedBankReceipt"
+    [products]="allStoreProducts"
+    [orders]="orders"
+    [deliveryCompanies]="deliveryCompanies"
+    [paymentMethods]="paymentMethods"
+    (closeCatalog)="catalogModal = null"
+    (closeApprovals)="isApprovalsOpen = false"
+    (closePotentialCustomers)="isPotentialCustomersOpen = false"
+    (closeBulkStatus)="isBulkStatusOpen = false"
+    (closeRowAction)="closeRowAction()"
+    (confirmBulkStatus)="confirmBulkStatus($event)"
+    (approveOrder)="approveBankTransfer($event)"
+    (saveRowAction)="saveRowActionFromModal($event)"
+  ></app-dashboard-modals>
+
+  <!-- 7. Floating Chat -->
+  <app-dashboard-floating-chat
+    [isOpen]="isChatOpen"
+    [conversations]="chatConversations"
+    [activeChatId]="activeChatId"
+    [unreadCount]="chatConversations[0] ? chatConversations[0].unread : 0"
+    (toggleChat)="toggleFloatingChat()"
+    (selectConversation)="selectConversation($event)"
+    (sendMessage)="sendChatMessageFromChild($event)"
+  ></app-dashboard-floating-chat>
+</div>

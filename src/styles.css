@@ -1,0 +1,189 @@
+
+@import './assets/styles/dashboard/admin-catalog-page.css';
+@import './assets/styles/dashboard/dashboard-layout.css';
+@import './assets/styles/dashboard/dashboard-page.css';
+@import './assets/styles/dashboard/admin-catalog-page.css';
+@import './assets/styles/dashboard/admin-floating-chat.css';
+@import './assets/styles/dashboard/admin-login-page.css';
+@import './assets/styles/dashboard/dashboard-layout.css';
+@import './assets/styles/dashboard/dashboard-login-page.css';
+@import './assets/styles/dashboard/dashboard-overdue-alerts.css';
+@import './assets/styles/dashboard/dashboard-overdue-alerts.top-left-compact.css';
+@import './assets/styles/dashboard/dashboard-page.css';
+@import './assets/styles/dashboard/dashboard-sidebar-unified.css';
+@import './assets/styles/dashboard/operations-center-page.css';
+@import './assets/styles/dashboard/about-page.css';
+@import './assets/styles/dashboard/all-shapers-page.css';
+@import './assets/styles/dashboard/cart-page.css';
+@import './assets/styles/dashboard/categories-page.css';
+@import './assets/styles/dashboard/checkout-page.css';
+@import './assets/styles/dashboard/contact-page.css';
+@import './assets/styles/dashboard/customer-floating-chat.css';
+@import './assets/styles/dashboard/faq-page.css';
+@import './assets/styles/dashboard/favorites-page.css';
+@import './assets/styles/dashboard/home-page.css';
+@import './assets/styles/dashboard/login-page.css';
+@import './assets/styles/dashboard/offers-page.css';
+@import './assets/styles/dashboard/order-tracking-page.css';
+@import './assets/styles/dashboard/policies-page.css';
+@import './assets/styles/dashboard/product-detail-page.css';
+@import './assets/styles/dashboard/profile-page.css';
+@import './assets/styles/dashboard/search-page.css';
+@import './assets/styles/dashboard/size-guide-page.css';
+@import './assets/styles/dashboard/staff-dashboard-menu-item.css';
+@import './assets/styles/dashboard/wallet-payment-page.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #FAFAFA;
+    --fg: #0E0E11;
+    --card-bg: #FFFFFF;
+    --card-fg: #0E0E11;
+    --primary-color: #5BC8F0;
+    --primary-fg: #0E0E11;
+    --secondary-bg: #EDF8FD;
+    --secondary-fg: #0A7FA8;
+    --muted-bg: #F3F3F7;
+    --muted-fg: #6B6B80;
+    --border-color: #E4E4EA;
+    --ring-color: #5BC8F0;
+    --success-color: #22C55E;
+    --warning-color: #F59E0B;
+    --danger-color: #EF4444;
+  }
+
+  .dark {
+    --bg: #0E0E11;
+    --fg: #F0F0F5;
+    --card-bg: #18181D;
+    --card-fg: #F0F0F5;
+    --primary-color: #5BC8F0;
+    --primary-fg: #0E0E11;
+    --secondary-bg: #162028;
+    --secondary-fg: #5BC8F0;
+    --muted-bg: #222228;
+    --muted-fg: #8A8AA0;
+    --border-color: #2C2C36;
+    --ring-color: #5BC8F0;
+    --success-color: #4ADE80;
+    --warning-color: #FBBF24;
+    --danger-color: #F87171;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 100%;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-fg);
+}
+
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+@keyframes bounce-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes spin-once {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-slide-up { animation: slideUp 0.25s ease-out; }
+.animate-fade-in { animation: fadeIn 0.2s ease-out; }
+.animate-bounce-in { animation: bounce-in 0.3s ease-out; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--muted-bg) 25%, var(--border-color) 50%, var(--muted-bg) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.tap-highlight {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+
+app-root,
+app-store-header,
+app-home-header,
+app-bottom-nav,
+app-floating-chat,
+app-hero-section,
+app-benefits-bar,
+app-category-section,
+app-products-section,
+app-offer-banner,
+app-testimonials-section,
+app-faq-section,
+app-footer,
+app-cart-page,
+app-checkout-page,
+app-home-page,
+app-product-detail-page,
+app-categories-page,
+app-category-page,
+app-search-page,
+app-size-guide-page,
+app-profile-page,
+app-my-orders-page,
+app-notifications-page,
+app-login-page,
+app-section-card,
+app-badge {
+  display: block;
+}

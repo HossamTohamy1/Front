@@ -1,0 +1,276 @@
+<app-store-layout>
+
+  <main class="lk-profile-form-page" dir="rtl">
+    <div class="lk-profile-form-page__container">
+      <header class="lk-profile-form-page__heading">
+        <h1>{{ config().headerTitle | translate}}</h1>
+        <p>{{ config().headerSubtitle | translate}}</p>
+      </header>
+
+      <form class="lk-profile-form-card" (ngSubmit)="handleSubmit($event)">
+        <section *ngIf="config().showAvatarSection" class="lk-profile-avatar-section">
+          <input
+            #imageInput
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            class="lk-profile-avatar-section__input"
+            (change)="handleImageChange($event)"
+          />
+
+          <div class="lk-profile-avatar-section__avatar-wrap">
+            <button
+              type="button"
+              class="lk-profile-avatar-section__avatar"
+              (click)="imageInput.click()"
+              aria-label='STOREFRONT.AUTO_STR_179'
+            >
+              <img *ngIf="profile().profileImage; else noAvatar" [src]="profile().profileImage" alt='STOREFRONT.AUTO_STR_283' />
+              <ng-template #noAvatar>
+                <span>{{ initials() }}</span>
+              </ng-template>
+
+              <span class="lk-profile-avatar-section__edit-badge">
+                <span *ngIf="isImageLoading()" class="lk-profile-avatar-section__spinner"></span>
+                <lucide-icon *ngIf="!isImageLoading()" [img]="Camera" size="17"></lucide-icon>
+              </span>
+            </button>
+
+            <button
+              *ngIf="profile().profileImage"
+              type="button"
+              class="lk-profile-avatar-section__remove"
+              (click)="removeProfileImage()"
+              aria-label='STOREFRONT.AUTO_STR_202'
+            >
+              <lucide-icon [img]="Trash2" size="15"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="lk-profile-avatar-section__text">
+            <h2>{{ profile().name.trim() || 'STOREFRONT.AUTO_STR_408' }}</h2>
+          
+            <button
+              type="button"
+              (click)="imageInput.click()"
+            >
+              <lucide-icon [img]="ImagePlus" size="16"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_377' | translate }}</button>
+          </div>
+        </section>
+
+        <section *ngIf="config().showBasicInfoSection" class="lk-profile-form-section">
+          <div class="lk-profile-form-section__title">
+            <span><lucide-icon [img]="UserRound" size="20"></lucide-icon></span>
+            <div>
+              <h2>{{ 'STOREFRONT.AUTO_STR_213' | translate }}</h2>
+            </div>
+          </div>
+
+          <div class="lk-profile-fields-grid">
+            <label class="lk-profile-field lk-profile-field--wide">
+              <span>الاسم بالكامل *</span>
+              <div>
+                <lucide-icon [img]="UserRound" size="18"></lucide-icon>
+                <input
+                  [value]="profile().name"
+                  (input)="updateField('name', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_192'
+                  autocomplete="name"
+                  required
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'CONTACT.EMAIL' | translate }}</span>
+              <div>
+                <lucide-icon [img]="Mail" size="18"></lucide-icon>
+                <input
+                  type="email"
+                  [value]="profile().email"
+                  (input)="updateField('email', $any($event.target).value)"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  dir="ltr"
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>رقم الهاتف *</span>
+              <div>
+                <lucide-icon [img]="Phone" size="18"></lucide-icon>
+                <input
+                  [value]="profile().phone"
+                  (input)="updateField('phone', $any($event.target).value)"
+                  placeholder="01xxxxxxxxx"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  dir="ltr"
+                  required
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_312' | translate }}</span>
+              <div>
+                <lucide-icon [img]="Phone" size="18"></lucide-icon>
+                <input
+                  [value]="profile().alternatePhone"
+                  (input)="updateField('alternatePhone', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_214'
+                  inputmode="tel"
+                  dir="ltr"
+                />
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <section *ngIf="config().showAddressSection" class="lk-profile-form-section">
+          <div class="lk-profile-form-section__title">
+            <span><lucide-icon [img]="MapPin" size="20"></lucide-icon></span>
+            <div>
+              <h2>{{ 'DASHBOARD.AUTO_STR_178' | translate }}</h2>
+              <p>سيظهر هذا العنوان تلقائيًا عند إتمام الطلب.</p>
+            </div>
+          </div>
+
+          <datalist id="lk-profile-country-options">
+            <option *ngFor="let country of countryOptions" [value]="country"></option>
+          </datalist>
+
+          <div class="lk-profile-fields-grid">
+            <label class="lk-profile-field">
+              <span>الدولة *</span>
+              <div>
+                <lucide-icon [img]="Landmark" size="18"></lucide-icon>
+                <input
+                  list="lk-profile-country-options"
+                  [value]="profile().country"
+                  (input)="updateField('country', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_313'
+                  autocomplete="country-name"
+                  required
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>المدينة *</span>
+              <div>
+                <lucide-icon [img]="Building2" size="18"></lucide-icon>
+                <input
+                  [value]="profile().city"
+                  (input)="updateField('city', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_314'
+                  autocomplete="address-level2"
+                  required
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_259' | translate }}</span>
+              <div>
+                <lucide-icon [img]="MapPin" size="18"></lucide-icon>
+                <input
+                  [value]="profile().area"
+                  (input)="updateField('area', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_259'
+                  autocomplete="address-level3"
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_315' | translate }}</span>
+              <div>
+                <lucide-icon [img]="Hash" size="18"></lucide-icon>
+                <input
+                  [value]="profile().postalCode"
+                  (input)="updateField('postalCode', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_315'
+                  inputmode="numeric"
+                  autocomplete="postal-code"
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field lk-profile-field--wide">
+              <span>اسم الشارع والعنوان بالتفصيل *</span>
+              <div>
+                <lucide-icon [img]="HomeIcon" size="18"></lucide-icon>
+                <input
+                  [value]="profile().street"
+                  (input)="updateField('street', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_56'
+                  autocomplete="street-address"
+                  required
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_409' | translate }}</span>
+              <div>
+                <lucide-icon [img]="Building2" size="18"></lucide-icon>
+                <input
+                  [value]="profile().building"
+                  (input)="updateField('building', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_409'
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_468' | translate }}</span>
+              <div>
+                <lucide-icon [img]="Building2" size="18"></lucide-icon>
+                <input
+                  [value]="profile().floor"
+                  (input)="updateField('floor', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_430'
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field">
+              <span>{{ 'STOREFRONT.AUTO_STR_431' | translate }}</span>
+              <div>
+                <lucide-icon [img]="HomeIcon" size="18"></lucide-icon>
+                <input
+                  [value]="profile().apartment"
+                  (input)="updateField('apartment', $any($event.target).value)"
+                  placeholder='STOREFRONT.AUTO_STR_431'
+                />
+              </div>
+            </label>
+
+            <label class="lk-profile-field lk-profile-field--wide">
+              <span>{{ 'STOREFRONT.AUTO_STR_215' | translate }}</span>
+              <div>
+                <lucide-icon [img]="MapPin" size="18"></lucide-icon>
+                <input
+                  [value]="profile().landmark"
+                  (input)="updateField('landmark', $any($event.target).value)"
+                  placeholder="مثال: بجوار المدرسة أو أمام الصيدلية"
+                />
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <footer class="lk-profile-form-card__footer">
+          <div [class.is-visible]="savedSuccessfully()">
+            <lucide-icon [img]="CheckCircle2" size="18"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_193' | translate }}</div>
+
+          <button type="submit" [disabled]="isSaving()">
+            <lucide-icon [img]="Save" size="18"></lucide-icon>
+            {{ isSaving() ? 'جاري الحفظ...' : 'STOREFRONT.AUTO_STR_343' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </main>
+</app-store-layout>

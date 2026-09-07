@@ -1,0 +1,151 @@
+<div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
+  <div class="text-center mb-4">
+    <h2 class="text-xl font-bold text-gray-900 mb-1">{{ 'DASHBOARD.AUTO_STR_68' | translate }}</h2>
+    <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_7' | translate }}</p>
+  </div>
+
+  <div class="flex flex-col">
+    <ng-container *ngFor="let section of sections; let i = index">
+      
+      <!-- HERO SECTION -->
+      <app-section-card *ngIf="section.type === 'hero'"
+        [title]="titles[section.type] || 'DASHBOARD.NEW_SECTION'" [index]="i" [enabled]="section.enabled"
+        [isFirst]="i === 0" [isLast]="i === sections.length - 1"
+        addActionLabel='DASHBOARD.AUTO_STR_359' (onAddAction)="addHeroSlide(section)"
+        (toggle)="updateSection(section.id, { enabled: $event })"
+        (duplicate)="duplicateSection(i)" (delete)="deleteSection(i)"
+        (moveUp)="moveUp(i)" (moveDown)="moveDown(i)"
+        (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
+        (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
+        
+        <div class="flex gap-2 overflow-x-auto pb-2">
+          <div *ngFor="let slide of (section.slides || (section.image ? [{id: 'old-1', image: section.image}] : [])); let sIdx = index" class="relative w-32 flex-shrink-0 group">
+            <div class="w-full h-24 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-blue-500 transition-colors">
+              <img [src]="slide.image" alt="" class="w-full h-full object-cover" />
+            </div>
+            <div class="absolute top-1 right-1 bg-blue-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+              {{ sIdx + 1 }}
+            </div>
+            <div class="absolute top-1 left-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button (click)="deleteSlide(section, sIdx)" class="p-1.5 bg-white text-red-500 rounded-md shadow hover:bg-red-50"><lucide-icon name="trash-2" [size]="14"></lucide-icon></button>
+              <button (click)="duplicateSlide(section, sIdx)" class="p-1.5 bg-white text-blue-500 rounded-md shadow hover:bg-blue-50"><lucide-icon name="copy" [size]="14"></lucide-icon></button>
+              <button (click)="promptImageChange(section, sIdx, slide.image)" class="p-1.5 bg-white text-green-500 rounded-md shadow hover:bg-green-50"><lucide-icon name="edit-2" [size]="14"></lucide-icon></button>
+            </div>
+          </div>
+          <div class="w-32 h-24 flex-shrink-0 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer" (click)="addHeroSlide(section)">
+            <div class="flex flex-col items-center gap-2 text-gray-400">
+              <lucide-icon name="plus" [size]="24"></lucide-icon>
+              <span class="text-xs font-bold text-gray-500">{{ 'DASHBOARD.AUTO_STR_359' | translate }}</span>
+            </div>
+          </div>
+        </div>
+      </app-section-card>
+
+      <!-- BENEFITS SECTION -->
+      <app-section-card *ngIf="section.type === 'benefits'"
+        [title]="titles[section.type] || 'DASHBOARD.NEW_SECTION'" [index]="i" [enabled]="section.enabled"
+        [isFirst]="i === 0" [isLast]="i === sections.length - 1"
+        addActionLabel='DASHBOARD.AUTO_STR_360' (onAddAction)="addBenefit(section)"
+        (toggle)="updateSection(section.id, { enabled: $event })"
+        (duplicate)="duplicateSection(i)" (delete)="deleteSection(i)"
+        (moveUp)="moveUp(i)" (moveDown)="moveDown(i)"
+        (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
+        (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
+        
+        <div class="space-y-2 mb-2">
+          <div *ngFor="let benefit of section.benefits; let bIdx = index" class="flex items-center gap-4 bg-white border border-gray-200 rounded-lg p-2">
+            <div class="flex items-center gap-3 flex-1">
+              <div class="text-gray-600 bg-gray-100 p-1.5 rounded">
+                <lucide-icon *ngIf="bIdx === 0" name="banknote" [size]="18"></lucide-icon>
+                <lucide-icon *ngIf="bIdx === 1" name="truck" [size]="18"></lucide-icon>
+                <lucide-icon *ngIf="bIdx > 1" name="package" [size]="18"></lucide-icon>
+              </div>
+              <div class="text-sm font-medium text-gray-800">{{ benefit.text.replace('\n', ' ') }}</div>
+            </div>
+            <button (click)="removeBenefit(section, bIdx)" class="text-red-400 hover:text-red-600 p-1"><lucide-icon name="trash-2" [size]="16"></lucide-icon></button>
+            <label class="relative inline-flex items-center cursor-pointer ml-2">
+              <input type="checkbox" class="sr-only peer" [checked]="benefit.enabled" (change)="updateBenefit(section, bIdx, { enabled: $any($event.target).checked })" />
+              <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+        </div>
+      </app-section-card>
+
+      <!-- PROMO SECTION -->
+      <app-section-card *ngIf="section.type === 'promo'"
+        [title]="titles[section.type] || 'DASHBOARD.NEW_SECTION'" [index]="i" [enabled]="section.enabled"
+        [isFirst]="i === 0" [isLast]="i === sections.length - 1"
+        (toggle)="updateSection(section.id, { enabled: $event })"
+        (duplicate)="duplicateSection(i)" (delete)="deleteSection(i)"
+        (moveUp)="moveUp(i)" (moveDown)="moveDown(i)"
+        (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
+        (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
+        
+        <div class="flex flex-row items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
+          <div class="w-24 h-16 rounded-md overflow-hidden flex items-center justify-center">
+            <img *ngIf="section.image" [src]="section.image" alt="Banner" class="w-full h-full object-cover" />
+            <lucide-icon *ngIf="!section.image" name="image" class="text-gray-400"></lucide-icon>
+          </div>
+          <button (click)="promptSectionImageChange(section)" class="flex flex-row items-center gap-2 px-4 py-2 border border-blue-200 text-blue-600 rounded-md text-sm hover:bg-blue-50 bg-white mr-auto">
+            <lucide-icon name="edit-2" [size]="16"></lucide-icon><span>{{ 'DASHBOARD.AUTO_STR_284' | translate }}</span>
+          </button>
+        </div>
+      </app-section-card>
+
+      <!-- CATEGORIES OR BESTSELLERS SECTION -->
+      <app-section-card *ngIf="section.type === 'categories' || section.type === 'bestsellers'"
+        [title]="titles[section.type] || 'DASHBOARD.NEW_SECTION'" [index]="i" [enabled]="section.enabled"
+        [isFirst]="i === 0" [isLast]="i === sections.length - 1"
+        (toggle)="updateSection(section.id, { enabled: $event })"
+        (duplicate)="duplicateSection(i)" (delete)="deleteSection(i)"
+        (moveUp)="moveUp(i)" (moveDown)="moveDown(i)"
+        (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
+        (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
+        
+        <div class="flex flex-col mb-2 gap-2">
+          <div class="flex items-center gap-3 w-full">
+            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+              <input type="checkbox" class="sr-only peer" [checked]="!!section.title" (change)="updateSection(section.id, { title: $any($event.target).checked ? 'DASHBOARD.AUTO_STR_317' : '' })" />
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            </label>
+            <input type="text" class="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
+              [ngModel]="section.title || ''" (ngModelChange)="updateSection(section.id, { title: $event })" placeholder='DASHBOARD.AUTO_STR_317' />
+          </div>
+        </div>
+        <div class="mb-2 mt-4">
+          <div class="text-xs font-bold text-gray-700 mb-2">
+            المنتجات ({{ section.type === 'categories' ? (section.categories?.length || 0) : (section.products?.length || 0) }})
+          </div>
+          <div class="flex gap-2 overflow-x-auto pb-2">
+            <ng-container *ngIf="section.type === 'categories'">
+              <div *ngFor="let c of section.categories" class="w-14 h-14 bg-gray-100 rounded-md border border-gray-200 overflow-hidden flex-shrink-0">
+                <img [src]="c.image" [alt]="c.name" class="w-full h-full object-cover" />
+              </div>
+            </ng-container>
+            <ng-container *ngIf="section.type === 'bestsellers'">
+              <div *ngFor="let p of section.products" class="w-14 h-14 bg-gray-100 rounded-md border border-gray-200 overflow-hidden flex-shrink-0 p-1">
+                <img [src]="p.image" [alt]="p.name" class="w-full h-full object-contain mix-blend-multiply" />
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <button class="w-full flex items-center justify-center gap-2 py-2 border border-blue-200 text-blue-600 bg-white rounded-lg text-sm hover:bg-blue-50 transition-colors mt-2">
+          <lucide-icon name="edit-2" [size]="16"></lucide-icon>{{ 'DASHBOARD.AUTO_STR_140' | translate }}</button>
+      </app-section-card>
+      
+    </ng-container>
+  </div>
+
+  <div class="relative mt-4">
+    <button (click)="showAddMenu = !showAddMenu" class="w-full flex items-center justify-center gap-2 py-3 bg-gray-900 text-white rounded-xl text-sm font-bold shadow-md hover:bg-gray-800 transition-colors">
+      <lucide-icon name="plus" [size]="18"></lucide-icon>{{ 'DASHBOARD.AUTO_STR_205' | translate }}<lucide-icon name="chevron-down" [size]="18" [class.rotate-180]="showAddMenu" class="transition-transform"></lucide-icon>
+    </button>
+    <div *ngIf="showAddMenu" class="absolute bottom-full left-0 w-full mb-2 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-10 flex flex-col">
+      <button (click)="addSection('hero')" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-right border-b border-gray-100"><lucide-icon name="image" class="text-gray-400" [size]="18"></lucide-icon><span class="font-medium text-gray-900">الصورة الرئيسية (البانر)</span></button>
+      <button (click)="addSection('categories')" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-right border-b border-gray-100"><lucide-icon name="package" class="text-gray-400" [size]="18"></lucide-icon><span class="font-medium text-gray-900">{{ 'DASHBOARD.AUTO_STR_401' | translate }}</span></button>
+      <button (click)="addSection('bestsellers')" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-right border-b border-gray-100"><lucide-icon name="banknote" class="text-gray-400" [size]="18"></lucide-icon><span class="font-medium text-gray-900">{{ 'DASHBOARD.AUTO_STR_239' | translate }}</span></button>
+      <button (click)="addSection('benefits')" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-right border-b border-gray-100"><lucide-icon name="truck" class="text-gray-400" [size]="18"></lucide-icon><span class="font-medium text-gray-900">{{ 'DASHBOARD.AUTO_STR_240' | translate }}</span></button>
+      <button (click)="addSection('promo')" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-right"><lucide-icon name="image" class="text-gray-400" [size]="18"></lucide-icon><span class="font-medium text-gray-900">{{ 'DASHBOARD.AUTO_STR_285' | translate }}</span></button>
+    </div>
+  </div>
+</div>
