@@ -10,12 +10,18 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
     req.url.startsWith('/api') ||
     req.url.startsWith('http://localhost:5050/api');
 
-  if (token && isApiRequest) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  if (isApiRequest) {
+    const cloneConfig: any = {
+      withCredentials: true
+    };
+    
+    if (token) {
+      cloneConfig.setHeaders = {
+        Authorization: `Bearer ${token}`
+      };
+    }
+    
+    const cloned = req.clone(cloneConfig);
     return next(cloned);
   }
 

@@ -1,36 +1,40 @@
-import { Injectable, signal, computed, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { User, isStaffRole } from '../../models/user.model';
-
-const USER_STORAGE_KEY = 'lk-auth-user';
+import { environment } from '../../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private platformId = inject(PLATFORM_ID);
+  
   user = signal<User | null>(null);
   isAdmin = computed(() => isStaffRole(this.user()?.role));
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor() {
+    // If we want to auto-fetch on load:
     if (isPlatformBrowser(this.platformId)) {
-      this.user.set(this.readStoredUser());
-      
-      window.addEventListener('storage', (event: StorageEvent) => {
-        if (event.key === USER_STORAGE_KEY) {
-          this.user.set(this.readStoredUser());
-        }
-      });
+      this.fetchUser().catch(() => {});
     }
   }
 
-  private readStoredUser(): User | null {
+  async fetchUser(): Promise<User | null> {
     try {
-      const stored = window.localStorage.getItem(USER_STORAGE_KEY);
-      if (!stored) return null;
-      const parsed = JSON.parse(stored);
-      if (this.isUser(parsed)) return parsed;
+      const url = `${environment.apiBaseUrl || 'http://localhost:5050/api'}/users/me`;
+      const res = await firstValueFrom(this.http.get<any>(url, { withCredentials: true }));
+      
+      if (res && res.isSuccess && this.isUser(res.data)) {
+        this.user.set(res.data);
+        return res.data;
+      }
+      this.user.set(null);
       return null;
     } catch {
+      this.user.set(null);
       return null;
     }
   }
@@ -48,14 +52,8 @@ export class AuthService {
 
   setUser(nextUser: User | null) {
     this.user.set(nextUser);
-    if (isPlatformBrowser(this.platformId)) {
-      if (nextUser) {
-        window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
-      } else {
-        window.localStorage.removeItem(USER_STORAGE_KEY);
-        window.localStorage.removeItem('lk-auth-token');
-      }
+    if (!nextUser && isPlatformBrowser(this.platformId)) {
+      window.localStorage.removeItem('lk-auth-token');
     }
   }
 }
-
