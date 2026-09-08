@@ -1,5 +1,5 @@
-import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, computed, signal, OnInit } from '@angular/core';
+import { TranslatePipe, TranslateDirective, TranslateService } from '@ngx-translate/core';
+import { Component, computed, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -121,22 +121,26 @@ export class MyOrdersPageComponent implements OnInit {
     return digits || value;
   }
 
+  translate = inject(TranslateService);
+
   formatRelativeUpdate(updatedAt: string): string {
     const timestamp = new Date(updatedAt).getTime();
 
     if (Number.isNaN(timestamp)) {
-      return 'STOREFRONT.AUTO_STR_187';
+      return this.translate.instant('STOREFRONT.AUTO_STR_187');
     }
 
     const minutes = Math.max(1, Math.round((Date.now() - timestamp) / 60000));
+    const prefix = this.translate.instant('STOREFRONT.AUTO_STR_306');
 
     if (minutes < 60) {
-      return `Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ« Ù…Ù†Ø° ${minutes} ${minutes === 1 ? 'STOREFRONT.AUTO_STR_459' : 'STOREFRONT.AUTO_STR_460'}`;
+      const unit = this.translate.instant(minutes === 1 ? 'STOREFRONT.AUTO_STR_459' : 'STOREFRONT.AUTO_STR_460');
+      return `${prefix} ${minutes} ${unit}`;
     }
 
     const hours = Math.max(1, Math.round(minutes / 60));
-
-    return `Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ« Ù…Ù†Ø° ${hours} ${hours === 1 ? 'STOREFRONT.AUTO_STR_476' : 'STOREFRONT.AUTO_STR_461'}`;
+    const unit = this.translate.instant(hours === 1 ? 'STOREFRONT.AUTO_STR_476' : 'STOREFRONT.AUTO_STR_461');
+    return `${prefix} ${hours} ${unit}`;
   }
 
   getCurrentIndex(status: TrackedOrderStatus | undefined): number {

@@ -5,7 +5,7 @@
     </div>
 
     <app-section-card 
-        title='DASHBOARD.AUTO_STR_353' 
+        title="رأس الصفحة" 
         [index]="0" 
         [enabled]="true" 
         [isFirst]="true" 
@@ -22,12 +22,12 @@
     </app-section-card>
 
     <app-section-card 
-        title='DASHBOARD.AUTO_STR_209' 
+        title="قائمة السياسات" 
         [index]="1" 
         [enabled]="true" 
         [isFirst]="false" 
         [isLast]="true" 
-        [addAction]="{ label: 'DASHBOARD.AUTO_STR_333', onClick: addPolicy }">
+        [addAction]="{ label: 'إضافة سياسة', onClick: addPolicy }">
         
         <div class="flex flex-col gap-4">
             @for (policy of config().policies; track policy.key; let idx = $index) {

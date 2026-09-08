@@ -1,10 +1,13 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
 import { LucideAngularModule, ChevronLeft, ArrowRight } from 'lucide-angular';
+
+import { TranslateService } from '@ngx-translate/core';
+import { LangService } from '../../../core/services/lang/lang.service';
 
 export interface CategoryCardConfig {
   id: string;
@@ -26,12 +29,12 @@ const initialConfig: CategoriesPageConfig = {
   headerTitle: 'CATEGORIES.TITLE',
   headerSubtitle: 'STOREFRONT.AUTO_STR_39',
   categories: [
-    { id: 'men', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.MENS', description: 'دعم مثالي وثقة\nطوال اليوم', path: '/all-shapers?type=men' },
-    { id: 'women', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.WOMENS', description: 'تصاميم أنثوية\nلإطلالة مثالية', path: '/all-shapers?type=women' },
-    { id: 'postpartum', title: 'CATEGORIES.POST', accent: 'CATEGORIES.MATERNITY', description: 'راحة ودعم بعد\nفترة الحمل', path: '/all-shapers?type=postpartum' },
-    { id: 'sport', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.SPORTS', description: 'حرية الحركة\nوأداء أفضل', path: '/all-shapers?type=sport' },
-    { id: 'full-body', title: 'CATEGORIES.FULL_BODY', accent: 'CATEGORIES.BODY', description: 'تنسيق شامل\nلجسم مثالي', path: '/all-shapers?type=full-body' },
-    { id: 'waist', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.WAIST', description: 'خصر أنحف\nوإطلالة جذابة', path: '/all-shapers?type=waist' }
+    { id: 'men', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.MENS', description: 'CATEGORIES.MENS_DESC', path: '/all-shapers?type=men' },
+    { id: 'women', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.WOMENS', description: 'CATEGORIES.WOMENS_DESC', path: '/all-shapers?type=women' },
+    { id: 'postpartum', title: 'CATEGORIES.POST', accent: 'CATEGORIES.MATERNITY', description: 'CATEGORIES.MATERNITY_DESC', path: '/all-shapers?type=postpartum' },
+    { id: 'sport', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.SPORTS', description: 'CATEGORIES.SPORTS_DESC', path: '/all-shapers?type=sport' },
+    { id: 'full-body', title: 'CATEGORIES.FULL_BODY', accent: 'CATEGORIES.BODY', description: 'CATEGORIES.FULL_BODY_DESC', path: '/all-shapers?type=full-body' },
+    { id: 'waist', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.WAIST', description: 'CATEGORIES.WAIST_DESC', path: '/all-shapers?type=waist' }
   ]
 };
 
@@ -47,6 +50,8 @@ export class CategoriesPageComponent {
 
   readonly ChevronLeft = ChevronLeft;
   readonly ArrowRight = ArrowRight;
+  readonly langService = inject(LangService);
+  private translate = inject(TranslateService);
 
   getStoreCategories() {
     const config = this.pageConfig();
@@ -66,6 +71,7 @@ export class CategoriesPageComponent {
   }
 
   splitDescription(desc: string): string[] {
-    return (desc || '').split('\n');
+    const text = this.translate.instant(desc);
+    return (text || desc || '').split('\n');
   }
 }

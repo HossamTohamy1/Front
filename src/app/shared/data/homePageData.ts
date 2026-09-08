@@ -37,13 +37,13 @@ export const homeCategories: HomeCategory[] = [
     },
     {
         id: 'sport',
-        label: 'SHARED.AUTO_STR_99',
+        label: 'COMMON.SPORTS',
         image: categorySport,
         path: '/categories',
     },
     {
         id: 'postpartum',
-        label: 'SHARED.AUTO_STR_68',
+        label: 'COMMON.POSTPARTUM',
         image: categoryPostpartum,
         path: '/categories',
     },
@@ -59,7 +59,7 @@ export const homeProducts: HomeProduct[] = [
     {
         id: 'home-product-1',
         productId: 'prod-2',
-        name: 'SHARED.AUTO_STR_50',
+        name: 'PRODUCT.FULL_BODY_SHAPER',
         image: productFullBody,
         price: 260,
         oldPrice: 320,
@@ -69,7 +69,7 @@ export const homeProducts: HomeProduct[] = [
     {
         id: 'home-product-2',
         productId: 'prod-3',
-        name: 'SHARED.AUTO_STR_46',
+        name: 'PRODUCT.POSTPARTUM_SHAPER',
         image: productPostpartumBeige,
         price: 210,
         oldPrice: 250,
@@ -79,7 +79,7 @@ export const homeProducts: HomeProduct[] = [
     {
         id: 'home-product-3',
         productId: 'prod-4',
-        name: 'SHARED.AUTO_STR_75',
+        name: 'PRODUCT.SPORTS_SHAPER',
         image: productSportBlack,
         price: 230,
         oldPrice: 270,
@@ -90,7 +90,7 @@ export const homeProducts: HomeProduct[] = [
     {
         id: 'home-product-4',
         productId: 'prod-6',
-        name: 'SHARED.AUTO_STR_56',
+        name: 'PRODUCT.DAILY_SQUARE_SHAPER',
         image: productBeigeSquare,
         price: 195,
         oldPrice: 250,
@@ -100,7 +100,7 @@ export const homeProducts: HomeProduct[] = [
     {
         id: 'home-product-5',
         productId: 'prod-1',
-        name: 'SHARED.AUTO_STR_51',
+        name: 'PRODUCT.CLASSIC_WAIST_SHAPER',
         image: productClassicBlack,
         price: 200,
         oldPrice: 250,

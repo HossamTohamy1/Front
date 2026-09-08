@@ -93,8 +93,8 @@ export class OperationsCenterPageComponent {
     const unpaidOrders = ordersList.length - paidOrders;
     const deliveredOrders = ordersList.filter(order => order.status === 'delivered').length;
     const activeOrders = ordersList.filter(order => !['delivered', 'postponed'].includes(order.status)).length;
-    const bankTransfers = ordersList.filter(order => (order.paymentMethod || '').includes('DASHBOARD.AUTO_STR_437')).length;
-    const walletOrders = ordersList.filter(order => (order.paymentMethod || '').includes('DASHBOARD.AUTO_STR_438')).length;
+    const bankTransfers = ordersList.filter(order => (order.paymentMethod || '').includes('تحويل') || (order.paymentMethod || '').toLowerCase().includes('bank')).length;
+    const walletOrders = ordersList.filter(order => (order.paymentMethod || '').includes('محفظة') || (order.paymentMethod || '').toLowerCase().includes('wallet')).length;
 
     return {
       revenue,
@@ -119,18 +119,18 @@ export class OperationsCenterPageComponent {
     const t = this.totals();
     const len = this.dayOrders().length;
     return [
-      { key: 'orders', label: 'DASHBOARD.AUTO_STR_214', value: this.formatNumber(len), hint: 'DASHBOARD.AUTO_STR_34', icon: ShoppingBag },
-      { key: 'sar', label: 'DASHBOARD.AUTO_STR_53', value: `${this.formatMoney(t.revenue)} ₺`, hint: 'DASHBOARD.AUTO_STR_21', icon: Banknote },
-      { key: 'usd', label: 'DASHBOARD.AUTO_STR_47', value: `$${this.formatMoney(t.revenueUsd)}`, hint: `قيمة تقديرية على أساس ${TRY_PER_USD} ليرة لكل دولار`, icon: CircleDollarSign },
-      { key: 'items', label: 'DASHBOARD.AUTO_STR_152', value: this.formatNumber(t.items), hint: 'DASHBOARD.AUTO_STR_76', icon: PackageCheck },
-      { key: 'discounted', label: 'DASHBOARD.AUTO_STR_297', value: this.formatNumber(t.discountedOrders), hint: `${this.formatMoney(t.discounts)} ₺ إجمالي الخصومات`, icon: Percent },
-      { key: 'regular', label: 'DASHBOARD.AUTO_STR_111', value: this.formatNumber(t.regularOrders), hint: 'DASHBOARD.AUTO_STR_153', icon: ReceiptText },
-      { key: 'paid', label: 'DASHBOARD.AUTO_STR_298', value: this.formatNumber(t.paidOrders), hint: `${this.formatNumber(t.unpaidOrders)} طلب غير مدفوع`, icon: CheckCircle2 },
-      { key: 'active', label: 'DASHBOARD.AUTO_STR_154', value: this.formatNumber(t.activeOrders), hint: `${this.formatNumber(t.deliveredOrders)} طلب تم تسليمه`, icon: Truck },
-      { key: 'average', label: 'DASHBOARD.AUTO_STR_171', value: `${this.formatMoney(t.averageOrder)} ₺`, hint: 'DASHBOARD.AUTO_STR_38', icon: Wallet },
-      { key: 'shipping', label: 'DASHBOARD.AUTO_STR_155', value: `${this.formatMoney(t.shipping)} ₺`, hint: `${this.formatMoney(t.subtotal)} ₺ قيمة المنتجات قبل الشحن`, icon: CreditCard },
-      { key: 'bank', label: 'DASHBOARD.AUTO_STR_257', value: this.formatNumber(t.bankTransfers), hint: 'DASHBOARD.AUTO_STR_22', icon: Banknote },
-      { key: 'wallet', label: 'DASHBOARD.AUTO_STR_192', value: this.formatNumber(t.walletOrders), hint: 'DASHBOARD.AUTO_STR_23', icon: Wallet },
+      { key: 'orders', label: 'إجمالي الطلبات', value: this.formatNumber(len), hint: 'كل الطلبات داخل فترة العمل', icon: ShoppingBag },
+      { key: 'sar', label: 'إجمالي المبيعات بالليرة', value: `${this.formatMoney(t.revenue)} ₺`, hint: 'قيمة الطلبات بعد الخصم والشحن', icon: Banknote },
+      { key: 'usd', label: 'إجمالي المبيعات بالدولار', value: `$${this.formatMoney(t.revenueUsd)}`, hint: `قيمة تقديرية على أساس ${TRY_PER_USD} ليرة لكل دولار`, icon: CircleDollarSign },
+      { key: 'items', label: 'عدد القطع المباعة', value: this.formatNumber(t.items), hint: 'إجمالي كميات المنتجات', icon: PackageCheck },
+      { key: 'discounted', label: 'طلبات بتخفيض', value: this.formatNumber(t.discountedOrders), hint: `${this.formatMoney(t.discounts)} ₺ إجمالي الخصومات`, icon: Percent },
+      { key: 'regular', label: 'طلبات بالسعر العادي', value: this.formatNumber(t.regularOrders), hint: 'طلبات بدون أي خصم', icon: ReceiptText },
+      { key: 'paid', label: 'طلبات مدفوعة', value: this.formatNumber(t.paidOrders), hint: `${this.formatNumber(t.unpaidOrders)} طلب غير مدفوع`, icon: CheckCircle2 },
+      { key: 'active', label: 'طلبات قيد التنفيذ', value: this.formatNumber(t.activeOrders), hint: `${this.formatNumber(t.deliveredOrders)} طلب تم تسليمه`, icon: Truck },
+      { key: 'average', label: 'متوسط قيمة الطلب', value: `${this.formatMoney(t.averageOrder)} ₺`, hint: 'متوسط إجمالي الطلب الواحد', icon: Wallet },
+      { key: 'shipping', label: 'إجمالي رسوم الشحن', value: `${this.formatMoney(t.shipping)} ₺`, hint: `${this.formatMoney(t.subtotal)} ₺ قيمة المنتجات قبل الشحن`, icon: CreditCard },
+      { key: 'bank', label: 'تحويلات بنكية', value: this.formatNumber(t.bankTransfers), hint: 'عدد الطلبات المدفوعة بالتحويل', icon: Banknote },
+      { key: 'wallet', label: 'مدفوعات المحفظة', value: this.formatNumber(t.walletOrders), hint: 'عدد الطلبات المدفوعة بالمحفظة', icon: Wallet },
     ];
   });
 

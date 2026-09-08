@@ -1,1 +1,36 @@
-<p>toast-container works!</p>
+<div *ngIf="toastService.toasts().length > 0" class="lk-toast-wrapper" [attr.dir]="langService.dir()">
+  <div
+    *ngFor="let toast of toastService.toasts(); trackBy: trackById"
+    class="lk-toast-item lk-toast-item--{{ toast.type }}"
+    [class.is-dismissing]="dismissingIds.has(toast.id)"
+    role="alert"
+    aria-live="polite"
+  >
+    <div class="lk-toast-body">
+      <div class="lk-toast-icon-wrap" aria-hidden="true">
+        <lucide-icon *ngIf="toast.type === 'success'" [img]="CheckCircle2Icon" [size]="20" [strokeWidth]="2.2"></lucide-icon>
+        <lucide-icon *ngIf="toast.type === 'error'" [img]="AlertCircleIcon" [size]="20" [strokeWidth]="2.2"></lucide-icon>
+        <lucide-icon *ngIf="toast.type === 'warning'" [img]="AlertTriangleIcon" [size]="20" [strokeWidth]="2.2"></lucide-icon>
+        <lucide-icon *ngIf="toast.type === 'info'" [img]="InfoIcon" [size]="20" [strokeWidth]="2.2"></lucide-icon>
+      </div>
+
+      <div class="lk-toast-content">
+        <h4 *ngIf="toast.title" class="lk-toast-title">{{ toast.title }}</h4>
+        <p class="lk-toast-message">{{ toast.message }}</p>
+      </div>
+
+      <button
+        type="button"
+        class="lk-toast-close"
+        (click)="handleDismiss(toast.id)"
+        [attr.aria-label]="langService.isRtl() ? 'إغلاق الإشعار' : 'Close notification'"
+      >
+        <lucide-icon [img]="XIcon" [size]="15" [strokeWidth]="2.4"></lucide-icon>
+      </button>
+    </div>
+
+    <div class="lk-toast-progress-track">
+      <div class="lk-toast-progress-bar" [style.animationDuration]="toast.duration + 'ms'"></div>
+    </div>
+  </div>
+</div>

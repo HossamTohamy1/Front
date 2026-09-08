@@ -13,7 +13,7 @@ import { t } from '../../../shared/i18n/translations';
 @Component({
   selector: 'app-notifications-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, StoreLayoutComponent, LucideAngularModule],
+  imports: [CommonModule, StoreLayoutComponent, LucideAngularModule, TranslatePipe, TranslateDirective],
   templateUrl: './notifications-page.component.html',
   styleUrl: './notifications-page.component.css'
 })

@@ -13,7 +13,7 @@ import { LucideAngularModule, Menu } from 'lucide-angular';
         type="button"
         class="dashboard-home__menu"
         (click)="openMenu.emit()"
-        aria-label='DASHBOARD.AUTO_STR_301'
+        [attr.aria-label]="'DASHBOARD.AUTO_STR_301' | translate"
       >
         <lucide-icon [img]="MenuIcon" [size]="27" strokeWidth="2"></lucide-icon>
       </button>
@@ -23,7 +23,7 @@ import { LucideAngularModule, Menu } from 'lucide-angular';
         <span class="dashboard-home__brand-secondary">KING</span>
       </div>
 
-      <div class="dashboard-home__header-actions" aria-label='DASHBOARD.AUTO_STR_48'>
+      <div class="dashboard-home__header-actions" [attr.aria-label]="'DASHBOARD.AUTO_STR_48' | translate">
         <button type="button" (click)="openPrices.emit()">{{ 'DASHBOARD.AUTO_STR_302' | translate }}</button>
         <button type="button" (click)="openProducts.emit()">{{ 'DASHBOARD.AUTO_STR_260' | translate }}</button>
         <button type="button" class="dashboard-home__approval-button" (click)="openApprovals.emit()">{{ 'DASHBOARD.AUTO_STR_340' | translate }}<span class="dashboard-number" *ngIf="pendingApprovalsCount > 0">{{ pendingApprovalsCount }}</span>

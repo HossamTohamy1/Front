@@ -18,7 +18,7 @@
     </header>
   </ng-container>
 
-  <main class="lk-search-page" dir="rtl">
+  <main class="lk-search-page">
     <div *ngIf="feedback()" class="lk-search-feedback-toast" [ngClass]="{'is-success': feedback()!.type === 'success', 'is-error': feedback()!.type === 'error'}" role="status" aria-live="polite">
       <button type="button" (click)="closeFeedback()" aria-label='STOREFRONT.AUTO_STR_316'>
         <lucide-icon [img]="X" aria-hidden="true"></lucide-icon>
@@ -47,7 +47,7 @@
           [ngModel]="query()"
           (ngModelChange)="query.set($event)"
           name="query"
-          placeholder="ابحث عن مشد خصر، مشد نسائي..."
+          [placeholder]="'STOREFRONT.AUTO_STR_115' | translate"
           aria-label='STOREFRONT.AUTO_STR_238'
           autofocus
         />
@@ -62,7 +62,7 @@
       <div class="lk-search-chips">
         <button *ngFor="let suggestion of pageConfig().quickSuggestions" type="button" (click)="runSearch(suggestion)">
           <lucide-icon [img]="Search" aria-hidden="true"></lucide-icon>
-          <span>{{ suggestion }}</span>
+          <span>{{ suggestion | translate }}</span>
         </button>
       </div>
     </section>
@@ -82,14 +82,14 @@
           <button
             type="button"
             (click)="removeSearch(item.query)"
-            [attr.aria-label]="'حذف ' + item.query + ' من سجل البحث'"
+            [attr.aria-label]="('COMMON.DELETE' | translate) + ' ' + item.query"
           >
             <lucide-icon [img]="X" aria-hidden="true"></lucide-icon>
           </button>
         </div>
       </div>
       <ng-template #noHistory>
-        <p class="lk-search-empty-history">لا توجد عمليات بحث سابقة لهذا الحساب حتى الآن.</p>
+        <p class="lk-search-empty-history">{{ 'STOREFRONT.AUTO_STR_38' | translate }}</p>
       </ng-template>
     </section>
 
@@ -99,7 +99,7 @@
           {{ resultHeading().label | translate}}
           <span *ngIf="resultHeading().count" class="lk-search-results__count">({{ resultHeading().count }})</span>
         </h2>
-        <a [routerLink]="['/category/all']" [queryParams]="submittedQuery() ? {q: submittedQuery()} : {}">{{ 'COMMON.SEEALL' | translate }}<lucide-icon [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+        <a [routerLink]="['/category/all']" [queryParams]="submittedQuery() ? {q: submittedQuery()} : {}">{{ 'COMMON.SEEALL' | translate }}<lucide-icon class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
         </a>
       </div>
 
@@ -131,13 +131,13 @@
             </div>
 
             <p>
-              المقاس: {{ getFirstSize(product) }} - {{ getLastSize(product) }}
+              {{ 'PRODUCT.SIZE' | translate }}: {{ getFirstSize(product) }} - {{ getLastSize(product) }}
             </p>
 
             <div class="lk-search-product-card__price">
-              <strong>{{ getSearchProductDisplay(product).price }} ر.س</strong>
+              <strong>{{ getSearchProductDisplay(product).price }} {{ 'COMMON.CURRENCY' | translate }}</strong>
               <del *ngIf="getSearchProductDisplay(product).oldPrice > getSearchProductDisplay(product).price">
-                {{ getSearchProductDisplay(product).oldPrice }} ر.س
+                {{ getSearchProductDisplay(product).oldPrice }} {{ 'COMMON.CURRENCY' | translate }}
               </del>
             </div>
 
@@ -179,9 +179,9 @@
       <div class="lk-search-no-match__content">
         <h2>{{ 'SHARED.AUTO_STR_22' | translate }}</h2>
         <p>
-          لم نتمكن من العثور على منتجات تطابق بحثك عن «{{ submittedQuery() }}».
+          {{ 'STOREFRONT.AUTO_STR_41' | translate }} «{{ submittedQuery() }}».
           <br />
-          جرّب البحث بكلمة أخرى أو تحقق من الإملاء.
+          {{ 'STOREFRONT.AUTO_STR_52' | translate }}.
         </p>
         <button type="button" (click)="searchAgain()">
           <lucide-icon [img]="Search" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_240' | translate }}</button>

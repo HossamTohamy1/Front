@@ -2,16 +2,17 @@ import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { Component, Input, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
-import { LucideAngularModule, ChevronLeft, ChevronRight, CircleDollarSign, Flame, Heart, Minus, PackageCheck, Plus, Ruler, ShieldCheck, ShoppingCart, Star, Truck, Zap } from 'lucide-angular';
+import { LucideAngularModule, ChevronLeft, ChevronRight, CircleDollarSign, Flame, Heart, Minus, PackageCheck, Plus, Ruler, ShieldCheck, ShoppingCart, Star, Truck, Zap, Edit3, X } from 'lucide-angular';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { FavoritesService } from '../../../core/services/favorites/favorites.service';
 import { ToastService } from '../../../core/services/toast/toast.service';
 import { products, Product } from '../../../shared/data/mockData';
 import { ProductRepositoryImpl } from '../../../data/repositories/product.repository.impl';
-
 import { ProductFeatureIconComponent } from '../../../shared/components/ui/feature-icon/product-feature-icon.component';
+import { LangService } from '../../../core/services/lang/lang.service';
 
 export interface ProductPageConfig {
     showBreadcrumb: boolean;
@@ -53,7 +54,7 @@ const initialConfig: ProductPageConfig = {
     buyNowText: 'PRODUCT.BUY_NOW',
     showServiceRow: true,
     services: [
-        { id: '1', icon: 'Truck', text: 'توصيل مجاني للطلبات فوق 300 ر.س' },
+        { id: '1', icon: 'Truck', text: 'PRODUCT.SERVICE_FREE_SHIPPING' },
         { id: '2', icon: 'RotateCcw', text: 'PRODUCT.SERVICE_EASY_RETURNS' }
     ],
     showTabs: true,
@@ -75,7 +76,7 @@ const initialConfig: ProductPageConfig = {
 @Component({
   selector: 'app-product-detail-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, ProductFeatureIconComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, ProductFeatureIconComponent],
   templateUrl: './product-detail-page.component.html',
   styleUrl: './product-detail-page.component.css'
 })
@@ -84,6 +85,8 @@ export class ProductDetailPageComponent {
   cartService = inject<any>(CartService);
   favoritesService = inject<any>(FavoritesService);
   toastService = inject<any>(ToastService);
+  readonly langService = inject(LangService);
+  private productRepo = inject(ProductRepositoryImpl);
   route = inject(ActivatedRoute);
   router = inject(Router);
 
@@ -101,6 +104,13 @@ export class ProductDetailPageComponent {
   readonly Star = Star;
   readonly Truck = Truck;
   readonly Zap = Zap;
+  readonly EditIcon = Edit3;
+  readonly XIcon = X;
+
+  readonly showReviewModal = signal(false);
+  readonly newReviewRating = signal(5);
+  readonly newReviewName = signal('');
+  readonly newReviewComment = signal('');
 
   product?: Product;
   display: any;
@@ -134,8 +144,6 @@ export class ProductDetailPageComponent {
       },
   ];
 
-  private productRepo = inject(ProductRepositoryImpl);
-
   constructor() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -144,14 +152,15 @@ export class ProductDetailPageComponent {
       const setProductData = (p: any) => {
         if (!p) return;
         this.product = p;
+        const isAr = this.langService.storefrontLang() === 'ar';
         this.display = {
-          name: p.nameAr || p.nameEn || p.name,
+          name: isAr ? (p.nameAr || p.nameEn || p.name) : (p.nameEn || p.nameAr || p.name),
           price: p.price,
           oldPrice: p.originalPrice || p.price,
           rating: p.rating ?? 5,
           reviewCount: p.reviewCount ?? 0,
           categoryLabel: p.category || 'CATEGORIES.SHAPERS',
-          description: p.descAr || p.descEn || p.description,
+          description: isAr ? (p.descAr || p.descEn || p.description) : (p.descEn || p.descAr || p.description),
           color: 'STOREFRONT.AUTO_STR_472',
           colors: p.colors && p.colors.length ? p.colors : ['#060606', '#f5d4c2'],
           images: p.images && p.images.length ? p.images : ['/assets/home/product-1.png'],
@@ -227,5 +236,38 @@ export class ProductDetailPageComponent {
 
   getFiveStars() {
       return Array(5).fill(0);
+  }
+
+  toggleReviewModal(open: boolean) {
+      this.showReviewModal.set(open);
+  }
+
+  submitReview(e: Event) {
+      e.preventDefault();
+      const comment = this.newReviewComment().trim();
+      if (!comment) {
+          this.toastService.warning(this.langService.storefrontLang() === 'ar' ? 'يرجى كتابة تعليقك أولاً' : 'Please write your review comment');
+          return;
+      }
+
+      const name = this.newReviewName().trim() || (this.langService.storefrontLang() === 'ar' ? 'عميل موثوق' : 'Verified Customer');
+      this.customerReviews.unshift({
+          name,
+          meta: this.langService.storefrontLang() === 'ar' ? 'الآن • تجربة مؤكدة' : 'Just now • Verified Purchase',
+          comment
+      });
+
+      this.display.reviewCount = (this.display.reviewCount || 0) + 1;
+      this.toggleReviewModal(false);
+      this.newReviewComment.set('');
+      this.newReviewName.set('');
+      this.newReviewRating.set(5);
+
+      this.toastService.success(
+          this.langService.storefrontLang() === 'ar'
+              ? 'تم إرسال تقييمك بنجاح وسيتم نشره قريباً!'
+              : 'Your review has been submitted successfully!',
+          4500
+      );
   }
 }

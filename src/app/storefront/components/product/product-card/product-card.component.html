@@ -13,14 +13,14 @@
     </span>
     
     <span *ngIf="product.isNew && !product.badge" class="absolute top-2 start-2 bg-brand text-[#0E0E11] text-xs font-bold px-2 py-0.5 rounded-full">
-      {{ isNewText | translate }}
+      {{ isNewText }}
     </span>
     
     <button type="button" 
             (click)="handleFavorite($event)"
             class="absolute top-2 end-2 w-8 h-8 rounded-full flex items-center justify-center transition-all tap-highlight"
             [ngClass]="favorite() ? 'bg-red-500 text-white' : 'bg-white/80 text-foreground'"
-            [attr.aria-label]="favorite() ? 'STOREFRONT.AUTO_STR_222' : 'STOREFRONT.AUTO_STR_206'"
+            [attr.aria-label]="favorite() ? (lang() === 'ar' ? 'إزالة من المفضلة' : 'Remove from favorites') : (lang() === 'ar' ? 'إضافة إلى المفضلة' : 'Add to favorites')"
             [attr.aria-pressed]="favorite()">
       <lucide-icon name="heart" [size]="14" [attr.fill]="favorite() ? 'currentColor' : 'none'" [img]="Heart"></lucide-icon>
     </button>

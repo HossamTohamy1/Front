@@ -33,7 +33,7 @@
     ></app-dashboard-filters>
 
     <!-- Quick Action Pills Row -->
-    <section class="dashboard-quick-actions" aria-label='DASHBOARD.AUTO_STR_188'>
+    <section class="dashboard-quick-actions" aria-label="إجراءات الطلبات">
       <button type="button" class="dashboard-quick-action" (click)="downloadOrders()">{{ 'DASHBOARD.AUTO_STR_251' | translate }}<span class="dashboard-quick-action__count dashboard-number" *ngIf="newOrdersCount > 0">{{ newOrdersCount }}</span>
       </button>
       <button type="button" class="dashboard-quick-action" (click)="openBulkStatusModal()">{{ 'DASHBOARD.AUTO_STR_252' | translate }}</button>

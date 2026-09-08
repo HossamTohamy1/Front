@@ -6,19 +6,18 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { ProductCardComponent } from '../../components/product/product-card/product-card.component';
-import { } from '../../../shared/components/ui/button/button.component';
-import { } from '../../../shared/components/ui/modal/modal.component';
 import { LucideAngularModule, SlidersHorizontal, ChevronDown, Loader2 } from 'lucide-angular';
 import { LangService } from '../../../core/services/lang/lang.service';
 import { products, categories } from '../../../shared/data/mockData';
 import { t } from '../../../shared/i18n/translations';
+import { ProductRepositoryImpl } from '../../../data/repositories/product.repository.impl';
 
 const sortOptions = [
-  { value: 'popular', en: 'Most Popular', ar: 'STOREFRONT.AUTO_STR_328' },
-  { value: 'newest', en: 'Newest', ar: 'STOREFRONT.AUTO_STR_447' },
+  { value: 'popular', en: 'Most Popular', ar: 'الأكثر شهرة' },
+  { value: 'newest', en: 'Newest', ar: 'الأحدث' },
   { value: 'price-asc', en: 'Price: Low to High', ar: 'السعر: الأقل أولاً' },
   { value: 'price-desc', en: 'Price: High to Low', ar: 'السعر: الأعلى أولاً' },
-  { value: 'rating', en: 'Top Rated', ar: 'STOREFRONT.AUTO_STR_273' },
+  { value: 'rating', en: 'Top Rated', ar: 'الأعلى تقييماً' },
 ];
 
 const ITEMS_PER_PAGE = 8;
@@ -31,8 +30,6 @@ async function fetchProductsFromBackend(slug: string) {
   queryCache.set(slug, data);
   return data;
 }
-
-import { ProductRepositoryImpl } from '../../../data/repositories/product.repository.impl';
 
 @Component({
   selector: 'app-category-page',
@@ -108,7 +105,7 @@ export class CategoryPageComponent implements OnInit {
     let list = [...this.baseData()];
     const q = this.queryString().toLowerCase();
     if (q) {
-      list = list.filter((p: any) => p.nameEn.toLowerCase().includes(q) || p.nameAr.includes(q) || p.descEn.toLowerCase().includes(q));
+      list = list.filter((p: any) => (p.nameEn && p.nameEn.toLowerCase().includes(q)) || (p.nameAr && p.nameAr.includes(q)) || (p.descEn && p.descEn.toLowerCase().includes(q)));
     }
     const [min, max] = this.priceRange();
     list = list.filter((p: any) => p.price >= min && p.price <= max);

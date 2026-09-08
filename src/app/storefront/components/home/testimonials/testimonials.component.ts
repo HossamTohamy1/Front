@@ -1,8 +1,10 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, Star } from 'lucide-angular';
+
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 interface Testimonial {
     id: number;
@@ -21,6 +23,7 @@ interface Testimonial {
 })
 export class TestimonialsComponent implements OnInit, OnDestroy {
   readonly Star = Star;
+  readonly langService = inject(LangService);
   activeIndex = 0;
   private intervalId: any;
 

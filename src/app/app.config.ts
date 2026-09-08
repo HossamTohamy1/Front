@@ -28,6 +28,7 @@ import {
   FileCheck2,
   FileText,
   Flame,
+  Globe,
   Grid2X2,
   Grid2x2,
   HandCoins,
@@ -36,6 +37,7 @@ import {
   Image,
   Info,
   Landmark,
+  Languages,
   Layers3,
   LayoutDashboard,
   List,
@@ -93,8 +95,9 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { GlobalErrorHandler } from './core/error/global-error.handler';
 import { routes } from './app.routes';
 
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, provideMissingTranslationHandler } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AppMissingTranslationHandler } from './core/i18n/missing-translation.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -106,9 +109,11 @@ export const appConfig: ApplicationConfig = {
       lang: 'ar',
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({
-        prefix: './assets/i18n/',
-        suffix: '.json'
-      })
+        prefix: '/assets/i18n/',
+        suffix: '.json',
+        useHttpBackend: true
+      }),
+      missingTranslationHandler: provideMissingTranslationHandler(AppMissingTranslationHandler)
     }),
     importProvidersFrom(
       LucideAngularModule.pick({
@@ -138,6 +143,7 @@ export const appConfig: ApplicationConfig = {
         FileCheck2,
         FileText,
         Flame,
+        Globe,
         Grid2X2,
         Grid2x2,
         HandCoins,
@@ -146,6 +152,7 @@ export const appConfig: ApplicationConfig = {
         Image,
         Info,
         Landmark,
+        Languages,
         Layers3,
         LayoutDashboard,
         List,

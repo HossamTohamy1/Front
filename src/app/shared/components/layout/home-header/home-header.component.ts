@@ -8,7 +8,7 @@ import {
   Search, 
   ShoppingCart, 
   ArrowLeft, 
-  ChevronLeft, 
+  ChevronRight, 
   Home, 
   Grid2x2, 
   ShoppingBag, 
@@ -18,24 +18,28 @@ import {
   CircleHelp, 
   ShieldCheck, 
   FileText, 
-  UserRound 
+  UserRound,
+  Languages,
+  Globe
 } from 'lucide-angular';
 import { StaffDashboardMenuItemComponent } from '../../../../storefront/components/auth/staff-dashboard-menu-item.component';
 import { CartService } from '../../../../core/services/cart/cart.service';
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 @Component({
   selector: 'app-home-header',
   standalone: true,
   imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, LucideAngularModule, StaffDashboardMenuItemComponent],
+  styleUrl: './home-header.component.css',
   template: `
-    <header class="lk-home-header" aria-label='SHARED.AUTO_STR_49'>
+    <header class="lk-home-header" [attr.aria-label]="'SHARED.AUTO_STR_49' | translate">
       <div class="lk-home-header__inner">
         <div class="lk-home-header__tools">
           <button
             type="button"
             class="lk-icon-button"
             (click)="openMenu()"
-            aria-label='DASHBOARD.AUTO_STR_301'
+            [attr.aria-label]="'DASHBOARD.AUTO_STR_301' | translate"
           >
             <lucide-icon [img]="MenuIcon" [size]="27" [strokeWidth]="1.8" aria-hidden="true"></lucide-icon>
           </button>
@@ -44,7 +48,7 @@ import { CartService } from '../../../../core/services/cart/cart.service';
             type="button"
             class="lk-icon-button"
             (click)="navigateToSearch()"
-            aria-label='SHARED.AUTO_STR_98'
+            [attr.aria-label]="'SHARED.AUTO_STR_98' | translate"
           >
             <lucide-icon [img]="SearchIcon" [size]="29" [strokeWidth]="1.8" aria-hidden="true"></lucide-icon>
           </button>
@@ -53,32 +57,49 @@ import { CartService } from '../../../../core/services/cart/cart.service';
         <a
           routerLink="/"
           class="lk-home-header__logo"
-          aria-label='SHARED.AUTO_STR_28'
+          [attr.aria-label]="'SHARED.AUTO_STR_28' | translate"
         >
           <img
             src="assets/home/logo-header.png"
-            alt='SHARED.AUTO_STR_72'
+            [alt]="'SHARED.AUTO_STR_72' | translate"
             width="1758"
             height="784"
           />
         </a>
 
-        <a
-          routerLink="/cart"
-          class="lk-home-header__cart"
-          aria-label='CART.TITLE'
-        >
-          <lucide-icon
-            [img]="ShoppingCartIcon"
-            [size]="29"
-            [strokeWidth]="1.7"
-            aria-hidden="true"
-          ></lucide-icon>
+        <div class="lk-home-header__actions">
+          <button
+            type="button"
+            class="lk-lang-btn"
+            (click)="toggleLanguage()"
+            [attr.aria-label]="langService.storefrontLang() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+            [title]="langService.storefrontLang() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+          >
+            <span class="lk-lang-btn__icon" aria-hidden="true">
+              <lucide-icon [img]="GlobeIcon" [size]="15" [strokeWidth]="1.8"></lucide-icon>
+            </span>
+            <span class="lk-lang-btn__text">
+              {{ langService.storefrontLang() === 'ar' ? 'EN' : 'عربي' }}
+            </span>
+          </button>
 
-          @if (cartService.cartCount() > 0) {
-            <span>{{ cartService.cartCount() > 9 ? '9+' : cartService.cartCount() }}</span>
-          }
-        </a>
+          <a
+            routerLink="/cart"
+            class="lk-home-header__cart"
+            [attr.aria-label]="'CART.TITLE' | translate"
+          >
+            <lucide-icon
+              [img]="ShoppingCartIcon"
+              [size]="28"
+              [strokeWidth]="1.7"
+              aria-hidden="true"
+            ></lucide-icon>
+
+            @if (cartService.cartCount() > 0) {
+              <span>{{ cartService.cartCount() > 9 ? '9+' : cartService.cartCount() }}</span>
+            }
+          </a>
+        </div>
       </div>
     </header>
 
@@ -92,15 +113,15 @@ import { CartService } from '../../../../core/services/cart/cart.service';
           class="lk-more-drawer"
           role="dialog"
           aria-modal="true"
-          aria-label='SHARED.AUTO_STR_62'
+          [attr.aria-label]="'SHARED.AUTO_STR_62' | translate"
         >
           <header class="lk-more-drawer__header">
             <button
               type="button"
               (click)="closeMenu()"
-              aria-label='DASHBOARD.AUTO_STR_221'
+              [attr.aria-label]="'DASHBOARD.AUTO_STR_221' | translate"
             >
-              <lucide-icon [img]="ArrowLeftIcon" aria-hidden="true"></lucide-icon>
+              <lucide-icon [img]="ArrowLeftIcon" class="rtl-flip" aria-hidden="true"></lucide-icon>
             </button>
 
             <h2>{{ 'SHARED.AUTO_STR_84' | translate }}</h2>
@@ -111,7 +132,7 @@ import { CartService } from '../../../../core/services/cart/cart.service';
           <div class="lk-more-drawer__body">
             <nav
               class="lk-more-drawer__list"
-              aria-label='SHARED.AUTO_STR_63'
+              [attr.aria-label]="'SHARED.AUTO_STR_63' | translate"
             >
               @for (item of shoppingMenuItems; track item.to) {
                 <a
@@ -127,13 +148,13 @@ import { CartService } from '../../../../core/services/cart/cart.service';
                   </span>
 
                   <span class="lk-more-menu-card__copy">
-                    <strong>{{ item.title }}</strong>
-                    <small>{{ item.description }}</small>
+                    <strong>{{ item.title | translate }}</strong>
+                    <small>{{ item.description | translate }}</small>
                   </span>
 
                   <lucide-icon
-                    [img]="ChevronLeftIcon"
-                    class="lk-more-menu-card__chevron"
+                    [img]="ChevronRightIcon"
+                    class="lk-more-menu-card__chevron rtl-flip"
                     aria-hidden="true"
                   ></lucide-icon>
                 </a>
@@ -162,18 +183,43 @@ import { CartService } from '../../../../core/services/cart/cart.service';
                   </span>
 
                   <span class="lk-more-menu-card__copy">
-                    <strong>{{ item.title }}</strong>
-                    <small>{{ item.description }}</small>
+                    <strong>{{ item.title | translate }}</strong>
+                    <small>{{ item.description | translate }}</small>
                   </span>
 
                   <lucide-icon
-                    [img]="ChevronLeftIcon"
-                    class="lk-more-menu-card__chevron"
+                    [img]="ChevronRightIcon"
+                    class="lk-more-menu-card__chevron rtl-flip"
                     aria-hidden="true"
                   ></lucide-icon>
                 </a>
               }
             </nav>
+
+            <div class="lk-more-drawer__separator"></div>
+
+            <div class="lk-more-drawer__lang-section" style="padding: 12px 14px;">
+              <button
+                type="button"
+                class="lk-more-menu-card lk-more-menu-card--lang"
+                style="width: 100%; border: 0; background: transparent; cursor: pointer; text-align: start;"
+                (click)="toggleLanguage(); closeMenu()"
+                [attr.aria-label]="langService.storefrontLang() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+              >
+                <span class="lk-more-menu-card__icon" aria-hidden="true">
+                  <lucide-icon [img]="LanguagesIcon"></lucide-icon>
+                </span>
+
+                <span class="lk-more-menu-card__copy">
+                  <strong>{{ 'COMMON.LANGUAGE' | translate }}</strong>
+                  <small>{{ langService.storefrontLang() === 'ar' ? 'العربية (الحالية)' : 'English (Current)' }}</small>
+                </span>
+
+                <span class="lk-lang-pill">
+                  {{ langService.storefrontLang() === 'ar' ? 'English' : 'العربية' }}
+                </span>
+              </button>
+            </div>
           </div>
         </aside>
       </div>
@@ -187,13 +233,20 @@ export class HomeHeaderComponent {
   private platformId = inject(PLATFORM_ID);
   
   cartService = inject(CartService);
+  readonly langService = inject(LangService);
   menuOpen = false;
 
   readonly MenuIcon = Menu;
   readonly SearchIcon = Search;
   readonly ShoppingCartIcon = ShoppingCart;
   readonly ArrowLeftIcon = ArrowLeft;
-  readonly ChevronLeftIcon = ChevronLeft;
+  readonly ChevronRightIcon = ChevronRight;
+  readonly LanguagesIcon = Languages;
+  readonly GlobeIcon = Globe;
+
+  toggleLanguage() {
+    this.langService.toggleLang();
+  }
 
   shoppingMenuItems = [
     { to: '/', title: 'COMMON.HOME', description: 'SHARED.AUTO_STR_12', icon: Home },

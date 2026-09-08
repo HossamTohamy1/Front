@@ -1,4 +1,5 @@
 import { Injectable, signal, effect } from '@angular/core';
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 
 export type NotificationsPageConfig = {
     pageTitle: string;
@@ -25,14 +26,21 @@ export class NotificationsPageConfigService {
 
     window.addEventListener('storage', (e) => {
       if (e.key === this.STORAGE_KEY && e.newValue) {
-        this.config.set(JSON.parse(e.newValue));
+        this.config.set(sanitizeWithInitial(JSON.parse(e.newValue), DEFAULT_CONFIG));
       }
     });
   }
 
   private getInitialConfig(): NotificationsPageConfig {
     const saved = window.localStorage.getItem(this.STORAGE_KEY);
-    return saved ? { ...DEFAULT_CONFIG, ...JSON.parse(saved) } : DEFAULT_CONFIG;
+    if (saved) {
+      try {
+        const clean = sanitizeWithInitial(JSON.parse(saved), DEFAULT_CONFIG);
+        window.localStorage.setItem(this.STORAGE_KEY, JSON.stringify(clean));
+        return clean;
+      } catch (_) {}
+    }
+    return DEFAULT_CONFIG;
   }
 
   setConfig(config: NotificationsPageConfig) {

@@ -22,11 +22,11 @@ export class HomePageEditorComponent {
   showAddMenu = false;
 
   titles: Record<string, string> = {
-    hero: "Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ© (Ø§Ù„Ø¨Ø§Ù†Ø±)",
-    benefits: 'DASHBOARD.AUTO_STR_44',
-    categories: "Ø§Ù„Ø£Ù‚Ø³Ø§Ù… (ØªØ³ÙˆÙ‚ Ø­Ø³Ø¨ Ø§Ù„ÙØ¦Ø©)",
-    bestsellers: 'HOME.BEST_SELLERS_ALT',
-    promo: 'DASHBOARD.AUTO_STR_164',
+    hero: "الصورة الرئيسية (البانر)",
+    benefits: "الشريط المميز تحت البانر",
+    categories: "الأقسام (تسوق حسب الفئة)",
+    bestsellers: "الأكثر مبيعاً",
+    promo: "بانر العروض الترويجية",
   };
 
   heroVisual = 'assets/home/hero-visual-hd.png'; // Fallback
@@ -83,7 +83,7 @@ export class HomePageEditorComponent {
   }
 
   deleteSection(index: number) {
-    if (confirm('DASHBOARD.AUTO_STR_19')) {
+    if (confirm('هل أنت متأكد من رغبتك في حذف هذا القسم؟')) {
       const newSections = [...this.sections];
       newSections.splice(index, 1);
       this.updateConfig({ sections: newSections });
@@ -105,17 +105,21 @@ export class HomePageEditorComponent {
   }
 
   addSection(type: SectionType) {
-    let newSection: any = { id: "sec-" + Date.now(), type, enabled: true };
+    const newSection: any = {
+      id: "sec-" + Date.now(),
+      type,
+      enabled: true
+    };
     if (type === 'hero') {
-      newSection.title = "Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ© (Ø§Ù„Ø¨Ø§Ù†Ø±)";
-      newSection.slides = [{ id: "slide-" + Date.now(), image: this.heroVisual, title: "Ø´Ø¯ Ø£Ù‚ÙˆÙ‰\nÙˆÙ‚ÙˆØ§Ù… Ø£ÙØ¶Ù„" }];
+      newSection.title = "الصورة الرئيسية (البانر)";
+      newSection.slides = [{ id: "slide-" + Date.now(), image: this.heroVisual, title: "شد أقوى\nوقوام أفضل" }];
     } else if (type === 'benefits') {
-      newSection.benefits = [{ id: "b1-" + Date.now(), text: 'DASHBOARD.AUTO_STR_328', icon: "Truck", enabled: true }];
+      newSection.benefits = [{ id: "b1-" + Date.now(), text: 'توصيل سريع ومجاني', icon: "Truck", enabled: true }];
     } else if (type === 'categories') {
-      newSection.title = 'HOME.SHOP_BY_CATEGORY_ALT';
+      newSection.title = 'تسوق حسب الفئة';
       newSection.categories = []; // Simplified
     } else if (type === 'bestsellers') {
-      newSection.title = 'HOME.BEST_SELLERS_ALT';
+      newSection.title = 'الأكثر مبيعاً';
       newSection.products = []; // Simplified
     } else if (type === 'promo') {
       newSection.image = this.offerBanner;
@@ -151,14 +155,14 @@ export class HomePageEditorComponent {
   }
 
   promptImageChange(section: any, sIdx: number, currentImage: string) {
-    const url = window.prompt("Ø£Ø¯Ø®Ù„ Ø±Ø§Ø¨Ø· Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©:", currentImage);
+    const url = window.prompt("أدخل رابط الصورة الجديدة:", currentImage);
     if (url) {
       this.updateSlide(section, sIdx, { image: url });
     }
   }
 
   promptSectionImageChange(section: any) {
-    const url = window.prompt("Ø£Ø¯Ø®Ù„ Ø±Ø§Ø¨Ø· Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©:", section.image || '');
+    const url = window.prompt("أدخل رابط الصورة الجديدة:", section.image || '');
     if (url) {
       this.updateSection(section.id, { image: url });
     }
@@ -170,6 +174,11 @@ export class HomePageEditorComponent {
     this.updateSection(section.id, { benefits: newBenefits });
   }
 
+  updateBenefitText(section: any, bIdx: number, text: string) {
+    const val = text.includes(' - ') ? text.replace(' - ', '\n') : text;
+    this.updateBenefit(section, bIdx, { text: val });
+  }
+
   removeBenefit(section: any, bIdx: number) {
     const newB = [...(section.benefits || [])];
     newB.splice(bIdx, 1);
@@ -178,7 +187,7 @@ export class HomePageEditorComponent {
 
   addBenefit(section: any) {
     const benefits = [...(section.benefits || [])];
-    benefits.push({ id: "b-" + Date.now(), text: 'DASHBOARD.AUTO_STR_350', icon: "Truck", enabled: true });
+    benefits.push({ id: "b-" + Date.now(), text: 'شحن مجاني\nلجميع الطلبات', icon: "Truck", enabled: true });
     this.updateSection(section.id, { benefits });
   }
 }

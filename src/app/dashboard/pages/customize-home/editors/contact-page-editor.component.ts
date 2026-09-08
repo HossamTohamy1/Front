@@ -49,7 +49,7 @@ export interface ContactMethod {
             <div class="bg-card border border-border rounded-2xl overflow-hidden mb-4">
                 <div class="p-4 bg-muted/30 border-b border-border font-medium flex justify-between items-center">
                     <span>{{ 'DASHBOARD.AUTO_STR_322' | translate }}</span>
-                    <app-add-item-button (onClick)="addMethod()" label='DASHBOARD.AUTO_STR_433'></app-add-item-button>
+                    <app-add-item-button (onClick)="addMethod()" label="طريقة جديدة"></app-add-item-button>
                 </div>
                 <div class="p-4 space-y-4">
                     <div *ngFor="let m of config().contactMethods" class="p-4 bg-muted/30 rounded-xl border border-border space-y-3 relative group">
@@ -92,7 +92,7 @@ export class ContactPageEditorComponent {
   }
 
   addMethod() {
-    const newMethod: ContactMethod = { id: crypto.randomUUID(), type: 'phone', title: 'DASHBOARD.AUTO_STR_390', value: '', link: '' };
+    const newMethod: ContactMethod = { id: crypto.randomUUID(), type: 'phone', title: 'رقم جديد', value: '', link: '' };
     this.updateConfig('contactMethods', [...(this.config().contactMethods || []), newMethod]);
   }
 

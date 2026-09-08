@@ -5,7 +5,7 @@
         </div>
         <div class="flex items-center gap-2">
             <span class="font-bold text-gray-900 ml-1">{{ index + 1 }}.</span>
-            <h3 class="font-bold text-gray-900">{{ title }}</h3>
+            <h3 class="font-bold text-gray-900">{{ title | translate }}</h3>
         </div>
         
         <!-- Spacer -->
@@ -14,7 +14,7 @@
         <!-- Optional Add Button -->
         @if (addAction) {
             <div class="ml-3">
-                <button (click)="addAction.onClick()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-md font-medium transition-colors border border-blue-100">{{ addAction.label }}</button>
+                <button (click)="addAction.onClick()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-md font-medium transition-colors border border-blue-100">{{ addAction.label | translate }}</button>
             </div>
         }
         
@@ -30,10 +30,10 @@
         </div>
 
         <!-- Copy/Delete -->
-        <button (click)="duplicate.emit()" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors ml-1" title='DASHBOARD.AUTO_STR_423'>
+        <button (click)="duplicate.emit()" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors ml-1" [title]="'DASHBOARD.AUTO_STR_423' | translate">
             <lucide-icon [img]="Copy" size="16"></lucide-icon>
         </button>
-        <button (click)="delete.emit()" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors ml-2" title='COMMON.DELETE'>
+        <button (click)="delete.emit()" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors ml-2" [title]="'COMMON.DELETE' | translate">
             <lucide-icon [img]="Trash2" size="16"></lucide-icon>
         </button>
 

@@ -5,6 +5,10 @@ import { RouterModule } from '@angular/router';
 import { LucideAngularModule, ShoppingCart, Star } from 'lucide-angular';
 import { homeProducts } from '../../../../shared/data/homePageData';
 import { ProductRepositoryImpl } from '../../../../data/repositories/product.repository.impl';
+import { products as mockProducts } from '../../../../shared/data/mockData';
+import { LangService } from '../../../../core/services/lang/lang.service';
+import { CartService } from '../../../../core/services/cart/cart.service';
+import { ToastService } from '../../../../core/services/toast/toast.service';
 
 @Component({
   selector: 'app-products',
@@ -19,6 +23,10 @@ export class ProductsComponent {
   readonly Star = Star;
 
   private productRepo = inject(ProductRepositoryImpl);
+  readonly langService = inject(LangService);
+  private cartService = inject(CartService);
+  private toastService = inject(ToastService);
+
   liveProducts = signal<any[]>([]);
 
   constructor() {
@@ -41,10 +49,11 @@ export class ProductsComponent {
 
   getMappedProduct(product: any) {
     if ('productId' in product) return product;
+    const isAr = this.langService.storefrontLang() === 'ar';
     return {
       id: product.id,
       productId: product.id,
-      name: product.nameAr || product.nameEn || product.name,
+      name: isAr ? (product.nameAr || product.nameEn || product.name) : (product.nameEn || product.nameAr || product.name),
       image: (product.images && product.images[0]) || product.image || '/assets/home/product-1.png',
       price: product.price,
       oldPrice: product.originalPrice || product.price,
@@ -57,6 +66,22 @@ export class ProductsComponent {
   handleAddToCart(event: Event, item: any) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Added to cart', item);
+    const mapped = this.getMappedProduct(item);
+    const product = mockProducts.find((p: any) => p.id === mapped.productId || p.id === mapped.id) || {
+      id: mapped.productId || mapped.id,
+      name: mapped.name,
+      nameAr: item.nameAr || mapped.name,
+      nameEn: item.nameEn || mapped.name,
+      price: mapped.price,
+      image: mapped.image,
+      images: [mapped.image],
+      stock: 10,
+      rating: mapped.rating || 5,
+      reviewCount: mapped.reviews || 10,
+      sizes: ['M', 'L', 'XL'],
+      colors: ['Black']
+    };
+    this.cartService.addToCart(product as any, 'M', 1);
+    this.toastService.success('STOREFRONT.AUTO_STR_114');
   }
 }

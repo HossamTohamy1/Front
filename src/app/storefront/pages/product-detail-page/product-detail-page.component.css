@@ -779,11 +779,44 @@
         border-radius: inherit;
     }
 
+.lk-review-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed #e8edf2;
+}
+
+.lk-write-review-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #111318 0%, #2a313d 100%);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(17, 19, 24, 0.15);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+    .lk-write-review-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(17, 19, 24, 0.25);
+        background: linear-gradient(135deg, var(--lk-product-blue) 0%, #1c9ac6 100%);
+    }
+
 .lk-all-reviews-link {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 17px auto 0;
+    margin: 0;
     padding: 0;
     color: var(--lk-product-blue);
     font-size: 12px;
@@ -796,6 +829,159 @@
         width: 15px;
         height: 15px;
     }
+
+.lk-review-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(10, 15, 25, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: lkFadeIn 0.25s ease-out;
+}
+
+.lk-review-modal-card {
+    background: #ffffff;
+    border-radius: 20px;
+    width: min(100%, 460px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22);
+    padding: 24px;
+    border: 1px solid rgba(232, 237, 242, 0.8);
+    animation: lkModalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    direction: inherit;
+}
+
+.lk-review-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+    .lk-review-modal-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--lk-product-ink);
+    }
+
+.lk-modal-close-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background: #f1f4f8;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+    .lk-modal-close-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+.lk-review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.lk-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .lk-form-group label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+    }
+
+.lk-star-picker {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    direction: ltr;
+}
+
+.lk-star-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    color: #cbd5e1;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+    .lk-star-btn:hover {
+        transform: scale(1.15);
+    }
+
+    .lk-star-btn lucide-icon.is-active,
+    .lk-star-btn .lucide-icon.is-active,
+    .lk-star-btn svg.is-active {
+        color: #ffb000 !important;
+    }
+
+.lk-form-group input,
+.lk-form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+    .lk-form-group input:focus,
+    .lk-form-group textarea:focus {
+        border-color: var(--lk-product-blue);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px var(--lk-product-blue-soft);
+    }
+
+.lk-submit-review-btn {
+    margin-top: 6px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #111318 0%, #2a313d 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(17, 19, 24, 0.18);
+}
+
+    .lk-submit-review-btn:hover {
+        background: linear-gradient(135deg, var(--lk-product-blue) 0%, #1c9ac6 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(72, 186, 225, 0.35);
+    }
+
+@keyframes lkFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes lkModalPop {
+    from { opacity: 0; transform: scale(0.94) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
 
 .lk-product-purchase-section {
     padding: 16px 20px 18px;

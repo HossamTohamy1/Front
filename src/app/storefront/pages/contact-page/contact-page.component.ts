@@ -110,7 +110,7 @@ export class ContactPageComponent {
     {
         id: 'hours',
         title: 'STOREFRONT.AUTO_STR_363',
-        subtitle: 'يوميًا من 9:00 صباحًا إلى 10:00 مساءً',
+        subtitle: 'STOREFRONT.AUTO_STR_364',
         href: '#contact-form',
         icon: 'assets/contact/contact-clock.png',
     },

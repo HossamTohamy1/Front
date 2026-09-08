@@ -34,9 +34,9 @@
         <article class="operations-metric-card">
           <span class="operations-metric-card__icon"><lucide-icon [img]="card.icon" [size]="22"></lucide-icon></span>
           <div>
-            <p>{{ card.label }}</p>
+            <p>{{ card.label | translate }}</p>
             <span>{{ card.value }}</span>
-            <small>{{ card.hint }}</small>
+            <small>{{ card.hint | translate }}</small>
           </div>
         </article>
       }

@@ -1,5 +1,5 @@
 <app-store-layout>
-  <main class="lk-login-page" dir="rtl">
+  <main class="lk-login-page">
     <div
       class="lk-login-page__shell"
       [style.--login-scene]="'url(' + sceneImage + ')'"
@@ -22,7 +22,7 @@
 
             <p>
               @for (line of pageConfig().heroSubtitle.split('\n'); track $index) {
-                {{ line }}<br/>
+                {{ line | translate }}<br/>
               }
             </p>
           </div>
@@ -52,7 +52,7 @@
                 type="email"
                 [(ngModel)]="form.email"
                 name="email"
-                placeholder='CONTACT.EMAIL'
+                [placeholder]="'CONTACT.EMAIL' | translate"
                 autocomplete="email"
                 required
               />
@@ -65,7 +65,7 @@
                 [type]="showPassword() ? 'text' : 'password'"
                 [(ngModel)]="form.password"
                 name="password"
-                placeholder='AUTH.PASSWORD'
+                [placeholder]="'AUTH.PASSWORD' | translate"
                 autocomplete="current-password"
                 required
               />
@@ -74,7 +74,7 @@
                 type="button"
                 class="lk-login-field__eye"
                 (click)="togglePassword()"
-                [attr.aria-label]="showPassword() ? 'DASHBOARD.AUTO_STR_130' : 'DASHBOARD.AUTO_STR_131'"
+                [attr.aria-label]="showPassword() ? ('DASHBOARD.AUTO_STR_130' | translate) : ('DASHBOARD.AUTO_STR_131' | translate)"
               >
                 @if (showPassword()) {
                   <lucide-icon [img]="EyeOff"></lucide-icon>
@@ -104,8 +104,8 @@
               class="lk-login-submit"
               [disabled]="isSubmitting()"
             >
-              <lucide-icon [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
-              <span>{{ isSubmitting() ? 'جاري تسجيل الدخول...' : 'AUTH.LOGIN' }}</span>
+              <lucide-icon class="rtl-flip" [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
+              <span>{{ (isSubmitting() ? 'COMMON.LOADING' : 'AUTH.LOGIN') | translate }}</span>
             </button>
           </form>
 
@@ -140,16 +140,16 @@
             <lucide-icon [img]="ShieldCheck" aria-hidden="true"></lucide-icon>
             <h3>{{ benefit.title | translate}}</h3>
             <p>
-              {{ benefit.line1 }}
+              {{ benefit.line1 | translate }}
               <br />
-              {{ benefit.line2 }}
+              {{ benefit.line2 | translate }}
             </p>
           </article>
         }
       </section>
 
       <footer class="lk-login-footer">
-        <p>جميع الحقوق محفوظة © 2024 LOXX KING.</p>
+        <p>{{ 'STOREFRONT.AUTO_STR_198' | translate }} © LOXX KING.</p>
 
         <nav aria-label='STOREFRONT.AUTO_STR_276'>
           <a routerLink="/policies">{{ 'POLICIES.PRIVACY' | translate }}</a>

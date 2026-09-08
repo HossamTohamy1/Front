@@ -17,25 +17,25 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_49' | translate }}</p>
       </div>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_199' [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false"
+      <app-section-card title="الرأس والمقدمة" [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showTitle: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_178', field: 'headerTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_316', field: 'headerSubtitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'العنوان الرئيسي', field: 'headerTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'النص الفرعي', field: 'headerSubtitle' }"></ng-container>
         <hr class="my-3 border-gray-100" />
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_347', field: 'introText', isTextArea: true }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص المقدمة', field: 'introText', isTextArea: true }"></ng-container>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_200' [index]="1" [enabled]="config().showReasonsSection" [isFirst]="false" [isLast]="false"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel='DASHBOARD.AUTO_STR_373' (onAddAction)="addReason()"
+      <app-section-card title="قسم لماذا نحن؟" [index]="1" [enabled]="config().showReasonsSection" [isFirst]="false" [isLast]="false"
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة سبب" (onAddAction)="addReason()"
         (toggle)="updateConfig({ showReasonsSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_317', field: 'reasonsTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'reasonsTitle' }"></ng-container>
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of config().reasons; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
               <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.title" (ngModelChange)="updateReason(idx, { title: $event })" placeholder='COMMON.ADDRESS' />
+                [ngModel]="item.title" (ngModelChange)="updateReason(idx, { title: $event })" placeholder="العنوان" />
               <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.text" (ngModelChange)="updateReason(idx, { text: $event })" placeholder='PRODUCT.DESCRIPTION' rows="2"></textarea>
+                [ngModel]="item.text" (ngModelChange)="updateReason(idx, { text: $event })" placeholder="الوصف" rows="2"></textarea>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
                 [ngModel]="item.icon" (ngModelChange)="updateReason(idx, { icon: $event })">
                 <option value="ShieldCheck">درع (ShieldCheck)</option>
@@ -48,24 +48,24 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         </div>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_97' [index]="2" [enabled]="config().showVisionSection" [isFirst]="false" [isLast]="false"
+      <app-section-card title="قسم الرؤية والرسالة" [index]="2" [enabled]="config().showVisionSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showVisionSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_273', field: 'visionTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_374', field: 'visionText', isTextArea: true }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان الرؤية', field: 'visionTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص الرؤية', field: 'visionText', isTextArea: true }"></ng-container>
         <hr class="my-3 border-gray-100" />
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_225', field: 'missionTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_348', field: 'missionText', isTextArea: true }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان الرسالة', field: 'missionTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص الرسالة', field: 'missionText', isTextArea: true }"></ng-container>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_426' [index]="3" [enabled]="config().showValuesSection" [isFirst]="false" [isLast]="false"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel='DASHBOARD.AUTO_STR_349' (onAddAction)="addValue()"
+      <app-section-card title="القيم" [index]="3" [enabled]="config().showValuesSection" [isFirst]="false" [isLast]="false"
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة قيمة" (onAddAction)="addValue()"
         (toggle)="updateConfig({ showValuesSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_317', field: 'valuesTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'valuesTitle' }"></ng-container>
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of config().values; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
               <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.label" (ngModelChange)="updateValue(idx, { label: $event })" placeholder='DASHBOARD.AUTO_STR_412' />
+                [ngModel]="item.label" (ngModelChange)="updateValue(idx, { label: $event })" placeholder="القيمة" />
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
                 [ngModel]="item.icon" (ngModelChange)="updateValue(idx, { icon: $event })">
                 <option value="ShieldCheck">درع (ShieldCheck)</option>
@@ -80,17 +80,17 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         </div>
       </app-section-card>
 
-      <app-section-card title='CONTACT.TITLE' [index]="4" [enabled]="config().showContactSection" [isFirst]="false" [isLast]="true"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel='DASHBOARD.AUTO_STR_135' (onAddAction)="addContact()"
+      <app-section-card title="تواصل معنا" [index]="4" [enabled]="config().showContactSection" [isFirst]="false" [isLast]="true"
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة وسيلة تواصل" (onAddAction)="addContact()"
         (toggle)="updateConfig({ showContactSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_317', field: 'contactTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'contactTitle' }"></ng-container>
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of config().contacts; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
               <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.label" (ngModelChange)="updateContact(idx, { label: $event })" placeholder='DASHBOARD.AUTO_STR_427' />
+                [ngModel]="item.label" (ngModelChange)="updateContact(idx, { label: $event })" placeholder="الاسم" />
               <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.link" (ngModelChange)="updateContact(idx, { link: $event })" placeholder='DASHBOARD.AUTO_STR_413' dir="ltr" />
+                [ngModel]="item.link" (ngModelChange)="updateContact(idx, { link: $event })" placeholder="الرابط" dir="ltr" />
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
                 [ngModel]="item.icon" (ngModelChange)="updateContact(idx, { icon: $event })">
                 <option value="facebook">فيسبوك (facebook)</option>
@@ -107,7 +107,7 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
 
       <ng-template #textInputTemplate let-label="label" let-field="field" let-isTextArea="isTextArea">
         <div class="flex flex-col gap-1.5 mb-3">
-          <span class="text-xs font-bold text-gray-700">{{ label }}</span>
+          <span class="text-xs font-bold text-gray-700">{{ label | translate }}</span>
           <textarea *ngIf="isTextArea" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
             [ngModel]="getConfigValue(field)" (ngModelChange)="updateConfigField(field, $event)" rows="4"></textarea>
           <input *ngIf="!isTextArea" type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
@@ -135,7 +135,7 @@ export class AboutPageEditorComponent {
 
   addReason() {
     const list = [...(this.config().reasons || [])];
-    list.push({ id: 'r-' + Date.now(), icon: 'Star', title: 'DASHBOARD.AUTO_STR_350', text: 'DASHBOARD.AUTO_STR_387' });
+    list.push({ id: 'r-' + Date.now(), icon: 'Star', title: 'ميزة جديدة', text: 'وصف قصير' });
     this.updateConfig({ reasons: list });
   }
 
@@ -153,7 +153,7 @@ export class AboutPageEditorComponent {
 
   addValue() {
     const list = [...(this.config().values || [])];
-    list.push({ id: 'v-' + Date.now(), icon: 'Star', label: 'DASHBOARD.AUTO_STR_351' });
+    list.push({ id: 'v-' + Date.now(), icon: 'Star', label: 'قيمة جديدة' });
     this.updateConfig({ values: list });
   }
 
@@ -171,7 +171,7 @@ export class AboutPageEditorComponent {
 
   addContact() {
     const list = [...(this.config().contacts || [])];
-    list.push({ id: 'c-' + Date.now(), icon: 'phone', label: 'DASHBOARD.AUTO_STR_318', link: '#' });
+    list.push({ id: 'c-' + Date.now(), icon: 'phone', label: 'طريقة تواصل', link: '#' });
     this.updateConfig({ contacts: list });
   }
 

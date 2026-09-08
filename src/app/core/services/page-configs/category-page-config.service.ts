@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -57,10 +58,7 @@ export class CategoryPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): CategoryPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

@@ -31,11 +31,11 @@ export class PoliciesPageEditorComponent {
     const policies = [...this.config().policies];
     policies.push({
       key: 'p-' + Date.now(),
-      gridTitle: 'DASHBOARD.AUTO_STR_335',
-      gridDescription: 'DASHBOARD.AUTO_STR_104',
+      gridTitle: 'سياسة جديدة',
+      gridDescription: 'وصف السياسة الجديدة',
       icon: 'FileText',
-      title: 'DASHBOARD.AUTO_STR_85',
-      subtitle: 'DASHBOARD.AUTO_STR_391',
+      title: 'عنوان تفاصيل السياسة',
+      subtitle: 'وصف طويل',
       heroIcon: 'FileText',
       showWhatsApp: true,
       sections: []

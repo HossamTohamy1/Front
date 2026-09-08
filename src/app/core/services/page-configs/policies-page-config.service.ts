@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -28,33 +29,33 @@ export interface PoliciesPageConfig {
 
 
 const initialConfig: PoliciesPageConfig = {
-    title: 'POLICIES.TITLE',
-    subtitle: 'POLICIES.SUBTITLE',
+    title: 'السياسات والمعلومات',
+    subtitle: 'تعرف على سياسات المتجر وشروط استخدامه',
     policies: [
         {
             key: 'privacy',
-            gridTitle: 'POLICIES.PRIVACY',
-            gridDescription: 'POLICIES.PRIVACY_DESC',
+            gridTitle: 'سياسة الخصوصية',
+            gridDescription: 'كيف نحمي بياناتك ومعلوماتك',
             icon: 'ShieldCheck',
-            title: 'POLICIES.PRIVACY_SEC',
-            subtitle: 'POLICIES.PRIVACY_TEXT',
+            title: 'سياسة الخصوصية والأمان',
+            subtitle: 'نحن نأخذ خصوصيتك على محمل الجد، ونلتزم بحماية كافة بياناتك الشخصية وفقاً لأعلى معايير الأمان العالمية.',
             heroIcon: 'ShieldCheck',
             showWhatsApp: false,
             sections: [
-                { title: 'POLICIES.INFO_COLLECTION', description: 'POLICIES.INFO_TEXT', icon: 'Database' }
+                { title: 'جمع المعلومات', description: 'نحن نجمع فقط المعلومات الضرورية لإتمام طلباتك...', icon: 'Database' }
             ]
         },
         {
             key: 'returns',
-            gridTitle: 'POLICIES.RETURNS',
-            gridDescription: 'POLICIES.RETURNS_DESC',
+            gridTitle: 'الاستبدال والاسترجاع',
+            gridDescription: 'شروط إرجاع واستبدال المنتجات',
             icon: 'RotateCcw',
-            title: 'POLICIES.RETURNS_POLICY',
-            subtitle: 'POLICIES.RETURNS_TEXT',
+            title: 'سياسة الاستبدال والاسترجاع',
+            subtitle: 'حرصاً منا على رضاكم، نوفر سياسة مرنة للاستبدال والاسترجاع...',
             heroIcon: 'RotateCcw',
             showWhatsApp: true,
             sections: [
-                { title: 'POLICIES.EXCHANGE_TERMS', bullets: ['POLICIES.CONDITION', 'POLICIES.EXCHANGE_PERIOD'], icon: 'PackageCheck' }
+                { title: 'شروط الاستبدال', bullets: ['يجب أن يكون المنتج في حالته الأصلية', 'الاستبدال خلال 14 يوما'], icon: 'PackageCheck' }
             ]
         }
     ]
@@ -107,10 +108,7 @@ export class PoliciesPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): PoliciesPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

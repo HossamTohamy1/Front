@@ -22,9 +22,9 @@ const nextStatus: Record<string, string> = {
 };
 
 const actionLabel: Record<string, { en: string; ar: string }> = {
-  pending: { en: 'Accept Order', ar: 'COMMON.ACCEPTORDER' },
-  confirmed: { en: 'Mark as Shipped', ar: 'DASHBOARD.AUTO_STR_299' },
-  shipped: { en: 'Mark as Delivered', ar: 'DASHBOARD.AUTO_STR_300' },
+  pending: { en: 'Accept Order', ar: 'قبول الطلب' },
+  confirmed: { en: 'Mark as Shipped', ar: 'تحديد كمشحون' },
+  shipped: { en: 'Mark as Delivered', ar: 'تحديد كمسلّم' },
 };
 
 @Component({
@@ -101,12 +101,12 @@ export class OrderReviewPageComponent {
     if (!next) return;
     
     this.order.update(o => ({ ...o, status: next }));
-    this.toastService.showToast(this.lang() === 'ar' ? 'DASHBOARD.AUTO_STR_194' : 'Status updated', 'success');
+    this.toastService.showToast('تم تحديث الحالة', 'success');
   }
 
   handleCancelOrder() {
     this.order.update(o => ({ ...o, status: 'cancelled' }));
-    this.toastService.showToast(this.lang() === 'ar' ? 'DASHBOARD.AUTO_STR_216' : 'Order cancelled', 'error');
+    this.toastService.showToast('تم إلغاء الطلب', 'error');
   }
 
   openEdit() {
@@ -130,7 +130,7 @@ export class OrderReviewPageComponent {
       shipmentCode: form.shipmentCode || undefined
     }));
     this.editOpen.set(false);
-    this.toastService.showToast(this.lang() === 'ar' ? 'DASHBOARD.AUTO_STR_39' : 'Changes saved and logged to audit trail', 'success');
+    this.toastService.showToast('تم حفظ التعديلات وتسجيلها', 'success');
   }
 
   getVariant(status: string) {
@@ -140,15 +140,17 @@ export class OrderReviewPageComponent {
     return 'warning';
   }
 
-  getStatusLabel(status: string, isAr: boolean) {
+  getStatusLabel(status: string, isAr: boolean = true) {
     const labels: Record<string, {ar: string, en: string}> = {
-      'pending': {ar: 'COMMON.PENDING', en: 'Pending'},
-      'confirmed': {ar: 'COMMON.CONFIRMED', en: 'Confirmed'},
-      'shipped': {ar: 'COMMON.SHIPPED', en: 'Shipped'},
-      'delivered': {ar: 'DASHBOARD.AUTO_STR_341', en: 'Delivered'},
-      'cancelled': {ar: 'COMMON.CANCELLED', en: 'Cancelled'}
+      'pending': {ar: 'قيد الانتظار', en: 'Pending'},
+      'confirmed': {ar: 'مؤكد', en: 'Confirmed'},
+      'shipped': {ar: 'تم الشحن', en: 'Shipped'},
+      'delivered': {ar: 'تم التسليم', en: 'Delivered'},
+      'cancelled': {ar: 'ملغي', en: 'Cancelled'}
     };
-    return labels[status] ? (isAr ? labels[status].ar : labels[status].en) : status;
+    const item = labels[status];
+    if (!item) return status;
+    return isAr ? item.ar : item.en;
   }
 
   get editFormKeys() {

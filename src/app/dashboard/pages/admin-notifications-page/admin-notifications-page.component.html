@@ -1,8 +1,8 @@
 <app-admin-layout>
   <div class="max-w-2xl mx-auto space-y-5">
     <div class="flex items-center justify-between">
-      <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'NOTIFICATIONS.TITLE' : 'Notifications' }}</h1>
-      <p class="text-sm text-muted-foreground">{{ unreadCount() }} {{ lang() === 'ar' ? 'DASHBOARD.NEW_NOTIFICATIONS' : 'new' }}</p>
+      <h1 class="font-display font-bold text-2xl">{{ 'NOTIFICATIONS.TITLE' | translate }}</h1>
+      <p class="text-sm text-muted-foreground">{{ unreadCount() }} {{ 'DASHBOARD.NEW_NOTIFICATIONS' | translate }}</p>
     </div>
 
     <div class="space-y-2">
@@ -16,10 +16,10 @@
         </div>
         <div class="flex-1">
           <div class="flex items-center justify-between gap-2">
-            <p class="font-semibold text-sm">{{ lang() === 'ar' ? n.titleAr : n.titleEn }}</p>
+            <p class="font-semibold text-sm">{{ n.titleAr | translate }}</p>
             <span *ngIf="!n.read" class="w-2 h-2 rounded-full bg-brand shrink-0"></span>
           </div>
-          <p class="text-xs text-muted-foreground mt-0.5">{{ lang() === 'ar' ? n.msgAr : n.msgEn }}</p>
+          <p class="text-xs text-muted-foreground mt-0.5">{{ n.msgAr | translate }}</p>
           <p class="text-[10px] text-muted-foreground mt-1">{{ n.time }}</p>
         </div>
       </div>

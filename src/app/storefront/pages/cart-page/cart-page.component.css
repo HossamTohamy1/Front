@@ -87,7 +87,16 @@
     border: 1px solid var(--lk-cart-line);
     border-radius: 12px;
     box-shadow: 0 1px 5px rgba(24, 37, 50, .025);
+}
+
+:host-context([dir="rtl"]) .lk-cart-item,
+[dir="rtl"] .lk-cart-item {
     direction: rtl;
+}
+
+:host-context([dir="ltr"]) .lk-cart-item,
+[dir="ltr"] .lk-cart-item {
+    direction: ltr;
 }
 
 .lk-cart-item__image {
@@ -144,7 +153,16 @@
     justify-content: center;
     padding: 10px 13px 10px 9px;
     overflow: visible;
+}
+
+:host-context([dir="rtl"]) .lk-cart-item__details,
+[dir="rtl"] .lk-cart-item__details {
     text-align: right;
+}
+
+:host-context([dir="ltr"]) .lk-cart-item__details,
+[dir="ltr"] .lk-cart-item__details {
+    text-align: left;
 }
 
     .lk-cart-item__details h2 {
@@ -172,9 +190,17 @@
     font-size: 13px;
     font-weight: 500;
     line-height: 1.4;
+}
+
+:host-context([dir="rtl"]) .lk-cart-item__meta-row,
+[dir="rtl"] .lk-cart-item__meta-row {
     direction: rtl;
 }
 
+:host-context([dir="ltr"]) .lk-cart-item__meta-row,
+[dir="ltr"] .lk-cart-item__meta-row {
+    direction: ltr;
+}
 
 .lk-cart-item__meta-row--color {
     flex-direction: row;
@@ -215,14 +241,32 @@
     align-items: flex-start;
     gap: 2px;
     margin-top: 5px;
+}
+
+:host-context([dir="rtl"]) .lk-cart-item__price,
+[dir="rtl"] .lk-cart-item__price {
     direction: rtl;
+}
+
+:host-context([dir="ltr"]) .lk-cart-item__price,
+[dir="ltr"] .lk-cart-item__price {
+    direction: ltr;
 }
 
 .lk-cart-item__price-current {
     display: inline-flex;
     align-items: baseline;
     gap: 4px;
+}
+
+:host-context([dir="rtl"]) .lk-cart-item__price-current,
+[dir="rtl"] .lk-cart-item__price-current {
     direction: rtl;
+}
+
+:host-context([dir="ltr"]) .lk-cart-item__price-current,
+[dir="ltr"] .lk-cart-item__price-current {
+    direction: ltr;
 }
 
     .lk-cart-item__price-current strong {
@@ -327,7 +371,16 @@
     grid-template-columns: 1.02fr .98fr;
     gap: 18px;
     margin-top: 20px;
+}
+
+:host-context([dir="rtl"]) .lk-cart-checkout-grid,
+[dir="rtl"] .lk-cart-checkout-grid {
     direction: rtl;
+}
+
+:host-context([dir="ltr"]) .lk-cart-checkout-grid,
+[dir="ltr"] .lk-cart-checkout-grid {
+    direction: ltr;
 }
 
 .lk-cart-summary,
@@ -415,7 +468,16 @@
     overflow: hidden;
     border: 1px solid #dfe4e8;
     border-radius: 7px;
+}
+
+:host-context([dir="rtl"]) .lk-cart-coupon__field,
+[dir="rtl"] .lk-cart-coupon__field {
     direction: rtl;
+}
+
+:host-context([dir="ltr"]) .lk-cart-coupon__field,
+[dir="ltr"] .lk-cart-coupon__field {
+    direction: ltr;
 }
 
     .lk-cart-coupon__field input {
@@ -471,6 +533,15 @@
     background: linear-gradient(155deg, #fbfcfe 0%, #f8fbfd 100%);
     border: 1px solid #e7ebef;
     border-radius: 14px;
+}
+
+:host-context([dir="rtl"]) .lk-cart-empty,
+[dir="rtl"] .lk-cart-empty {
+    direction: rtl;
+}
+
+:host-context([dir="ltr"]) .lk-cart-empty,
+[dir="ltr"] .lk-cart-empty {
     direction: ltr;
 }
 
@@ -520,8 +591,34 @@
     }
 
 .lk-cart-empty__copy {
+    display: flex;
+    flex-direction: column;
+}
+
+:host-context([dir="rtl"]) .lk-cart-empty__copy,
+[dir="rtl"] .lk-cart-empty__copy {
     direction: rtl;
     text-align: right;
+    align-items: flex-start;
+}
+
+:host-context([dir="ltr"]) .lk-cart-empty__copy,
+[dir="ltr"] .lk-cart-empty__copy {
+    direction: ltr;
+    text-align: left;
+    align-items: flex-start;
+}
+
+:host-context([dir="rtl"]) .lk-cart-empty__copy a,
+[dir="rtl"] .lk-cart-empty__copy a {
+    direction: rtl;
+    flex-direction: row;
+}
+
+:host-context([dir="ltr"]) .lk-cart-empty__copy a,
+[dir="ltr"] .lk-cart-empty__copy a {
+    direction: ltr;
+    flex-direction: row;
 }
 
     .lk-cart-empty__copy h2 {
@@ -587,6 +684,16 @@
             width: 1px;
             content: '';
             background: #e8ebee;
+        }
+
+        [dir="ltr"] .lk-cart-trust > div:not(:last-child)::after {
+            left: auto;
+            right: 0;
+        }
+
+        [dir="rtl"] .lk-cart-trust > div:not(:last-child)::after {
+            left: 0;
+            right: auto;
         }
 
     .lk-cart-trust svg {

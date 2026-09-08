@@ -1,7 +1,7 @@
 <app-store-layout [showFloatingChat]="false">
   
 
-  <main class="lk-favorites-page" dir="rtl">
+  <main class="lk-favorites-page">
     @if (pageConfig().showTitle) {
       <section class="lk-favorites-heading">
         <div class="lk-favorites-heading__title">
@@ -27,12 +27,12 @@
       <section class="lk-favorites-toolbar" aria-label='STOREFRONT.AUTO_STR_302'>
         @if (pageConfig().showSort) {
           <label>
-            <span>ترتيب حسب:</span>
+            <span>{{ 'COMMON.SORT' | translate }}:</span>
             <span class="lk-favorites-select-wrap">
               <select [ngModel]="sortMode()" (change)="updateSortMode($event)">
                 <option value="latest">{{ 'STOREFRONT.AUTO_STR_447' | translate }}</option>
-                <option value="price-low">السعر: الأقل أولًا</option>
-                <option value="price-high">السعر: الأعلى أولًا</option>
+                <option value="price-low">{{ ('COMMON.PRICE' | translate) + ': ' + ('STOREFRONT.AUTO_STR_365' | translate) }}</option>
+                <option value="price-high">{{ ('COMMON.PRICE' | translate) + ': ' + ('STOREFRONT.AUTO_STR_329' | translate) }}</option>
               </select>
               <lucide-icon [img]="ChevronDown" aria-hidden="true"></lucide-icon>
             </span>
@@ -40,7 +40,7 @@
         }
         @if (pageConfig().showCount) {
           <p>
-            عدد المنتجات:
+            {{ 'STOREFRONT.AUTO_STR_334' | translate }}:
             <strong>{{ favoriteProducts().length }}</strong>
           </p>
         }
@@ -62,25 +62,25 @@
               </a>
               <p>
                 @if (pageConfig().showProductColor) {
-                  اللون: {{ item.color }} <i aria-hidden="true"></i>
+                  {{ 'PRODUCT.COLOR' | translate }}: {{ item.color | translate }} <i aria-hidden="true"></i>
                 }
                 @if (pageConfig().showProductSize) {
-                  المقاس: {{ item.size }}
+                  {{ 'PRODUCT.SIZE' | translate }}: {{ item.size }}
                 }
               </p>
 
               @if (pageConfig().showProductPrice) {
                 <div class="lk-favorite-item__price">
-                  <strong>{{ item.price }}</strong><span>ر.س</span>
+                  <strong>{{ item.price }}</strong><span>{{ 'COMMON.CURRENCY' | translate }}</span>
                   @if (pageConfig().showProductOldPrice && item.oldPrice && item.oldPrice > item.price) {
-                    <del>{{ item.oldPrice }} ر.س</del>
+                    <del>{{ item.oldPrice }} {{ 'COMMON.CURRENCY' | translate }}</del>
                   }
                 </div>
               }
 
               @if (pageConfig().showProductStock) {
                 <div [class]="item.product.stock > 0 ? 'lk-favorite-item__stock is-available' : 'lk-favorite-item__stock is-empty'">
-                  <span aria-hidden="true"></span>{{ item.product.stock > 0 ? 'COMMON.INSTOCK' : 'STOREFRONT.AUTO_STR_366' }}
+                  <span aria-hidden="true"></span>{{ (item.product.stock > 0 ? 'COMMON.INSTOCK' : 'STOREFRONT.AUTO_STR_366') | translate }}
                 </div>
               }
             </div>
@@ -120,7 +120,10 @@
         <div class="lk-favorites-empty__copy">
           <h2>{{ pageConfig().emptyStateTitle | translate }}</h2>
           <p>{{ pageConfig().emptyStateSubtitle | translate }}</p>
-          <a routerLink="/all-shapers">{{ pageConfig().emptyStateButtonText | translate }} <lucide-icon [img]="ChevronLeft" aria-hidden="true"></lucide-icon></a>
+          <a routerLink="/all-shapers">
+            <span>{{ pageConfig().emptyStateButtonText | translate }}</span>
+            <lucide-icon [img]="ChevronRight" class="rtl-flip" aria-hidden="true"></lucide-icon>
+          </a>
         </div>
       </section>
     }

@@ -1,13 +1,12 @@
 <app-store-layout [showFloatingChat]="false">
 
-  <div class="about-page" dir="rtl">
-    <div class="about-page__container">
-      <nav class="about-breadcrumb" aria-label='STOREFRONT.AUTO_STR_351'>
+  <div class="about-page">
+    <div class="about-page__container" *ngIf="config">
+      <nav class="about-breadcrumb" [attr.aria-label]="'STOREFRONT.AUTO_STR_351' | translate">
         <a routerLink="/" class="about-breadcrumb__home">
-          <lucide-icon [img]="ChevronLeft" [size]="19" [strokeWidth]="2.1"></lucide-icon>
           <span>{{ 'NAV.HOME' | translate }}</span>
         </a>
-        <lucide-icon [img]="ChevronLeft" [size]="16" class="about-breadcrumb__separator"></lucide-icon>
+        <lucide-icon [name]="langService.isRtl() ? 'chevron-left' : 'chevron-right'" [img]="langService.isRtl() ? ChevronLeft : ChevronRight" [size]="14" class="about-breadcrumb__separator" aria-hidden="true"></lucide-icon>
         <span class="about-breadcrumb__current">{{ 'ABOUT.TITLE' | translate }}</span>
       </nav>
 
@@ -21,7 +20,7 @@
           <div class="about-intro-card__logo-halo"></div>
           <img [src]="logoImg" alt="LOXX KING" class="about-intro-card__logo" />
         </div>
-        <p class="about-intro-card__text" [innerHTML]="replaceNewlines(config.introText)"></p>
+        <p class="about-intro-card__text" [innerHTML]="replaceNewlines(config.introText | translate)"></p>
       </section>
 
       <section *ngIf="config.showReasonsSection" class="about-section">
@@ -30,9 +29,9 @@
         <div class="about-reasons-grid">
           <article *ngFor="let reason of config.reasons" class="about-reason-card">
             <div class="about-reason-card__icon">
-              <lucide-icon *ngIf="reason.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="31" [strokeWidth]="1.9"></lucide-icon>
-              <lucide-icon *ngIf="reason.icon === 'Check'" [img]="Check" [size]="31" [strokeWidth]="1.9"></lucide-icon>
-              <lucide-icon *ngIf="reason.icon === 'Star'" [img]="Star" [size]="31" [strokeWidth]="1.9"></lucide-icon>
+              <lucide-icon *ngIf="reason.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+              <lucide-icon *ngIf="reason.icon === 'Check'" [img]="Check" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+              <lucide-icon *ngIf="reason.icon === 'Star'" [img]="Star" [size]="28" [strokeWidth]="1.9"></lucide-icon>
             </div>
             <h3>{{ reason.title | translate }}</h3>
             <p>{{ reason.text | translate}}</p>
@@ -45,9 +44,9 @@
         <div class="about-title-underline"></div>
         <div class="about-wide-card">
           <div class="about-wide-card__icon">
-            <lucide-icon [img]="Eye" [size]="32" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon [img]="Eye" [size]="28" [strokeWidth]="1.9"></lucide-icon>
           </div>
-          <p [innerHTML]="replaceNewlines(config.visionText, '<br class=&quot;about-desktop-break&quot; />')"></p>
+          <p [innerHTML]="replaceNewlines(config.visionText | translate)"></p>
         </div>
       </section>
 
@@ -56,9 +55,9 @@
         <div class="about-title-underline"></div>
         <div class="about-wide-card">
           <div class="about-wide-card__icon">
-            <lucide-icon [img]="Target" [size]="31" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon [img]="Target" [size]="28" [strokeWidth]="1.9"></lucide-icon>
           </div>
-          <p [innerHTML]="replaceNewlines(config.missionText, '<br class=&quot;about-desktop-break&quot; />')"></p>
+          <p [innerHTML]="replaceNewlines(config.missionText | translate)"></p>
         </div>
       </section>
 
@@ -67,10 +66,10 @@
         <div class="about-title-underline"></div>
         <div class="about-values-card">
           <div *ngFor="let value of config.values" class="about-value-item">
-            <lucide-icon *ngIf="value.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="28" [strokeWidth]="1.9"></lucide-icon>
-            <lucide-icon *ngIf="value.icon === 'Check'" [img]="Check" [size]="28" [strokeWidth]="1.9"></lucide-icon>
-            <lucide-icon *ngIf="value.icon === 'Star'" [img]="Star" [size]="28" [strokeWidth]="1.9"></lucide-icon>
-            <lucide-icon *ngIf="value.icon === 'Target'" [img]="Target" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="22" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'Check'" [img]="Check" [size]="22" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'Star'" [img]="Star" [size]="22" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'Target'" [img]="Target" [size]="22" [strokeWidth]="1.9"></lucide-icon>
             <span>{{ value.label | translate}}</span>
           </div>
         </div>

@@ -17,12 +17,12 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
         <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_32' | translate }}</p>
       </div>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_148' [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card title="إعدادات حقل البحث" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص حقل البحث (Placeholder)', field: 'searchPlaceholder' }"></ng-container>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_88' [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'DASHBOARD.AUTO_STR_365', onClick: addSuggestion.bind(this) }">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_317', field: 'quickSuggestionsTitle' }"></ng-container>
+      <app-section-card title="عمليات البحث الشائعة" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة كلمة', onClick: addSuggestion.bind(this) }">
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'quickSuggestionsTitle' }"></ng-container>
         <div class="flex flex-col gap-2 mt-2">
           <div *ngFor="let sugg of config().quickSuggestions || []; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-2">
             <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="sugg" (ngModelChange)="updateSuggestion(idx, $event)" />
@@ -33,30 +33,30 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
         </div>
       </app-section-card>
 
-      <app-section-card title='SEARCH.RECENT' [index]="2" [enabled]="config().showRecentSearch" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showRecentSearch: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_317', field: 'recentSearchTitle' }"></ng-container>
+      <app-section-card title="عمليات البحث الأخيرة" [index]="2" [enabled]="config().showRecentSearch" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showRecentSearch: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'recentSearchTitle' }"></ng-container>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_100' [index]="3" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'COMMON.ADDRESS', field: 'noResultsTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_286', field: 'noResultsSubtitle' }"></ng-container>
+      <app-section-card title="حالة عدم وجود نتائج" [index]="3" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'العنوان', field: 'noResultsTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'الوصف الفرعي', field: 'noResultsSubtitle' }"></ng-container>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_74' [index]="4" [enabled]="config().showSupportCard" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showSupportCard: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_245', field: 'supportCardTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'DASHBOARD.AUTO_STR_316', field: 'supportCardSubtitle' }"></ng-container>
+      <app-section-card title="بطاقة الدعم والمساعدة" [index]="4" [enabled]="config().showSupportCard" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showSupportCard: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان البطاقة', field: 'supportCardTitle' }"></ng-container>
+        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'النص الفرعي', field: 'supportCardSubtitle' }"></ng-container>
       </app-section-card>
 
       <ng-template #textInputTemplate let-label="label" let-field="field">
         <div class="flex flex-col gap-1.5 mb-3">
-          <span class="text-xs font-bold text-gray-700">{{ label }}</span>
+          <span class="text-xs font-bold text-gray-700">{{ label | translate }}</span>
           <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="$any(config())[field] || ''" (ngModelChange)="updateConfigField(field, $event)" />
         </div>
       </ng-template>
 
       <ng-template #checkboxTemplate let-label="label" let-field="field">
         <label class="flex items-center justify-between p-2 bg-gray-50 rounded-md border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors mb-2">
-          <span class="text-sm text-gray-700">{{ label }}</span>
+          <span class="text-sm text-gray-700">{{ label | translate }}</span>
           <div class="relative inline-flex items-center">
             <input type="checkbox" class="sr-only peer" [checked]="!!$any(config())[field]" (change)="updateConfigCheckbox(field, $event)" />
             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
@@ -88,7 +88,7 @@ export class SearchPageEditorComponent {
 
   addSuggestion() {
     const suggs = [...(this.config().quickSuggestions || [])];
-    suggs.push('DASHBOARD.AUTO_STR_392');
+    suggs.push('مشد كولومبي');
     this.updateConfig({ quickSuggestions: suggs });
   }
 

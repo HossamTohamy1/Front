@@ -1,9 +1,11 @@
-import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, Input, OnInit, computed, signal } from '@angular/core';
+import { TranslatePipe, TranslateDirective, TranslateService } from '@ngx-translate/core';
+import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, ChevronLeft, MessageCircle, Minus, Phone, Plus, Search } from 'lucide-angular';
+import { LucideAngularModule, ChevronLeft, ChevronRight, MessageCircle, Minus, Phone, Plus, Search } from 'lucide-angular';
+import { FaqPageConfigService } from '../../../../core/services/page-configs/faq-page-config.service';
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 export interface FaqItem {
   id: string;
@@ -21,34 +23,32 @@ export interface FaqItem {
 export class FaqComponent implements OnInit {
   @Input() className = '';
   
+  private faqConfigService = inject(FaqPageConfigService);
+  private translate = inject(TranslateService);
+  readonly langService = inject(LangService);
+
   readonly ChevronLeft = ChevronLeft;
+  readonly ChevronRight = ChevronRight;
   readonly MessageCircle = MessageCircle;
   readonly Minus = Minus;
   readonly Phone = Phone;
   readonly Plus = Plus;
   readonly Search = Search;
 
-  config = {
-    subtitle: 'STOREFRONT.AUTO_STR_66',
-    showSearch: true,
-    searchPlaceholder: 'ابحث في الأسئلة...',
-    showSupportCard: true,
-    supportCardTitle: 'SEARCH.NOT_FOUND',
-    supportCardSubtitle: 'STOREFRONT.AUTO_STR_140',
-    faqs: [
-      { id: 'size', question: 'STOREFRONT.AUTO_STR_243', answer: 'يمكنك معرفة مقاسك من خلال جدول المقاسات.' }
-    ] as FaqItem[]
-  };
+  config = this.faqConfigService.pageConfig;
 
   query = signal('');
   openId = signal<string | null>('size');
 
   filteredItems = computed(() => {
     const q = this.query().trim().toLocaleLowerCase();
-    if (!q) return this.config.faqs;
-    return this.config.faqs.filter(item => 
-      `${item.question} ${item.answer}`.toLocaleLowerCase().includes(q)
-    );
+    const items = this.config().faqs || [];
+    if (!q) return items;
+    return items.filter(item => {
+      const qText = (this.translate.instant(item.question) || item.question).toLocaleLowerCase();
+      const aText = (this.translate.instant(item.answer) || item.answer).toLocaleLowerCase();
+      return qText.includes(q) || aText.includes(q);
+    });
   });
 
   ngOnInit() {}
