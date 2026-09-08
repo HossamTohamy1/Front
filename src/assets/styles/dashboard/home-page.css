@@ -138,10 +138,18 @@
     font-family: 'Cairo', Tahoma, Arial, sans-serif;
     font-synthesis: none;
     background: #fff;
-    direction: rtl;
+    direction: inherit;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+[dir="rtl"] .lk-home-page {
+    direction: rtl;
+}
+
+[dir="ltr"] .lk-home-page {
+    direction: ltr;
 }
 
 /* =============================

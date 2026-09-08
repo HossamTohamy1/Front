@@ -95,8 +95,9 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { GlobalErrorHandler } from './core/error/global-error.handler';
 import { routes } from './app.routes';
 
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, provideMissingTranslationHandler } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AppMissingTranslationHandler } from './core/i18n/missing-translation.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -111,7 +112,8 @@ export const appConfig: ApplicationConfig = {
         prefix: '/assets/i18n/',
         suffix: '.json',
         useHttpBackend: true
-      })
+      }),
+      missingTranslationHandler: provideMissingTranslationHandler(AppMissingTranslationHandler)
     }),
     importProvidersFrom(
       LucideAngularModule.pick({

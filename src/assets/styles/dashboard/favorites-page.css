@@ -543,6 +543,16 @@
   background: #e8ebee;
 }
 
+[dir="ltr"] .lk-favorites-trust > div:not(:last-child)::after {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .lk-favorites-trust > div:not(:last-child)::after {
+  left: 0;
+  right: auto;
+}
+
 .lk-favorites-trust svg {
   width: 31px;
   height: 31px;
