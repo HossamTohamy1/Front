@@ -3,12 +3,10 @@ import { CommonModule } from '@angular/common';
 import { StoreHeaderComponent } from '../store-header/store-header.component';
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
 import { FloatingChatComponent } from '../floating-chat/floating-chat.component';
-import { ToastContainerComponent } from '../../ui/toast-container/toast-container.component';
-
 @Component({
   selector: 'app-store-layout',
   standalone: true,
-  imports: [CommonModule, StoreHeaderComponent, BottomNavComponent, FloatingChatComponent, ToastContainerComponent],
+  imports: [CommonModule, StoreHeaderComponent, BottomNavComponent, FloatingChatComponent],
   template: `
     <div class="min-h-screen bg-background text-foreground">
       <ng-container *ngIf="hasCustomHeader; else defaultHeader">
@@ -24,7 +22,6 @@ import { ToastContainerComponent } from '../../ui/toast-container/toast-containe
 
       <app-bottom-nav *ngIf="showBottomNav"></app-bottom-nav>
       <app-floating-chat></app-floating-chat>
-      <app-toast-container></app-toast-container>
     </div>
   `,
   host: {

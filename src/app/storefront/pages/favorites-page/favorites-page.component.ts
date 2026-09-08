@@ -8,6 +8,8 @@ import { HomeHeaderComponent } from '../../../shared/components/layout/home-head
 import { LucideAngularModule, BadgeCheck, ChevronDown, ChevronLeft, ChevronRight, Heart, RotateCcw, ShieldCheck, ShoppingCart, Trash2, Truck } from 'lucide-angular';
 import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
 import { LangService } from '../../../core/services/lang/lang.service';
+import { CartService } from '../../../core/services/cart/cart.service';
+import { ToastService } from '../../../core/services/toast/toast.service';
 
 export interface TrustBadgeConfig {
     id: string;
@@ -173,16 +175,19 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
     window.removeEventListener('storage', this.storageListener);
   }
 
+  private cartService = inject(CartService);
+  private toastService = inject(ToastService);
+
   removeFavorite(id: string) {
     this.favoriteProductIds.update(ids => ids.filter(i => i !== id));
   }
 
   addToCart(product: Product, size: string) {
-    console.log('Added to cart:', product, size);
+    this.cartService.addToCart(product as any, size, 1);
   }
 
-  showToast(message: string, type: string = 'success') {
-    alert(message);
+  showToast(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'success') {
+    this.toastService.showToast(message, type);
   }
 
   addFavoriteToCart(item: FavoriteProductDisplay, removeAfterAdding: boolean) {

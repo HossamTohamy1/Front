@@ -210,10 +210,53 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="lk-all-reviews-link">
-                {{ (langService.storefrontLang() === 'ar' ? 'عرض جميع التقييمات' : 'View all reviews') }} ({{display.reviewCount}})
-                <lucide-icon name="chevron-left" class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
-            </button>
+            <div class="lk-review-action-row">
+                <button type="button" class="lk-write-review-btn" (click)="toggleReviewModal(true)">
+                    <lucide-icon [img]="EditIcon" [size]="15" aria-hidden="true"></lucide-icon>
+                    <span>{{ (langService.storefrontLang() === 'ar' ? 'كتابة تقييم' : 'Write a Review') }}</span>
+                </button>
+                <button type="button" class="lk-all-reviews-link">
+                    {{ (langService.storefrontLang() === 'ar' ? 'عرض جميع التقييمات' : 'View all reviews') }} ({{display.reviewCount}})
+                    <lucide-icon name="chevron-left" class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+                </button>
+            </div>
+
+            <!-- Write Review Modal -->
+            <div *ngIf="showReviewModal()" class="lk-review-modal-backdrop" (click)="toggleReviewModal(false)">
+                <div class="lk-review-modal-card" (click)="$event.stopPropagation()">
+                    <div class="lk-review-modal-header">
+                        <h3>{{ (langService.storefrontLang() === 'ar' ? 'أضف تقييمك للمنتج' : 'Write a Product Review') }}</h3>
+                        <button type="button" class="lk-modal-close-btn" (click)="toggleReviewModal(false)">
+                            <lucide-icon [img]="XIcon" [size]="18" aria-hidden="true"></lucide-icon>
+                        </button>
+                    </div>
+                    
+                    <form (submit)="submitReview($event)" class="lk-review-form">
+                        <div class="lk-form-group">
+                            <label>{{ (langService.storefrontLang() === 'ar' ? 'تقييمك للمنتج' : 'Your Rating') }}</label>
+                            <div class="lk-star-picker">
+                                <button type="button" *ngFor="let s of [1,2,3,4,5]" (click)="newReviewRating.set(s)" class="lk-star-btn">
+                                    <lucide-icon [img]="Star" [size]="24" [attr.fill]="s <= newReviewRating() ? 'currentColor' : 'none'" [class.is-active]="s <= newReviewRating()"></lucide-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lk-form-group">
+                            <label>{{ (langService.storefrontLang() === 'ar' ? 'الاسم' : 'Your Name') }}</label>
+                            <input type="text" [placeholder]="langService.storefrontLang() === 'ar' ? 'اكتب اسمك هنا' : 'Enter your name'" [ngModel]="newReviewName()" (ngModelChange)="newReviewName.set($event)" name="name" />
+                        </div>
+
+                        <div class="lk-form-group">
+                            <label>{{ (langService.storefrontLang() === 'ar' ? 'تعليقك' : 'Your Review') }}</label>
+                            <textarea rows="3" [placeholder]="langService.storefrontLang() === 'ar' ? 'شاركنا تجربتك ورأيك بالمنتج...' : 'Share your experience with this product...'" [ngModel]="newReviewComment()" (ngModelChange)="newReviewComment.set($event)" name="comment" required></textarea>
+                        </div>
+
+                        <button type="submit" class="lk-submit-review-btn">
+                            {{ (langService.storefrontLang() === 'ar' ? 'إرسال التقييم' : 'Submit Review') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </section>
 
         <section *ngIf="pageConfig().showPurchaseActions" id="lk-purchase" class="lk-product-purchase-section" aria-label='STOREFRONT.AUTO_STR_191'>

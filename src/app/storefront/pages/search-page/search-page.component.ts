@@ -6,6 +6,10 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { LucideAngularModule, Check, ChevronLeft, Headphones, Heart, MessageCircle, Search, ShoppingCart, Trash2, X } from 'lucide-angular';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
+import { CartService } from '../../../core/services/cart/cart.service';
+import { FavoritesService } from '../../../core/services/favorites/favorites.service';
+import { ToastService } from '../../../core/services/toast/toast.service';
+import { products as mockProducts, Product } from '../../../shared/data/mockData';
 
 export interface SearchPageConfig {
     searchPlaceholder: string;
@@ -38,21 +42,7 @@ const initialConfig: SearchPageConfig = {
     supportCardSubtitle: 'SEARCH.WHATSAPP_HELP',
 }
 
-export interface Product {
-  id: string;
-  nameAr: string;
-  price: number;
-  originalPrice?: number;
-  images: string[];
-  rating: number;
-  reviewCount: number;
-  category: string;
-  sizes: string[];
-}
 
-const products: Product[] = [
-  // Mock data as needed
-];
 
 type SearchMode = 'idle' | 'success' | 'suggestions';
 type SearchFeedbackType = 'success' | 'error';
@@ -111,7 +101,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cartService: CartService,
+    private favoritesService: FavoritesService,
+    private toastService: ToastService
   ) {
     // Load config from localStorage if available
     const saved = localStorage.getItem('loxxking-search-page-config');
@@ -307,35 +300,29 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Mocks for Search Utils
+  // Search Utils
   findExactProductMatches(q: string): Product[] {
-    return products.filter(p => p.nameAr.includes(q));
+    const term = q.trim().toLowerCase();
+    return mockProducts.filter(p => p.nameAr?.toLowerCase().includes(term) || (p.nameEn && p.nameEn.toLowerCase().includes(term)));
   }
 
   findSimilarProductSuggestions(q: string): Product[] {
-    return products.slice(0, 4);
+    return mockProducts.slice(0, 4);
   }
 
-  // Mock app methods
   addToCart(product: Product, size: string) {
-    console.log('Added to cart', product, size);
+    this.cartService.addToCart(product as any, size, 1);
+    this.toastService.showToast('STOREFRONT.AUTO_STR_114', 'success');
   }
-  showToast(msg: string, type: string) {}
-  
-  favorites = signal<string[]>([]);
   
   isFavorite(id: string): boolean {
-    return this.favorites().includes(id);
+    return this.favoritesService.isFavorite(id);
   }
 
   toggleFavoriteProduct(id: string) {
-    if (this.isFavorite(id)) {
-      this.favorites.set(this.favorites().filter(f => f !== id));
-      this.showToast('STOREFRONT.AUTO_STR_127', 'info');
-    } else {
-      this.favorites.set([...this.favorites(), id]);
-      this.showToast('STOREFRONT.AUTO_STR_100', 'info');
-    }
+    this.favoritesService.toggleFavorite(id);
+    const isFav = this.favoritesService.isFavorite(id);
+    this.toastService.showToast(isFav ? 'STOREFRONT.AUTO_STR_127' : 'STOREFRONT.AUTO_STR_100', 'info');
   }
 
   getSearchProductDisplay(product: Product) {
@@ -366,7 +353,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopPropagation();
     this.addToCart(product, this.getFirstSize(product));
-    this.showToast('STOREFRONT.AUTO_STR_114', 'success');
   }
 
   toggleFavorite(event: MouseEvent, product: Product) {
