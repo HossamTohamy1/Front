@@ -1,11 +1,13 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, computed, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
-import { LucideAngularModule, BadgeCheck, ChevronDown, ChevronLeft, Heart, RotateCcw, ShieldCheck, ShoppingCart, Trash2, Truck } from 'lucide-angular';
+import { LucideAngularModule, BadgeCheck, ChevronDown, ChevronLeft, ChevronRight, Heart, RotateCcw, ShieldCheck, ShoppingCart, Trash2, Truck } from 'lucide-angular';
+import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
+import { LangService } from '../../../core/services/lang/lang.service';
 
 export interface TrustBadgeConfig {
     id: string;
@@ -70,10 +72,10 @@ const initialConfig: FavoritesPageConfig = {
     
     showTrustBadges: true,
     trustBadges: [
-        { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: '100% Ù…Ø¶Ù…ÙˆÙ†Ø©' },
-        { id: '2', icon: 'Truck', title: 'CART.FAST_SHIPPING', subtitle: '2 - 5 Ø£ÙŠØ§Ù…' },
+        { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
+        { id: '2', icon: 'Truck', title: 'CART.FAST_SHIPPING', subtitle: 'CART.DAYS_2_5' },
         { id: '3', icon: 'RotateCcw', title: 'CART.EASY_RETURNS', subtitle: 'CART.RETURN_PERIOD' },
-        { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: '100% Ø¢Ù…Ù†' }
+        { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'CART.SECURE_100' }
     ]
 };
 
@@ -101,8 +103,8 @@ export type FavoriteProductDisplay = {
 }
 
 const dummyProducts: Product[] = [
-  { id: 'prod-1', nameAr: 'STOREFRONT.AUTO_STR_229', price: 299, originalPrice: 350, images: ['https://placehold.co/100x100'], sizes: ['S', 'M', 'L'], category: 'general', stock: 10 },
-  { id: 'prod-2', nameAr: 'STOREFRONT.AUTO_STR_423', price: 150, images: ['https://placehold.co/100x100'], sizes: ['M', 'L'], category: 'postpartum', stock: 0 },
+  { id: 'prod-1', nameAr: 'STOREFRONT.AUTO_STR_229', price: 299, originalPrice: 350, images: ['/assets/categories/category-women-reference.png'], sizes: ['S', 'M', 'L'], category: 'general', stock: 10 },
+  { id: 'prod-2', nameAr: 'STOREFRONT.AUTO_STR_423', price: 150, images: ['/assets/categories/category-waist-reference.png'], sizes: ['M', 'L'], category: 'postpartum', stock: 0 },
 ];
 const homeProducts: any[] = [];
 const homeProductById = new Map(homeProducts.map(item => [item.productId, item]));
@@ -118,6 +120,7 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
   readonly BadgeCheck = BadgeCheck;
   readonly ChevronDown = ChevronDown;
   readonly ChevronLeft = ChevronLeft;
+  readonly ChevronRight = ChevronRight;
   readonly Heart = Heart;
   readonly RotateCcw = RotateCcw;
   readonly ShieldCheck = ShieldCheck;
@@ -125,6 +128,7 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
   readonly Trash2 = Trash2;
   readonly Truck = Truck;
 
+  public langService = inject(LangService);
   pageConfig = signal<FavoritesPageConfig>(initialConfig);
 
   favoriteProductIds = signal<string[]>(['prod-1', 'prod-2']); // Initial dummy data
@@ -147,7 +151,8 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
   private storageListener = (e: StorageEvent) => {
     if (e.key === 'loxxking-favorites-page-config' && e.newValue) {
       try {
-        this.pageConfig.set({ ...initialConfig, ...JSON.parse(e.newValue) });
+        const clean = sanitizeWithInitial(JSON.parse(e.newValue), initialConfig);
+        this.pageConfig.set(clean);
       } catch (_) {}
     }
   };
@@ -156,7 +161,9 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
     const saved = localStorage.getItem('loxxking-favorites-page-config');
     if (saved) {
       try {
-        this.pageConfig.set({ ...initialConfig, ...JSON.parse(saved) });
+        const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
+        this.pageConfig.set(clean);
+        localStorage.setItem('loxxking-favorites-page-config', JSON.stringify(clean));
       } catch (e) {}
     }
     window.addEventListener('storage', this.storageListener);

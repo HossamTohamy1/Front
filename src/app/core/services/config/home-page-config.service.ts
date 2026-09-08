@@ -1,6 +1,7 @@
 import { Injectable, signal, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PageConfig } from '../../models/config.model';
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { homeCategories, homeProducts } from '../../../shared/data/homePageData';
 
 const CONFIG_KEY = 'loxxking-homepage-config';
@@ -67,7 +68,7 @@ export class HomePageConfigService {
       window.addEventListener('storage', (e: StorageEvent) => {
         if (e.key === CONFIG_KEY && e.newValue) {
           try {
-            this.pageConfig.set(JSON.parse(e.newValue));
+            this.pageConfig.set(sanitizeWithInitial(JSON.parse(e.newValue), initialConfig));
           } catch (_) {}
         }
       });
@@ -79,7 +80,9 @@ export class HomePageConfigService {
       const saved = window.localStorage.getItem(CONFIG_KEY);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
+          window.localStorage.setItem(CONFIG_KEY, JSON.stringify(clean));
+          return clean;
         } catch (_) {}
       }
     }

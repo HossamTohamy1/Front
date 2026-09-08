@@ -1,6 +1,6 @@
 <app-store-layout [showFloatingChat]="false">
 
-    <div class="lk-size-guide-page" dir="rtl">
+    <div class="lk-size-guide-page">
         <section class="lk-size-guide-hero" aria-labelledby="size-guide-title">
             <img class="lk-size-guide-hero__model" src="assets/size-guide/hero-model.png" alt='STOREFRONT.AUTO_STR_85' />
 
@@ -30,7 +30,7 @@
                             <h3>{{ 'STOREFRONT.AUTO_STR_411' | translate }}</h3>
                         </div>
 
-                        <p>قس محيط الخصر من أضيق منطقة في الخصر، عادةً فوق منطقة السرة.</p>
+                        <p>{{ 'STOREFRONT.AUTO_STR_29' | translate }}</p>
                         <svg class="lk-size-guide-measure-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
                             <circle cx="32" cy="32" r="29.5" stroke="#D8E3EC" />
                             <path
@@ -57,7 +57,7 @@
                             <h3>{{ 'STOREFRONT.AUTO_STR_412' | translate }}</h3>
                         </div>
 
-                        <p>قس محيط البطن من أوسع منطقة، عادةً حول السرة، وأنت واقف بشكل مستقيم.</p>
+                        <p>{{ 'STOREFRONT.AUTO_STR_12' | translate }}</p>
                         <svg class="lk-size-guide-measure-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
                             <circle cx="32" cy="32" r="29.5" stroke="#D8E3EC" />
                             <path
@@ -93,13 +93,13 @@
                     <h3>{{ 'STOREFRONT.AUTO_STR_379' | translate }}</h3>
 
                     <p>
-                        جميع المقاسات بالسنتيمتر (سم)
+                        {{ 'STOREFRONT.AUTO_STR_134' | translate }} ({{ 'STOREFRONT.AUTO_STR_493' | translate }})
                         <br />{{ 'STOREFRONT.AUTO_STR_99' | translate }}<br />
-                        بـ 1–2 سم.
+                        1–2 {{ 'STOREFRONT.AUTO_STR_493' | translate }}.
                     </p>
 
                     <p>{{ 'STOREFRONT.AUTO_STR_79' | translate }}<br />
-                        المقاس الأكبر لراحة أفضل.
+                        {{ 'STOREFRONT.AUTO_STR_135' | translate }}.
                     </p>
                 </aside>
 
@@ -108,9 +108,9 @@
                         <thead>
                             <tr>
                                 <th>{{ 'PRODUCT.SIZE' | translate }}</th>
-                                <th>مقاس رقمي (تقريبي)</th>
-                                <th>محيط الخصر (سم)</th>
-                                <th>محيط البطن (سم)</th>
+                                <th>{{ 'STOREFRONT.AUTO_STR_433' | translate }}</th>
+                                <th>{{ 'STOREFRONT.AUTO_STR_413' | translate }} ({{ 'STOREFRONT.AUTO_STR_493' | translate }})</th>
+                                <th>{{ 'STOREFRONT.AUTO_STR_414' | translate }} ({{ 'STOREFRONT.AUTO_STR_493' | translate }})</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,7 +141,7 @@
                         <path d="M23.5 17.5h17M23.5 46.5h17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                     </svg>
                     <h3>{{ 'STOREFRONT.AUTO_STR_345' | translate }}</h3>
-                    <p>منتجاتنا مصنوعة من خامات مرنة تتكيف مع جسمك.</p>
+                    <p>{{ 'STOREFRONT.AUTO_STR_42' | translate }}</p>
                 </article>
 
                 <article>
@@ -153,7 +153,7 @@
                         <path d="M26 42.8c1.8.1 4.2 1.2 6 2.6 1.8-1.4 4.2-2.5 6-2.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <h3>{{ 'STOREFRONT.AUTO_STR_320' | translate }}</h3>
-                    <p>للاستخدام اليومي اختاري مقاسك المعتاد، وللتنحيف أكثر اختاري مقاساً أصغر.</p>
+                    <p>{{ 'STOREFRONT.AUTO_STR_7' | translate }}</p>
                 </article>
 
                 <article>
@@ -167,7 +167,7 @@
                         <rect x="30" y="40" width="5" height="5" rx="1" stroke="currentColor" stroke-width="2" />
                     </svg>
                     <h3>{{ 'STOREFRONT.AUTO_STR_287' | translate }}</h3>
-                    <p>عند تجربة المنتج لأول مرة، ارتديه لمدة قصيرة للتأكد من المقاس المناسب.</p>
+                    <p>{{ 'STOREFRONT.AUTO_STR_9' | translate }}</p>
                 </article>
 
                 <article>
@@ -178,7 +178,7 @@
                         </g>
                     </svg>
                     <h3>{{ 'STOREFRONT.AUTO_STR_168' | translate }}</h3>
-                    <p>إذا كنت مترددة بين مقاسين، أعيدي القياس مرة أخرى في وضعية صحيحة.</p>
+                    <p>{{ 'STOREFRONT.AUTO_STR_18' | translate }}</p>
                 </article>
             </div>
         </section>
@@ -196,7 +196,7 @@
 
             <div class="lk-size-guide-help__copy">
                 <h2>{{ 'STOREFRONT.AUTO_STR_86' | translate }}</h2>
-                <p>تواصل معنا وسنساعدك في اختيار المقاس المناسب لك.</p>
+                <p>{{ 'STOREFRONT.AUTO_STR_35' | translate }}</p>
 
                 <a routerLink="/chat" class="lk-whatsapp-button">
                     <svg class="lk-whatsapp-button__icon" viewBox="0 0 26 26" fill="none" aria-hidden="true">
@@ -223,11 +223,11 @@
             </div>
             <div>
                 <lucide-icon [img]="Truck" aria-hidden="true"></lucide-icon>
-                <span><strong>{{ 'CART.FAST_SHIPPING' | translate }}</strong><small>2 - 5 أيام</small></span>
+                <span><strong>{{ 'CART.FAST_SHIPPING' | translate }}</strong><small>{{ 'CART.DAYS_2_5' | translate }}</small></span>
             </div>
             <div>
                 <lucide-icon [img]="PackageCheck" aria-hidden="true"></lucide-icon>
-                <span><strong>{{ 'STOREFRONT.AUTO_STR_346' | translate }}</strong><small>14 يوم</small></span>
+                <span><strong>{{ 'STOREFRONT.AUTO_STR_346' | translate }}</strong><small>14 {{ 'STOREFRONT.AUTO_STR_492' | translate }}</small></span>
             </div>
             <div>
                 <lucide-icon [img]="BadgeCheck" aria-hidden="true"></lucide-icon>

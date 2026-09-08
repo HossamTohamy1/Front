@@ -78,15 +78,17 @@ export class OrdersPageComponent {
     return 'warning';
   }
 
-  getStatusLabel(status: string, isAr: boolean) {
+  getStatusLabel(status: string, isAr: boolean = true) {
     const labels: Record<string, {ar: string, en: string}> = {
-      'pending': {ar: 'COMMON.PENDING', en: 'Pending'},
-      'confirmed': {ar: 'COMMON.CONFIRMED', en: 'Confirmed'},
-      'shipped': {ar: 'COMMON.SHIPPED', en: 'Shipped'},
-      'delivered': {ar: 'DASHBOARD.AUTO_STR_341', en: 'Delivered'},
-      'cancelled': {ar: 'COMMON.CANCELLED', en: 'Cancelled'},
-      'all': {ar: 'COMMON.ALL', en: 'All'}
+      'pending': {ar: 'قيد الانتظار', en: 'Pending'},
+      'confirmed': {ar: 'مؤكد', en: 'Confirmed'},
+      'shipped': {ar: 'تم الشحن', en: 'Shipped'},
+      'delivered': {ar: 'تم التسليم', en: 'Delivered'},
+      'cancelled': {ar: 'ملغي', en: 'Cancelled'},
+      'all': {ar: 'الكل', en: 'All'}
     };
-    return labels[status] ? (isAr ? labels[status].ar : labels[status].en) : status;
+    const item = labels[status];
+    if (!item) return status;
+    return isAr ? item.ar : item.en;
   }
 }

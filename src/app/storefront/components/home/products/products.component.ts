@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, ShoppingCart, Star } from 'lucide-angular';
 import { homeProducts } from '../../../../shared/data/homePageData';
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 @Component({
   selector: 'app-products',
@@ -16,6 +17,7 @@ export class ProductsComponent {
   @Input() config?: any;
   readonly ShoppingCart = ShoppingCart;
   readonly Star = Star;
+  readonly langService = inject(LangService);
 
   get title() {
     return this.config?.title ?? 'HOME.BEST_SELLERS_ALT';

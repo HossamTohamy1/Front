@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { LucideAngularModule, Check, ChevronLeft, Headphones, Heart, MessageCircle, Search, ShoppingCart, Trash2, X } from 'lucide-angular';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
+import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
 
 export interface SearchPageConfig {
     searchPlaceholder: string;
@@ -20,8 +21,8 @@ export interface SearchPageConfig {
 }
 
 const initialConfig: SearchPageConfig = {
-    searchPlaceholder: 'ابحث عن...',
-    quickSuggestionsTitle: 'عمليات بحث شائعة:',
+    searchPlaceholder: 'SEARCH.FIND_PLACEHOLDER',
+    quickSuggestionsTitle: 'SEARCH.POPULAR_TITLE',
     quickSuggestions: [
         'SEARCH.MENS_WAIST',
         'SEARCH.WOMENS_WAIST',
@@ -116,7 +117,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const saved = localStorage.getItem('loxxking-search-page-config');
     if (saved) {
       try {
-        this.pageConfig.set({ ...initialConfig, ...JSON.parse(saved) });
+        const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
+        this.pageConfig.set(clean);
+        localStorage.setItem('loxxking-search-page-config', JSON.stringify(clean));
       } catch (e) {}
     }
   }

@@ -4,7 +4,7 @@
       <h1 class="font-display font-bold text-2xl">{{ configService.config().pageTitle | translate }}</h1>
       <button *ngIf="unread() > 0" (click)="markAllRead()" class="flex items-center gap-1.5 text-sm text-brand hover:underline tap-highlight">
         <lucide-icon name="check-check" [size]="16"></lucide-icon>
-        {{ t('markAllRead', langService.lang()) }}
+        {{ 'COMMON.MARKALLREAD' | translate }}
       </button>
     </div>
 

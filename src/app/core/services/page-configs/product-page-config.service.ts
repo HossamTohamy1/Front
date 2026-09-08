@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -50,39 +51,39 @@ export interface ProductPageConfig {
 const initialConfig: ProductPageConfig = {
     showBreadcrumb: true,
     showBestSellerBadge: true,
-    bestSellerText: 'HOME.BEST_SELLERS_ALT',
+    bestSellerText: 'الأكثر مبيعاً',
     showRatingLine: true,
     
     showColorOptions: true,
-    colorLabel: 'PRODUCT.COLOR',
+    colorLabel: 'اللون',
     showSizeOptions: true,
-    sizeLabel: 'PRODUCT.SIZE',
-    sizeGuideText: 'PRODUCT.SIZE_GUIDE',
+    sizeLabel: 'المقاس',
+    sizeGuideText: 'دليل المقاسات',
     
     showPurchaseActions: true,
-    addToCartText: 'PRODUCT.ADD_TO_CART',
-    buyNowText: 'PRODUCT.BUY_NOW',
+    addToCartText: 'أضف للسلة',
+    buyNowText: 'شراء الآن',
     
     showServiceRow: true,
     services: [
-        { id: '1', icon: 'Truck', text: 'PRODUCT.SERVICE_FREE_SHIPPING' },
-        { id: '2', icon: 'RotateCcw', text: 'PRODUCT.SERVICE_EASY_RETURNS' }
+        { id: '1', icon: 'Truck', text: 'توصيل مجاني للطلبات فوق 300 ر.س' },
+        { id: '2', icon: 'RotateCcw', text: 'استبدال واسترجاع خلال 14 يوم' }
     ],
     
     showTabs: true,
-    tabDescriptionText: 'PRODUCT.DESCRIPTION',
-    tabFeaturesText: 'PRODUCT.FEATURES',
-    tabReviewsText: 'PRODUCT.REVIEWS',
+    tabDescriptionText: 'الوصف',
+    tabFeaturesText: 'المميزات',
+    tabReviewsText: 'التقييمات',
     
     showDescriptionSection: true,
     
     showFeaturesSection: true,
     features: [
-        { id: '1', icon: 'shield', title: 'PRODUCT.SAFE_MATERIAL', subtitle: 'PRODUCT.GENTLE' },
-        { id: '2', icon: 'feather', title: 'PRODUCT.LIGHTWEIGHT', subtitle: 'PRODUCT.COMFORTABLE' },
-        { id: '3', icon: 'posture', title: 'PRODUCT.BACK_SUPPORT', subtitle: 'PRODUCT.IMPROVES_POSTURE' },
-        { id: '4', icon: 'fabric', title: 'PRODUCT.BREATHABLE', subtitle: 'PRODUCT.AIRFLOW' },
-        { id: '5', icon: 'waist', title: 'PRODUCT.WAIST_SCULPTING', subtitle: 'PRODUCT.SHAPES_BODY' }
+        { id: '1', icon: 'shield', title: 'خامة آمنة', subtitle: 'لطيفة على البشرة' },
+        { id: '2', icon: 'feather', title: 'خفيف الوزن', subtitle: 'لراحة تدوم طويلاً' },
+        { id: '3', icon: 'posture', title: 'دعم الظهر', subtitle: 'يحسن استقامة القوام' },
+        { id: '4', icon: 'fabric', title: 'تهوية عالية', subtitle: 'يسمح بمرور الهواء' },
+        { id: '5', icon: 'waist', title: 'نحت الخصر', subtitle: 'يمنحك شكلاً متناسقاً' }
     ],
     
     showReviewsSection: true,
@@ -135,10 +136,7 @@ export class ProductPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): ProductPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

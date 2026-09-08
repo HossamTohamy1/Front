@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 type OrderConfirmationPageConfig = {
     pageTitle: string;
@@ -7,8 +8,8 @@ type OrderConfirmationPageConfig = {
 };
 
 const DEFAULT_CONFIG = {
-    pageTitle: 'CHECKOUT.CONFIRMED',
-    successMessage: 'CHECKOUT.SUCCESS_DESC',
+    pageTitle: 'تم تأكيد طلبك',
+    successMessage: 'شكراً لتسوقك من LOXX KING. تم استلام طلبك بنجاح.',
     showOrderDetails: true,
     showNextSteps: true,
 };
@@ -67,9 +68,6 @@ export class OrderConfirmationPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...DEFAULT_CONFIG, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, DEFAULT_CONFIG);
   }
 }

@@ -1,12 +1,12 @@
 <app-store-layout [showFloatingChat]="false">
     
-    <main class="lk-offers-page" dir="rtl">
+    <main class="lk-offers-page">
         <section *ngIf="pageConfig().showHero" class="lk-offers-hero" aria-labelledby="offers-title" [ngStyle]="heroStyle">
             <div class="lk-offers-hero__copy">
                 <h1 id="offers-title">{{ pageConfig().heroTitle | translate }}</h1>
                 <p>{{ pageConfig().heroSubtitle | translate }}</p>
                 <button type="button" (click)="scrollToOffers()">
-                    <lucide-icon [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
+                    <lucide-icon class="rtl-flip" [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
                     <span>{{ 'STOREFRONT.AUTO_STR_368' | translate }}</span>
                 </button>
             </div>
@@ -41,10 +41,10 @@
                     </div>
 
                     <div class="lk-offer-product-card__body">
-                        <h3>{{ product.nameAr }}</h3>
+                        <h3>{{ product.nameAr | translate }}</h3>
                         <div class="lk-offer-product-card__prices">
-                            <strong>{{ product.price }} <span>ر.س</span></strong>
-                            <del>{{ product.originalPrice }}</del>
+                            <strong>{{ product.price }} <span>{{ 'COMMON.CURRENCY' | translate }}</span></strong>
+                            <del>{{ product.originalPrice }} {{ 'COMMON.CURRENCY' | translate }}</del>
                         </div>
 
                         <button type="button" (click)="addOfferProduct(product)">
@@ -65,7 +65,7 @@
                     (click)="toggleAllBundles()"
                     [attr.aria-expanded]="showAllBundles()"
                 >
-                    {{ showAllBundles() ? 'STOREFRONT.AUTO_STR_445' : 'COMMON.SEEALL' }}
+                    {{ (showAllBundles() ? 'STOREFRONT.AUTO_STR_445' : 'COMMON.SEEALL') | translate }}
                 </button>
             </div>
 
@@ -74,8 +74,8 @@
                     <div class="lk-offer-bundle-card__copy">
                         <h3>{{ bundle.title | translate}}</h3>
                         <p>{{ bundle.subtitle | translate}}</p>
-                        <strong>{{ bundle.price }} <span>ر.س</span></strong>
-                        <del>{{ bundle.originalPrice }} ر.س</del>
+                        <strong>{{ bundle.price }} <span>{{ 'COMMON.CURRENCY' | translate }}</span></strong>
+                        <del>{{ bundle.originalPrice }} {{ 'COMMON.CURRENCY' | translate }}</del>
                     </div>
 
                     <div *ngIf="bundle.imageType === 'three'" class="lk-offer-bundle-card__media lk-offer-bundle-card__media--three" aria-hidden="true">
@@ -100,10 +100,10 @@
                     </div>
 
                     <div class="lk-offer-bundle-card__footer">
-                        <span>وفر {{ bundle.saving }} ر.س</span>
+                        <span>{{ 'STOREFRONT.AUTO_STR_490' | translate }} {{ bundle.saving }} {{ 'COMMON.CURRENCY' | translate }}</span>
                         <button type="button" (click)="addBundle(bundle)">
                             <span>{{ 'STOREFRONT.AUTO_STR_277' | translate }}</span>
-                            <lucide-icon [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
+                            <lucide-icon class="rtl-flip" [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
                         </button>
                     </div>
                 </article>
@@ -175,7 +175,7 @@
 
                 <div class="lk-offers-limited-card__copy">
                     <h3>{{ 'STOREFRONT.AUTO_STR_211' | translate }}</h3>
-                    <p>سارعي قبل انتهاء الوقت!</p>
+                    <p>{{ 'STOREFRONT.AUTO_STR_155' | translate }}</p>
                 </div>
 
                 <span class="lk-offers-limited-card__percent" aria-hidden="true">

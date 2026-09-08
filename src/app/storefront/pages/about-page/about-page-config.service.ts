@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -54,31 +55,31 @@ export interface AboutPageConfig {
 const initialConfig: AboutPageConfig = {
     showTitle: true,
     headerTitle: 'ABOUT.TITLE',
-    headerSubtitle: 'Ù„ÙˆÙƒØ³ ÙƒÙŠÙ†Ø¬... ÙˆØ¬Ù‡ØªÙƒ Ø§Ù„Ø£ÙˆÙ„Ù‰ Ù„Ù„Ø£Ù†Ø§Ù‚Ø© Ø§Ù„Ø¹ØµØ±ÙŠØ©',
+    headerSubtitle: 'ABOUT.SLOGAN',
     
     showIntroSection: true,
-    introText: 'Ù„ÙˆÙƒØ³ ÙƒÙŠÙ†Ø¬ Ù‡ÙŠ Ø¹Ù„Ø§Ù…Ø© ØªØ¬Ø§Ø±ÙŠØ© Ø±Ø§Ø¦Ø¯Ø©\nØªØ£Ø³Ø³Øª ÙÙŠ Ù…ØµØ± ÙˆØªÙ‡ØªÙ… Ø¨ØªÙ‚Ø¯ÙŠÙ… Ø£Ø²ÙŠØ§Ø¡\nØ¹ØµØ±ÙŠØ© ØªÙ„Ø¨ÙŠ ÙƒØ§ÙØ© Ø§Ù„Ø£Ø°ÙˆØ§Ù‚.\nÙ†Ø­Ù† Ù†Ø³Ø¹Ù‰ Ù„Ø£Ù† Ù†ÙƒÙˆÙ† Ø®ÙŠØ§Ø±Ùƒ Ø§Ù„Ø£ÙˆÙ„ Ù…Ù† Ø®Ù„Ø§Ù„\nØªÙˆÙÙŠØ± Ø¬ÙˆØ¯Ø© Ø¹Ø§Ù„ÙŠØ© Ø¨Ø£Ø³Ø¹Ø§Ø± ØªÙ†Ø§ÙØ³ÙŠØ©\nÙ„ØªÙ†Ø§Ø³Ø¨ Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª.',
+    introText: 'ABOUT.DESC',
     
     showReasonsSection: true,
-    reasonsTitle: 'STOREFRONT.AUTO_STR_265',
+    reasonsTitle: 'ABOUT.WHY_US',
     reasons: [
-        { id: '1', icon: 'ShieldCheck', title: 'ABOUT.QUALITY', text: 'Ù†Ø­Ø±Øµ ÙÙŠ Ù…Ù†ØªØ¬Ø§ØªÙ†Ø§ Ø¹Ù„Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ø£ÙØ¶Ù„ Ø§Ù„Ø®Ø§Ù…Ø§Øª Ù„Ø¶Ù…Ø§Ù† Ø§Ù„Ø±Ø§Ø­Ø©.' },
-        { id: '2', icon: 'Check', title: 'STOREFRONT.AUTO_STR_350', text: 'Ù†Ù‚Ø¯Ù… Ù„Ùƒ Ù…Ù†ØªØ¬Ø§Øª Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ø¬ÙˆØ¯Ø© Ø¨Ø£Ø³Ø¹Ø§Ø± ØªÙ†Ø§ÙØ³ÙŠØ©.' },
-        { id: '3', icon: 'Star', title: 'STOREFRONT.AUTO_STR_291', text: 'Ù†ØªÙ…ÙŠØ² Ø¨ØªÙˆÙÙŠØ± Ø£Ø­Ø¯Ø« ØµÙŠØ­Ø§Øª Ø§Ù„Ù…ÙˆØ¶Ø© Ø§Ù„ØªÙŠ ØªÙ†Ø§Ø³Ø¨ Ø§Ù„Ø¬Ù…ÙŠØ¹.' }
+        { id: '1', icon: 'ShieldCheck', title: 'ABOUT.QUALITY', text: 'ABOUT.QUALITY_DESC' },
+        { id: '2', icon: 'Check', title: 'ABOUT.COMFORT', text: 'ABOUT.COMFORT_DESC' },
+        { id: '3', icon: 'Star', title: 'ABOUT.RESULTS', text: 'ABOUT.RESULTS_DESC' }
     ],
     
     showVisionSection: true,
     visionTitle: 'ABOUT.VISION_TITLE',
-    visionText: 'Ø£Ù† Ù†ÙƒÙˆÙ† Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£ÙˆÙ„ ÙÙŠ Ø¹Ø§Ù„Ù… Ø§Ù„Ø£Ø²ÙŠØ§Ø¡ ÙˆØ§Ù„Ù…ÙˆØ¶Ø© ÙÙŠ Ø§Ù„Ø´Ø±Ù‚ Ø§Ù„Ø£ÙˆØ³Ø·\nÙ…Ù† Ø®Ù„Ø§Ù„ ØªÙ‚Ø¯ÙŠÙ… ØªØµÙ…ÙŠÙ…Ø§Øª Ø¹ØµØ±ÙŠØ© Ù…Ø¨ØªÙƒØ±Ø© ØªÙ„ÙŠÙ‚ Ø¨Ø¹Ù…Ù„Ø§Ø¦Ù†Ø§.',
+    visionText: 'ABOUT.VISION_TEXT',
     
     showMissionSection: true,
     missionTitle: 'ABOUT.MISSION_TITLE',
-    missionText: 'ØªÙ„Ø¨ÙŠØ© ØªØ·Ù„Ø¹Ø§Øª Ø¹Ù…Ù„Ø§Ø¦Ù†Ø§ Ø¨ØªÙˆÙÙŠØ± Ø£Ø­Ø¯Ø« ØµÙŠØ­Ø§Øª Ø§Ù„Ù…ÙˆØ¶Ø© Ø¨Ø¬ÙˆØ¯Ø© ØªÙ†Ø§ÙØ³ÙŠØ©\nÙ…Ø¹ Ø§Ù„ØªØ±ÙƒÙŠØ² Ø¹Ù„Ù‰ Ø±Ø§Ø­Ø© ÙˆØ±Ø¶Ø§ Ø¹Ù…Ù„Ø§Ø¦Ù†Ø§.',
+    missionText: 'ABOUT.MISSION_TEXT',
     
     showValuesSection: true,
     valuesTitle: 'ABOUT.VALUES_TITLE',
     values: [
-        { id: '1', icon: 'ShieldCheck', label: 'STOREFRONT.AUTO_STR_418' },
+        { id: '1', icon: 'ShieldCheck', label: 'ABOUT.VALUE_1' },
         { id: '2', icon: 'Check', label: 'ABOUT.VALUE_2' },
         { id: '3', icon: 'Star', label: 'ABOUT.VALUE_3' },
         { id: '4', icon: 'Target', label: 'ABOUT.VALUE_4' },
@@ -89,7 +90,7 @@ const initialConfig: AboutPageConfig = {
     contactTitle: 'CONTACT.TITLE',
     contacts: [
         { id: '1', icon: 'facebook', label: 'SOCIAL.FACEBOOK', link: 'https://facebook.com' },
-        { id: '2', icon: 'instagram', label: 'STOREFRONT.AUTO_STR_435', link: 'https://instagram.com' },
+        { id: '2', icon: 'instagram', label: 'SOCIAL.INSTAGRAM', link: 'https://instagram.com' },
         { id: '3', icon: 'mail', label: 'SOCIAL.EMAIL', link: 'mailto:support@loxxking.com' },
         { id: '4', icon: 'phone', label: 'SOCIAL.CALL', link: 'tel:+201000000000' },
         { id: '5', icon: 'whatsapp', label: 'CONTACT.WHATSAPP', link: 'https://wa.me/201000000000' }
@@ -120,7 +121,7 @@ export class AboutPageConfigService {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        this.configSubject.next({ ...initialConfig, ...parsed });
+        this.configSubject.next(sanitizeWithInitial(parsed, initialConfig));
       } catch (e) {
       }
     }
@@ -130,7 +131,7 @@ export class AboutPageConfigService {
     if (e.key !== 'loxxking-about-page-config' || !e.newValue) return;
     try {
       const parsed = JSON.parse(e.newValue);
-      this.configSubject.next({ ...initialConfig, ...parsed });
+      this.configSubject.next(sanitizeWithInitial(parsed, initialConfig));
     } catch (_) {}
   }
 

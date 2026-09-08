@@ -108,8 +108,17 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--muted-fg);
 }
 
+.rtl-flip {
+  display: inline-flex;
+}
+
 [dir="rtl"] .rtl-flip {
   transform: scaleX(-1);
+}
+
+[dir="rtl"] .rtl-flip > svg,
+[dir="rtl"] lucide-icon.rtl-flip > svg {
+  transform: none !important;
 }
 
 @keyframes slideUp {

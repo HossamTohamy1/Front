@@ -56,7 +56,7 @@ const policies: PolicyDefinition[] = [
     {
         key: 'privacy',
         title: 'POLICIES.PRIVACY',
-        subtitle: 'نحن في لوكس كينج نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.',
+        subtitle: 'STOREFRONT.AUTO_STR_22',
         gridTitle: 'POLICIES.PRIVACY',
         gridDescription: 'STOREFRONT.AUTO_STR_156',
         icon: ShieldCheck,
@@ -64,27 +64,27 @@ const policies: PolicyDefinition[] = [
         sections: [
             {
                 title: 'STOREFRONT.AUTO_STR_166',
-                description: 'نجمع فقط المعلومات الضرورية لإتمام طلبك وتقديم خدمة أفضل لك.',
+                description: 'STOREFRONT.AUTO_STR_27',
                 icon: UserRound,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_212',
-                description: 'نستخدم معلوماتك فقط لمعالجة طلباتك، والتواصل معك، وتقديم الدعم.',
+                description: 'STOREFRONT.AUTO_STR_19',
                 icon: FileText,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_252',
-                description: 'نستخدم تقنيات أمان متقدمة لحماية بياناتك من الوصول غير المصرح به.',
+                description: 'STOREFRONT.AUTO_STR_17',
                 icon: LockKeyhole,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_233',
-                description: 'لا نقوم ببيع أو مشاركة بياناتك مع أي جهة خارجية إلا في حالات الشحن والدفع.',
+                description: 'STOREFRONT.AUTO_STR_6',
                 icon: UsersRound,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_464',
-                description: 'يمكنك طلب تعديل أو حذف بياناتك في أي وقت عبر التواصل معنا.',
+                description: 'STOREFRONT.AUTO_STR_30',
                 icon: BadgeCheck,
             },
         ],
@@ -92,7 +92,7 @@ const policies: PolicyDefinition[] = [
     {
         key: 'shipping',
         title: 'STOREFRONT.AUTO_STR_176',
-        subtitle: 'نحرص على توصيل طلبك بأسرع وقت وبأفضل خدمة.',
+        subtitle: 'STOREFRONT.AUTO_STR_48',
         gridTitle: 'STOREFRONT.AUTO_STR_372',
         gridDescription: 'STOREFRONT.AUTO_STR_177',
         icon: Truck,
@@ -100,22 +100,22 @@ const policies: PolicyDefinition[] = [
         sections: [
             {
                 title: 'STOREFRONT.AUTO_STR_373',
-                description: 'من 2 إلى 3 أيام عمل داخل المدن، ومن 2 إلى 5 أيام عمل للمناطق الأخرى.',
+                description: 'STOREFRONT.AUTO_STR_11',
                 icon: Clock3,
             },
             {
                 title: 'DASHBOARD.AUTO_STR_354',
-                description: 'رسوم الشحن تُحسب عند إتمام الطلب وتختلف حسب المدينة والمنطقة.',
+                description: 'STOREFRONT.AUTO_STR_23',
                 icon: CreditCard,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_397',
-                description: 'يمكنك تتبع طلبك من خلال صفحة تتبع الطلب باستخدام رقم الطلب ورقم الهاتف.',
+                description: 'STOREFRONT.AUTO_STR_8',
                 icon: MapPin,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_337',
-                description: 'في حال تأخر الطلب عن المدة المتوقعة، سنتواصل معك في أقرب وقت ممكن.',
+                description: 'STOREFRONT.AUTO_STR_13',
                 icon: Info,
             },
         ],
@@ -123,7 +123,7 @@ const policies: PolicyDefinition[] = [
     {
         key: 'returns',
         title: 'POLICIES.RETURNS_POLICY',
-        subtitle: 'نحرص على رضاك التام، لذلك نوفر لك سياسة استبدال واسترجاع سهلة وواضحة.',
+        subtitle: 'STOREFRONT.AUTO_STR_10',
         gridTitle: 'POLICIES.RETURNS_POLICY',
         gridDescription: 'STOREFRONT.AUTO_STR_130',
         icon: PackageOpen,
@@ -131,7 +131,7 @@ const policies: PolicyDefinition[] = [
         sections: [
             {
                 title: 'STOREFRONT.AUTO_STR_131',
-                description: 'يمكنك الاستبدال أو الاسترجاع خلال 7 أيام من تاريخ استلام الطلب.',
+                description: 'STOREFRONT.AUTO_STR_20',
                 icon: CalendarDays,
             },
             {
@@ -139,9 +139,9 @@ const policies: PolicyDefinition[] = [
                 description: '',
                 icon: ShieldCheck,
                 bullets: [
-                    'أن يكون المنتج غير مستخدم.',
-                    'أن يكون في عبوته الأصلية مع جميع الملحقات.',
-                    'عدم نزع الملصقات أو غسيل المنتج.',
+                    'STOREFRONT.AUTO_STR_121',
+                    'STOREFRONT.AUTO_STR_49',
+                    'STOREFRONT.AUTO_STR_84',
                 ],
             },
             {
@@ -149,14 +149,14 @@ const policies: PolicyDefinition[] = [
                 description: '',
                 icon: RefreshCcw,
                 bullets: [
-                    'وصول منتج مختلف عن الطلب.',
-                    'وجود عيب في المنتج.',
-                    'تلف المنتج أثناء الشحن.',
+                    'STOREFRONT.AUTO_STR_132',
+                    'STOREFRONT.AUTO_STR_199',
+                    'STOREFRONT.AUTO_STR_157',
                 ],
             },
             {
                 title: 'STOREFRONT.AUTO_STR_254',
-                description: 'في حال كان سبب الاسترجاع من طرفنا (خطأ أو عيب)، نتحمل نحن تكلفة الشحن.',
+                description: 'STOREFRONT.AUTO_STR_74',
                 icon: Truck,
             },
         ],
@@ -165,7 +165,7 @@ const policies: PolicyDefinition[] = [
     {
         key: 'terms',
         title: 'STOREFRONT.AUTO_STR_249',
-        subtitle: 'باستخدامك لموقع لوكس كينج، فإنك توافق على الشروط والأحكام التالية.',
+        subtitle: 'STOREFRONT.AUTO_STR_14',
         gridTitle: 'STOREFRONT.AUTO_STR_249',
         gridDescription: 'STOREFRONT.AUTO_STR_178',
         icon: FileCheck2,
@@ -173,27 +173,27 @@ const policies: PolicyDefinition[] = [
         sections: [
             {
                 title: 'STOREFRONT.AUTO_STR_279',
-                description: 'يسمح باستخدام الموقع لشراء المنتجات الشخصية فقط، ويمنع أي استخدام تجاري أو غير قانوني.',
+                description: 'STOREFRONT.AUTO_STR_4',
                 icon: Monitor,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_280',
-                description: 'جميع الطلبات تخضع للتوفر، ويجب تقديم معلومات صحيحة وكاملة، والدفع يتم حسب طريقة الدفع المختارة.',
+                description: 'STOREFRONT.AUTO_STR_1',
                 icon: Landmark,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_255',
-                description: 'الأسعار قابلة للتغيير دون إشعار مسبق، والعروض قابلة للتعديل وفقًا لسياسة المتجر.',
+                description: 'STOREFRONT.AUTO_STR_5',
                 icon: Tags,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_427',
-                description: 'لا نتحمل أي مسؤولية عن سوء استخدام المنتجات بعد الاستلام أو أي أضرار غير ناتجة عن عيب مصنعي.',
+                description: 'STOREFRONT.AUTO_STR_2',
                 icon: CircleAlert,
             },
             {
                 title: 'STOREFRONT.AUTO_STR_338',
-                description: 'نحتفظ بحق تعديل هذه الشروط في أي وقت، ويعد استمرارك في استخدام الموقع موافقة على التحديثات.',
+                description: 'STOREFRONT.AUTO_STR_3',
                 icon: PencilLine,
             },
         ],

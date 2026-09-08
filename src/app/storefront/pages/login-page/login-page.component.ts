@@ -7,23 +7,24 @@ import { LucideAngularModule, ArrowLeft, Eye, EyeOff, Heart, Lock, Mail, ShieldC
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth/auth.service';
+import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
 
 export type LoginBenefit = { id: string; title: string; line1: string; line2: string; };
 export type LoginPageConfig = { heroTitlePrefix: string; heroTitleHighlight: string; heroSubtitle: string; welcomeTitle: string; welcomeSubtitle: string; showSocialLogin: boolean; benefits: LoginBenefit[]; heroImage: string; };
 
 const DEFAULT_CONFIG: LoginPageConfig = {
-  heroTitlePrefix: '???? ???? ??',
-  heroTitleHighlight: '?????',
-  heroSubtitle: '????? ????? ?????? ?????\n?????? ?????? ?? ?? ????.',
-  welcomeTitle: '????? ??????',
-  welcomeSubtitle: '?????? ?? ??? ???? ?? LOXX KING',
+  heroTitlePrefix: 'STOREFRONT.AUTO_STR_272',
+  heroTitleHighlight: 'STOREFRONT.AUTO_STR_271',
+  heroSubtitle: 'STOREFRONT.AUTO_STR_87',
+  welcomeTitle: 'AUTH.LOGIN',
+  welcomeSubtitle: 'STOREFRONT.AUTO_STR_480',
   showSocialLogin: true,
   heroImage: '',
   benefits: [
-    { id: '1', title: '??? ??????', line1: '????? ???????', line2: '????? ?????? ??????' },
-    { id: '2', title: '??????? ???', line1: '????? ???????', line2: '???? ?????' },
-    { id: '3', title: '????? ????', line1: '????? ???????', line2: '?? ???????' },
-    { id: '4', title: '??? ???????', line1: '??? ??? ????????', line2: '?? ?? ???' },
+    { id: '1', title: 'STOREFRONT.AUTO_STR_275', line1: 'STOREFRONT.AUTO_STR_96', line2: 'STOREFRONT.AUTO_STR_228' },
+    { id: '2', title: 'STOREFRONT.AUTO_STR_274', line1: 'STOREFRONT.AUTO_STR_360', line2: 'STOREFRONT.AUTO_STR_254' },
+    { id: '3', title: 'STOREFRONT.AUTO_STR_273', line1: 'STOREFRONT.AUTO_STR_221', line2: 'STOREFRONT.AUTO_STR_258' },
+    { id: '4', title: 'STOREFRONT.AUTO_STR_271', line1: 'STOREFRONT.AUTO_STR_305', line2: 'STOREFRONT.AUTO_STR_140' },
   ],
 };
 
@@ -55,7 +56,15 @@ export class LoginPageComponent implements OnInit {
     const rememberedEmail = window.localStorage.getItem('loxx-remembered-email');
     if (rememberedEmail) { this.form.email = rememberedEmail; this.form.remember = true; }
     const saved = localStorage.getItem('loxx-login-config');
-    if (saved) { try { this.pageConfig.set({ ...DEFAULT_CONFIG, ...JSON.parse(saved) }); } catch (e) { console.error('Failed to parse login config', e); } }
+    if (saved) {
+      try {
+        const clean = sanitizeWithInitial(JSON.parse(saved), DEFAULT_CONFIG);
+        this.pageConfig.set(clean);
+        localStorage.setItem('loxx-login-config', JSON.stringify(clean));
+      } catch (e) {
+        console.error('Failed to parse login config', e);
+      }
+    }
   }
 
   togglePassword() { this.showPassword.update(v => !v); }

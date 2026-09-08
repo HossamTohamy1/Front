@@ -1,6 +1,7 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { LucideAngularModule, Bell, Package, Tag, MessageCircle, Info, CheckCheck } from 'lucide-angular';
 import { NotificationsPageConfigService } from '../../../core/services/config/notifications-page-config.service';
@@ -12,7 +13,7 @@ import { t } from '../../../shared/i18n/translations';
 @Component({
   selector: 'app-notifications-page',
   standalone: true,
-  imports: [CommonModule, StoreLayoutComponent, LucideAngularModule],
+  imports: [CommonModule, StoreLayoutComponent, LucideAngularModule, TranslatePipe, TranslateDirective],
   templateUrl: './notifications-page.component.html',
   styleUrl: './notifications-page.component.css'
 })

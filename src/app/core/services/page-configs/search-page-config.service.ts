@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -16,21 +17,21 @@ export interface SearchPageConfig {
 
 
 const initialConfig: SearchPageConfig = {
-    searchPlaceholder: 'SEARCH.FIND_PLACEHOLDER',
-    quickSuggestionsTitle: 'SEARCH.POPULAR_TITLE',
+    searchPlaceholder: 'ابحث عن...',
+    quickSuggestionsTitle: 'عمليات بحث شائعة:',
     quickSuggestions: [
-        'SEARCH.MENS_WAIST',
-        'SEARCH.WOMENS_WAIST',
-        'SEARCH.SLIMMING_WAIST',
-        'SEARCH.POSTPARTUM_WAIST',
+        'مشد خصر رجالي',
+        'مشد خصر نسائي',
+        'مشد خصر للتنحيف',
+        'مشد خصر بعد الولادة',
     ],
-    recentSearchTitle: 'SEARCH.RECENT',
+    recentSearchTitle: 'عمليات البحث الأخيرة',
     showRecentSearch: true,
-    noResultsTitle: 'SEARCH.NO_RESULTS',
-    noResultsSubtitle: 'SEARCH.TRY_DIFFERENT',
+    noResultsTitle: 'لم يتم العثور على أي منتج',
+    noResultsSubtitle: 'جرب استخدام كلمات بحث مختلفة أو تصفح المنتجات الشائعة',
     showSupportCard: true,
-    supportCardTitle: 'SEARCH.NOT_FOUND',
-    supportCardSubtitle: 'SEARCH.WHATSAPP_HELP',
+    supportCardTitle: 'لم تجد ما تبحث عنه؟',
+    supportCardSubtitle: 'تواصل معنا عبر واتساب للمساعدة',
 }
 
 @Injectable({
@@ -80,10 +81,7 @@ export class SearchPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): SearchPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

@@ -14,11 +14,11 @@ import { products, categories } from '../../../shared/data/mockData';
 import { t } from '../../../shared/i18n/translations';
 
 const sortOptions = [
-  { value: 'popular', en: 'Most Popular', ar: 'STOREFRONT.AUTO_STR_328' },
-  { value: 'newest', en: 'Newest', ar: 'STOREFRONT.AUTO_STR_447' },
+  { value: 'popular', en: 'Most Popular', ar: 'الأكثر شهرة' },
+  { value: 'newest', en: 'Newest', ar: 'الأحدث' },
   { value: 'price-asc', en: 'Price: Low to High', ar: 'السعر: الأقل أولاً' },
   { value: 'price-desc', en: 'Price: High to Low', ar: 'السعر: الأعلى أولاً' },
-  { value: 'rating', en: 'Top Rated', ar: 'STOREFRONT.AUTO_STR_273' },
+  { value: 'rating', en: 'Top Rated', ar: 'الأعلى تقييماً' },
 ];
 
 const ITEMS_PER_PAGE = 8;

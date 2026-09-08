@@ -1,14 +1,16 @@
 <app-store-layout [showFloatingChat]="false">
 
-  <main class="lk-cart-page" dir="rtl">
+  <main class="lk-cart-page">
     <section class="lk-cart-heading">
       <div>
         <h1>{{ config().headerTitle | translate}}</h1>
-        <p>{{ itemCount() }} {{ itemCount() === 1 ? 'STOREFRONT.AUTO_STR_471' : 'STOREFRONT.AUTO_STR_448' }}</p>
+        <p>{{ itemCount() }} {{ (itemCount() === 1 ? 'STOREFRONT.AUTO_STR_471' : 'STOREFRONT.AUTO_STR_448') | translate }}</p>
       </div>
 
       @if (config().showContinueShopping) {
-        <a routerLink="/all-shapers" class="lk-cart-continue">{{ 'STOREFRONT.AUTO_STR_294' | translate }}<lucide-icon name="chevron-left" aria-hidden="true"></lucide-icon>
+        <a routerLink="/all-shapers" class="lk-cart-continue">
+          <span>{{ 'STOREFRONT.AUTO_STR_294' | translate }}</span>
+          <lucide-icon [img]="ChevronRight" class="rtl-flip" aria-hidden="true"></lucide-icon>
         </a>
       }
     </section>
@@ -39,12 +41,12 @@
               <div class="lk-cart-item__meta">
                 <p class="lk-cart-item__meta-row lk-cart-item__meta-row--color">
                   <i class="lk-cart-color-dot" [class.is-beige]="item.color === 'STOREFRONT.AUTO_STR_483'" [class.is-black]="item.color !== 'STOREFRONT.AUTO_STR_483'" aria-hidden="true"></i>
-                  <span class="lk-cart-item__meta-label">اللون:</span>
-                  <strong class="lk-cart-item__meta-value">{{ item.color }}</strong>
+                  <span class="lk-cart-item__meta-label">{{ 'PRODUCT.COLOR' | translate }}:</span>
+                  <strong class="lk-cart-item__meta-value">{{ item.color | translate }}</strong>
                 </p>
 
                 <p class="lk-cart-item__meta-row">
-                  <span class="lk-cart-item__meta-label">المقاس:</span>
+                  <span class="lk-cart-item__meta-label">{{ 'PRODUCT.SIZE' | translate }}:</span>
                   <strong class="lk-cart-item__meta-value">{{ item.cartItem.size }}</strong>
                 </p>
               </div>
@@ -52,15 +54,15 @@
               <div class="lk-cart-item__price">
                 <span class="lk-cart-item__price-current">
                   <strong>{{ item.price }}</strong>
-                  <span>ر.س</span>
+                  <span>{{ 'COMMON.CURRENCY' | translate }}</span>
                 </span>
                 @if (config().showOldPrice && item.oldPrice && item.oldPrice > item.price) {
-                  <del>{{ item.oldPrice }} ر.س</del>
+                  <del>{{ item.oldPrice }} {{ 'COMMON.CURRENCY' | translate }}</del>
                 }
               </div>
 
               @if (item.cartItem.quantity > 1) {
-                <small>{{ (item.price * item.cartItem.quantity) | number }} ر.س</small>
+                <small>{{ (item.price * item.cartItem.quantity) | number }} {{ 'COMMON.CURRENCY' | translate }}</small>
               }
             </div>
 
@@ -101,18 +103,18 @@
       <section class="lk-cart-checkout-grid">
         <div class="lk-cart-summary">
           @if (config().showSubtotal) {
-            <div><span>{{ 'COMMON.SUBTOTAL' | translate }}</span><strong>{{ subtotal() | number }} ر.س</strong></div>
+            <div><span>{{ 'COMMON.SUBTOTAL' | translate }}</span><strong>{{ subtotal() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong></div>
           }
           @if (config().showShipping) {
-            <div><span>{{ 'DASHBOARD.AUTO_STR_354' | translate }}</span><strong>{{ shipping() | number }} ر.س</strong></div>
+            <div><span>{{ 'DASHBOARD.AUTO_STR_354' | translate }}</span><strong>{{ shipping() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong></div>
           }
           @if (config().showDiscount) {
-            <div class="is-discount"><span>{{ 'COMMON.DISCOUNT' | translate }}</span><strong>-{{ discount() | number }} ر.س</strong></div>
+            <div class="is-discount"><span>{{ 'COMMON.DISCOUNT' | translate }}</span><strong>-{{ discount() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong></div>
           }
           @if (config().showTotal) {
             <div class="lk-cart-summary__total">
               <span>{{ 'CART.TOTAL' | translate }}</span>
-              <strong>{{ total() | number }} <small>ر.س</small></strong>
+              <strong>{{ total() | number }} <small>{{ 'COMMON.CURRENCY' | translate }}</small></strong>
             </div>
           }
           <p>{{ 'STOREFRONT.AUTO_STR_117' | translate }}</p>
@@ -125,7 +127,7 @@
               <input
                 [value]="couponCode()"
                 (input)="setCouponCode($event)"
-                [placeholder]="config().couponPlaceholder"
+                [placeholder]="config().couponPlaceholder | translate"
                 aria-label='CART.DISCOUNT_CODE'
               />
               <button type="button" (click)="applyCoupon()">{{ config().couponButtonText | translate }}</button>
@@ -148,7 +150,9 @@
           <div class="lk-cart-empty__copy">
             <h2>{{ 'STOREFRONT.AUTO_STR_59' | translate }}</h2>
             <p>{{ 'STOREFRONT.AUTO_STR_36' | translate }}</p>
-            <a routerLink="/all-shapers">{{ 'COMMON.START_SHOPPING' | translate }}<lucide-icon name="chevron-left" aria-hidden="true"></lucide-icon>
+            <a routerLink="/all-shapers">
+              <span>{{ 'COMMON.START_SHOPPING' | translate }}</span>
+              <lucide-icon [img]="ChevronRight" class="rtl-flip" aria-hidden="true"></lucide-icon>
             </a>
           </div>
         </section>

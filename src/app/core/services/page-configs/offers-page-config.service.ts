@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 type OffersPageConfig = {
     heroTitle: string;
@@ -9,12 +10,12 @@ type OffersPageConfig = {
 };
 
 const DEFAULT_CONFIG = {
-    heroTitle: 'OFFERS.TITLE',
-    heroSubtitle: 'OFFERS.SUBTITLE',
+    heroTitle: 'عروض خاصة',
+    heroSubtitle: 'أفضل الأسعار لفترة محدودة',
     showHero: true,
-    currentOffersTitle: 'OFFERS.CURRENT',
-    bundlesTitle: 'OFFERS.BUNDLES',
-    bundlesSubtitle: 'OFFERS.BUNDLES_DESC',
+    currentOffersTitle: 'التخفيضات الحالية',
+    bundlesTitle: 'وفر أكثر مع الباقات',
+    bundlesSubtitle: 'اختار الباقة الأنسب لك بأسعار مخفضة',
 };
 
 
@@ -71,9 +72,6 @@ export class OffersPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...DEFAULT_CONFIG, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, DEFAULT_CONFIG);
   }
 }

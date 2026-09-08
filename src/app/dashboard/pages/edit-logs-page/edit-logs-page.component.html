@@ -1,6 +1,6 @@
 <app-admin-layout>
   <div class="max-w-6xl mx-auto space-y-5">
-    <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'COMMON.EDITLOGS' : 'Edit Logs' }}</h1>
+    <h1 class="font-display font-bold text-2xl">{{ 'COMMON.EDITLOGS' | translate }}</h1>
 
     <!-- Filters -->
     <div class="flex flex-wrap gap-3">
@@ -18,7 +18,7 @@
         (ngModelChange)="filterUser.set($event)"
         class="h-9 px-3 rounded-xl bg-card border border-border text-sm outline-none"
       >
-        <option value="">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_253' : 'All Editors' }}</option>
+        <option value="">{{ 'DASHBOARD.AUTO_STR_253' | translate }}</option>
         @for (e of editors; track e) {
           <option [value]="e">{{ e }}</option>
         }
@@ -42,12 +42,12 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-border bg-muted/40">
-              <th class="px-5 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.ORDER_NUMBER' : 'Order #' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_435' : 'Field Changed' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_211' : 'Old Value' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_212' : 'New Value' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_405' : 'Edited By' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_406' : 'Timestamp' }}</th>
+              <th class="px-5 py-3 text-start font-semibold text-muted-foreground">{{ 'ORDERS.ORDER_NUMBER' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_435' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_211' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_212' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_405' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_406' | translate }}</th>
               <th class="w-10"></th>
             </tr>
           </thead>
@@ -79,10 +79,10 @@
       </div>
       @if (filtered().length === 0) {
         <div class="text-center py-12 text-muted-foreground">
-          <p>{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_254' : 'No logs found' }}</p>
+          <p>{{ 'DASHBOARD.AUTO_STR_254' | translate }}</p>
         </div>
       }
     </div>
-    <p class="text-xs text-muted-foreground">{{ filtered().length }} {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_467' : 'records' }}</p>
+    <p class="text-xs text-muted-foreground">{{ filtered().length }} {{ 'DASHBOARD.AUTO_STR_467' | translate }}</p>
   </div>
 </app-admin-layout>

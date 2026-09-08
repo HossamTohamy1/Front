@@ -41,7 +41,7 @@ export class OrderRepositoryImpl implements IOrderRepository {
             city: o.country || '',
             area: '',
             address: o.address || '',
-            paymentMethod: o.paymentMethod === 'BankTransfer' ? 'ØªØ­ÙˆÙŠÙ„ Ø¨Ù†ÙƒÙŠ' : 'Ø§Ù„Ø¯ÙØ¹ Ø¹Ù†Ø¯ Ø§Ù„Ø§Ø³ØªÙ„Ø§Ù…',
+            paymentMethod: o.paymentMethod === 'BankTransfer' ? 'تحويل بنكي' : 'الدفع عند الاستلام',
             country: o.country || '',
             deliveryCompany: 'Loxxking Delivery',
             estimatedDelivery: '',
@@ -83,7 +83,7 @@ export class OrderRepositoryImpl implements IOrderRepository {
         address: order.address,
         phone: order.phone,
         notes: order.notes,
-        paymentMethod: order.paymentMethod.includes('ØªØ­ÙˆÙŠÙ„') ? 2 : 1, // 1: COD, 2: BankTransfer
+        paymentMethod: order.paymentMethod.includes('تحويل') || order.paymentMethod.includes('BankTransfer') ? 2 : 1, // 1: COD, 2: BankTransfer
         items: order.items.map(i => ({ productId: i.productId, quantity: i.quantity })),
         guestName: order.customerName,
         guestCountryName: order.country

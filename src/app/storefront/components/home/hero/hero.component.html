@@ -16,12 +16,10 @@
           <h1 id="home-hero-title" class="whitespace-pre-line">
               {{ getTitle(slides[0]) | translate }}
           </h1>
-          <p>{{ 'STOREFRONT.AUTO_STR_87' | translate }}<br />
-              والراحة في كل لحظة.
-          </p>
+          <p>{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
           <a routerLink="/all-shapers" class="lk-hero__button">
-              <lucide-icon [img]="ArrowLeft" size="19" strokeWidth="2" aria-hidden="true"></lucide-icon>
-              <span>{{ 'STOREFRONT.AUTO_STR_415' | translate }}</span>
+              <span>{{ 'HOME.SHOP_NOW' | translate }}</span>
+              <lucide-icon [img]="langService.storefrontLang() === 'ar' ? ArrowLeft : ArrowRight" size="18" strokeWidth="2.2" aria-hidden="true"></lucide-icon>
           </a>
       </div>
   </section>
@@ -34,7 +32,7 @@
           dir="ltr"
       >
           @for (slide of slides; track slide.id; let idx = $index) {
-              <div class="relative w-full h-full flex-shrink-0" [style.width]="(100 / slides.length) + '%'" dir="rtl">
+              <div class="relative w-full h-full flex-shrink-0" [style.width]="(100 / slides.length) + '%'">
                   <div class="lk-hero__visual" aria-hidden="true">
                       <img
                           [src]="slide.image"
@@ -47,12 +45,10 @@
                       <h1 id="home-hero-title" class="whitespace-pre-line">
                           {{ getTitle(slide) | translate }}
                       </h1>
-                      <p>{{ 'STOREFRONT.AUTO_STR_87' | translate }}<br />
-                          والراحة في كل لحظة.
-                      </p>
+                      <p>{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
                       <a routerLink="/all-shapers" class="lk-hero__button">
-                          <lucide-icon [img]="ArrowLeft" size="19" strokeWidth="2" aria-hidden="true"></lucide-icon>
-                          <span>{{ 'STOREFRONT.AUTO_STR_415' | translate }}</span>
+                          <span>{{ 'HOME.SHOP_NOW' | translate }}</span>
+                          <lucide-icon [img]="langService.storefrontLang() === 'ar' ? ArrowLeft : ArrowRight" size="18" strokeWidth="2.2" aria-hidden="true"></lucide-icon>
                       </a>
                   </div>
               </div>
@@ -61,14 +57,14 @@
       
       <button 
           (click)="prevSlide()"
-          class="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 hover:bg-white/80 transition-colors shadow-sm"
+          class="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 hover:bg-white/80 transition-colors shadow-sm rtl-flip"
           aria-label='COMMON.PREVIOUS'
       >
           <lucide-icon [img]="ChevronRight" size="18"></lucide-icon>
       </button>
       <button 
           (click)="nextSlide()"
-          class="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 hover:bg-white/80 transition-colors shadow-sm"
+          class="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 hover:bg-white/80 transition-colors shadow-sm rtl-flip"
           aria-label='COMMON.NEXT'
       >
           <lucide-icon [img]="ChevronLeft" size="18"></lucide-icon>
@@ -80,7 +76,7 @@
                   (click)="setSlide(idx)"
                   class="w-1.5 h-1.5 rounded-full transition-all"
                   [ngClass]="idx === currentIndex ? 'bg-gray-800 w-4' : 'bg-gray-400 hover:bg-gray-600'"
-                  [attr.aria-label]="'صورة ' + (idx + 1)"
+                  [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'صورة ' : 'Slide ') + (idx + 1)"
               ></button>
           }
       </div>

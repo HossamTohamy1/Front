@@ -17,7 +17,7 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_18' | translate }}</p>
         </div>
 
-        <app-section-card title='DASHBOARD.AUTO_STR_101' [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false" (toggle)="updateConfig({showTitle: $event})">
+        <app-section-card title="رأس الصفحة والأدوات" [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false" (toggle)="updateConfig({showTitle: $event})">
             <div class="flex flex-col gap-1.5 mb-3">
                 <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
                 <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().headerTitle" (ngModelChange)="updateConfig({headerTitle: $event})" />
@@ -66,7 +66,7 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             </div>
         </app-section-card>
 
-        <app-section-card title='DASHBOARD.AUTO_STR_281' [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false">
+        <app-section-card title="بطاقة المنتج" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false">
             <label class="flex items-center justify-between p-2 bg-gray-50 rounded-md border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors mb-2">
                 <span class="text-sm text-gray-700">{{ 'DASHBOARD.AUTO_STR_327' | translate }}</span>
                 <div class="relative inline-flex items-center">
@@ -119,7 +119,7 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             </label>
         </app-section-card>
 
-        <app-section-card title='DASHBOARD.AUTO_STR_83' [index]="2" [enabled]="true" [isFirst]="false" [isLast]="false">
+        <app-section-card title="حالة المفضلة الفارغة" [index]="2" [enabled]="true" [isFirst]="false" [isLast]="false">
             <label class="flex items-center justify-between p-2 bg-gray-50 rounded-md border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors mb-2">
                 <span class="text-sm text-gray-700">إظهار الرسم التوضيحي (Illustration)</span>
                 <div class="relative inline-flex items-center">
@@ -141,12 +141,12 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             </div>
         </app-section-card>
 
-        <app-section-card title='DASHBOARD.AUTO_STR_238' [index]="3" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showTrustBadges: $event})" [addAction]="{ label: 'DASHBOARD.AUTO_STR_356', onClick: addBadge }">
+        <app-section-card title="مميزات التسوق" [index]="3" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showTrustBadges: $event})" [addAction]="{ label: 'إضافة ميزة', onClick: addBadge }">
             <div class="flex flex-col gap-3">
                 <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackById" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <div class="flex flex-col gap-2 flex-1">
-                        <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.title" (ngModelChange)="updateBadge(idx, { title: $event })" placeholder='COMMON.ADDRESS' />
-                        <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="badge.subtitle" (ngModelChange)="updateBadge(idx, { subtitle: $event })" placeholder='DASHBOARD.AUTO_STR_279' />
+                        <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.title" (ngModelChange)="updateBadge(idx, { title: $event })" placeholder="العنوان" />
+                        <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="badge.subtitle" (ngModelChange)="updateBadge(idx, { subtitle: $event })" placeholder="الوصف القصير" />
                         <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.icon" (ngModelChange)="updateBadge(idx, { icon: $event })">
                             <option value="BadgeCheck">شارة توثيق (BadgeCheck)</option>
                             <option value="Truck">سيارة شحن (Truck)</option>
@@ -170,7 +170,7 @@ export class FavoritesPageEditorComponent {
 
   addBadge = () => {
       const badges = [...(this.config().trustBadges || [])];
-      badges.push({ id: 'b-' + Date.now(), icon: 'ShieldCheck', title: 'DASHBOARD.AUTO_STR_350', subtitle: 'DASHBOARD.AUTO_STR_387' });
+      badges.push({ id: 'b-' + Date.now(), icon: 'ShieldCheck', title: 'ميزة جديدة', subtitle: 'وصف قصير' });
       this.updateConfig({ trustBadges: badges });
   };
 

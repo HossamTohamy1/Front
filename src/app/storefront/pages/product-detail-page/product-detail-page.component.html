@@ -8,12 +8,12 @@
   </ng-container>
 
   <ng-template #content>
-    <main class="lk-product-page" dir="rtl">
+    <main class="lk-product-page">
         <nav *ngIf="pageConfig().showBreadcrumb" class="lk-product-breadcrumb" aria-label='STOREFRONT.AUTO_STR_374'>
             <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
-            <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+            <lucide-icon name="chevron-left" class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
             <a [routerLink]="'/category/' + product!.category">{{ display.categoryLabel | translate }}</a>
-            <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+            <lucide-icon name="chevron-left" class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
             <span>{{display.name | translate}}</span>
         </nav>
 
@@ -39,25 +39,15 @@
                     </button>
                 </div>
 
-                <div class="lk-product-thumbnails">
-                    <button type="button" class="lk-gallery-arrow" (click)="previousImage()" aria-label='STOREFRONT.AUTO_STR_281'>
-                        <lucide-icon name="chevron-right" [img]="ChevronRight" aria-hidden="true"></lucide-icon>
-                    </button>
-
-                    <div class="lk-product-thumbnails__list">
-                        <button *ngFor="let image of display.images; let i = index"
-                            type="button"
-                            [class.is-active]="i === activeImage()"
-                            class="lk-product-thumbnail"
-                            (click)="selectImage(i)"
-                            [attr.aria-label]="'عرض الصورة ' + (i + 1)"
-                        >
-                            <img [src]="image" alt="" class="lk-product-thumbnail__image lk-product-thumbnail__image--{{i}}" />
-                        </button>
-                    </div>
-
-                    <button type="button" class="lk-gallery-arrow" (click)="nextImage()" aria-label='STOREFRONT.AUTO_STR_282'>
-                        <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+                <div class="lk-product-thumbs">
+                    <button
+                        *ngFor="let img of display.images; let i = index"
+                        type="button"
+                        [class.is-active]="activeImage() === i"
+                        (click)="activeImage.set(i)"
+                        [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'عرض الصورة ' : 'View image ') + (i + 1)"
+                    >
+                        <img [src]="img" [alt]="display.name" />
                     </button>
                 </div>
             </div>
@@ -71,18 +61,18 @@
                 <h1>{{display.name | translate}}</h1>
 
                 <div *ngIf="pageConfig().showRatingLine" class="lk-product-rating-line">
-                    <span>({{display.reviewCount}} تقييم)</span>
-                    <div class="lk-product-stars" [attr.aria-label]="'التقييم ' + display.rating + ' من خمسة'">
+                    <span>({{display.reviewCount}} {{ 'PRODUCT.REVIEWS' | translate }})</span>
+                    <div class="lk-product-stars" [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'التقييم ' + display.rating + ' من خمسة' : 'Rating ' + display.rating + ' of 5 stars')">
                         <lucide-icon *ngFor="let _ of getFiveStars()" name="star" [img]="Star" fill="currentColor" strokeWidth="0" aria-hidden="true"></lucide-icon>
                     </div>
                 </div>
 
                 <div class="lk-product-price-row">
-                    <strong class="lk-product-current-price" [attr.aria-label]="display.price + ' ريال سعودي'">
+                    <strong class="lk-product-current-price" [attr.aria-label]="display.price + ' ' + ('COMMON.CURRENCY' | translate)">
                         <span class="lk-product-price-number">{{display.price}}</span>
-                        <small>ر.س</small>
+                        <small>{{ 'COMMON.CURRENCY' | translate }}</small>
                     </strong>
-                    <del *ngIf="display.oldPrice">{{display.oldPrice}} ر.س</del>
+                    <del *ngIf="display.oldPrice">{{display.oldPrice}} {{ 'COMMON.CURRENCY' | translate }}</del>
                 </div>
 
                 <p class="lk-tax-note">
@@ -92,8 +82,8 @@
 
                 <ng-container *ngIf="pageConfig().showColorOptions">
                     <div class="lk-product-option-heading">
-                        <strong>اللون:</strong>
-                        <span>{{selectedColor() === 0 ? display.color : display.color === 'STOREFRONT.AUTO_STR_472' ? 'STOREFRONT.AUTO_STR_483' : 'STOREFRONT.AUTO_STR_472'}}</span>
+                        <strong>{{ 'PRODUCT.COLOR' | translate }}:</strong>
+                        <span>{{ (selectedColor() === 0 ? display.color : display.color === 'STOREFRONT.AUTO_STR_472' ? 'STOREFRONT.AUTO_STR_483' : 'STOREFRONT.AUTO_STR_472') | translate }}</span>
                     </div>
 
                     <div class="lk-color-options">
@@ -102,7 +92,7 @@
                             [class.is-active]="i === selectedColor()"
                             class="lk-color-swatch"
                             (click)="selectedColor.set(i)"
-                            [attr.aria-label]="'اختيار اللون ' + (i + 1)"
+                            [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'اختيار اللون ' : 'Select color ') + (i + 1)"
                         >
                             <span [style.backgroundColor]="color"></span>
                         </button>
@@ -113,15 +103,19 @@
 
                 <ng-container *ngIf="pageConfig().showSizeOptions">
                     <div class="lk-size-heading">
-                        <strong>{{ 'PRODUCT.SIZE' | translate }}</strong>
-                        <button type="button" routerLink="/size-guide">
+                        <div class="lk-size-label">
+                            <strong>{{ 'PRODUCT.SIZE' | translate }}:</strong>
+                            <span>{{selectedSize()}}</span>
+                        </div>
+                        <button type="button" class="lk-size-guide-button" routerLink="/size-guide">
                             <lucide-icon name="ruler" [img]="Ruler" aria-hidden="true"></lucide-icon>{{ 'PRODUCT.SIZE_GUIDE' | translate }}</button>
                     </div>
 
                     <div class="lk-size-options">
-                        <button *ngFor="let size of product!.sizes"
+                        <button *ngFor="let size of display.sizes"
                             type="button"
                             [class.is-active]="selectedSize() === size"
+                            class="lk-size-box"
                             (click)="selectedSize.set(size)"
                         >
                             {{size}}
@@ -159,19 +153,6 @@
             </div>
         </section>
 
-        <nav *ngIf="pageConfig().showTabs" class="lk-product-tabs" aria-label='DASHBOARD.AUTO_STR_247'>
-            <button *ngIf="pageConfig().showDescriptionSection" [class.is-active]="activeTab() === 'description'" (click)="scrollToSection('description')">{{ 'PRODUCT.DESCRIPTION' | translate }}</button>
-            <button *ngIf="pageConfig().showFeaturesSection" [class.is-active]="activeTab() === 'features'" (click)="scrollToSection('features')">{{ 'PRODUCT.FEATURES' | translate }}</button>
-            <a class="lk-product-tab-link" routerLink="/size-guide">{{ 'PRODUCT.SIZE_GUIDE' | translate }}</a>
-            <button *ngIf="pageConfig().showReviewsSection" [class.is-active]="activeTab() === 'reviews'" (click)="scrollToSection('reviews')">التقييمات ({{display.reviewCount}})</button>
-            <button *ngIf="pageConfig().showPurchaseActions" [class.is-active]="activeTab() === 'purchase'" (click)="scrollToSection('purchase')">{{ 'STOREFRONT.AUTO_STR_453' | translate }}</button>
-        </nav>
-
-        <section *ngIf="pageConfig().showDescriptionSection" id="lk-description" class="lk-product-description-section">
-            <h2>{{ 'STOREFRONT.AUTO_STR_406' | translate }}</h2>
-            <p>{{display.description}}</p>
-        </section>
-
         <section *ngIf="pageConfig().showFeaturesSection" id="lk-features" class="lk-product-features-section">
             <h2>{{ 'PRODUCT.FEATURES' | translate }}</h2>
             <div class="lk-product-features-grid">
@@ -207,7 +188,7 @@
                         <lucide-icon *ngFor="let _ of getFiveStars()" name="star" [img]="Star" fill="currentColor" strokeWidth="0" aria-hidden="true"></lucide-icon>
                     </div>
                     <span>{{ 'STOREFRONT.AUTO_STR_470' | translate }}</span>
-                    <small>({{display.reviewCount}} تقييم)</small>
+                    <small>({{display.reviewCount}} {{ 'PRODUCT.REVIEWS' | translate }})</small>
                 </div>
 
                 <div class="lk-review-cards">
@@ -230,13 +211,13 @@
                 </div>
             </div>
             <button type="button" class="lk-all-reviews-link">
-                عرض جميع التقييمات ({{display.reviewCount}})
-                <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+                {{ (langService.storefrontLang() === 'ar' ? 'عرض جميع التقييمات' : 'View all reviews') }} ({{display.reviewCount}})
+                <lucide-icon name="chevron-left" class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
             </button>
         </section>
 
         <section *ngIf="pageConfig().showPurchaseActions" id="lk-purchase" class="lk-product-purchase-section" aria-label='STOREFRONT.AUTO_STR_191'>
-            <div class="lk-product-purchase-actions" dir="rtl">
+            <div class="lk-product-purchase-actions">
                 <button type="button" class="lk-purchase-buy" (click)="buyNow()">
                     <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_405' | translate }}</button>
 

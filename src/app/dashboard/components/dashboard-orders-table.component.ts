@@ -32,7 +32,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
               <th>{{ 'DASHBOARD.AUTO_STR_310' | translate }}</th>
               <th>{{ 'COMMON.MESSAGE' | translate }}</th>
               <th>{{ 'COMMON.PRODUCTS' | translate }}</th>
-              <th aria-label='COMMON.ACTIONS'></th>
+              <th [attr.aria-label]="'COMMON.ACTIONS' | translate"></th>
             </tr>
           </thead>
           <tbody>
@@ -42,8 +42,8 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                   <button
                     type="button"
                     class="dashboard-copy-value dashboard-orders__receipt dashboard-number"
-                    (click)="copyValue.emit({ value: order.orderNumber, label: 'ORDERS.ORDER_NUMBER' })"
-                    title='DASHBOARD.AUTO_STR_94'
+                    (click)="copyValue.emit({ value: order.orderNumber, label: 'رقم الطلب' })"
+                    [attr.title]="'DASHBOARD.AUTO_STR_94' | translate"
                   >
                     {{ order.orderNumber }}
                   </button>
@@ -55,8 +55,8 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                   <button
                     type="button"
                     class="dashboard-copy-value dashboard-orders__phone dashboard-number"
-                    (click)="copyValue.emit({ value: order.phone, label: 'CHECKOUT.PHONE' })"
-                    title='DASHBOARD.AUTO_STR_78'
+                    (click)="copyValue.emit({ value: order.phone, label: 'رقم الهاتف' })"
+                    [attr.title]="'DASHBOARD.AUTO_STR_78' | translate"
                   >
                     {{ order.phone }}
                   </button>
@@ -75,7 +75,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
 
                 <td>{{ order.city || '—' }}</td>
                 <td>{{ order.area || '—' }}</td>
-                <td>{{ order.gender || 'COMMON.WOMENS' }}</td>
+                <td>{{ order.gender || ('COMMON.WOMENS' | translate) }}</td>
                 <td class="dashboard-orders__address" [title]="order.address">{{ order.address }}</td>
                 <td class="dashboard-orders__delivery">{{ order.deliveryCompany }}</td>
 
@@ -86,7 +86,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                     type="button"
                     class="dashboard-bank-receipt"
                     (click)="rowAction.emit({ orderId: order.id, kind: 'approve' })"
-                    title='DASHBOARD.AUTO_STR_95'
+                    [attr.title]="'DASHBOARD.AUTO_STR_95' | translate"
                   >
                     <img [src]="order.bankTransferReceipt.dataUrl" [alt]="'إيصال تحويل الطلب ' + order.orderNumber" />
                   </button>
@@ -99,7 +99,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                         type="button"
                         class="dashboard-order-expand dashboard-order-expand--inline is-open"
                         (click)="toggleExpand.emit(order.id)"
-                        aria-label='DASHBOARD.AUTO_STR_96'
+                        [attr.aria-label]="'DASHBOARD.AUTO_STR_96' | translate"
                       >
                         <lucide-icon [img]="ChevronLeftIcon" [size]="19" strokeWidth="2.3"></lucide-icon>
                       </button>
@@ -161,7 +161,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                       type="button"
                       [ngClass]="statusClassMap[order.status]"
                       (click)="rowAction.emit({ orderId: order.id, kind: 'status' })"
-                      title='DASHBOARD.AUTO_STR_113'
+                      [attr.title]="'DASHBOARD.AUTO_STR_113' | translate"
                     >
                       {{ statusLabels[order.status] }}
                     </button>
@@ -187,7 +187,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                       type="button"
                       class="dashboard-whatsapp-button"
                       (click)="openWhatsApp(order)"
-                      title='DASHBOARD.AUTO_STR_42'
+                      [attr.title]="'DASHBOARD.AUTO_STR_42' | translate"
                     >
                       <img src="assets/dashboard/whatsapp-button.png" alt="WhatsApp" />
                     </button>
@@ -199,7 +199,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                         type="button"
                         class="dashboard-products-button"
                         (click)="toggleProductsPopover.emit(order.id)"
-                        title='DASHBOARD.AUTO_STR_158'
+                        [attr.title]="'DASHBOARD.AUTO_STR_158' | translate"
                       >
                         <lucide-icon [img]="ShoppingBagIcon" [size]="15"></lucide-icon>
                       </button>
@@ -224,7 +224,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
                       type="button"
                       class="dashboard-order-expand"
                       (click)="toggleExpand.emit(order.id)"
-                      aria-label='DASHBOARD.AUTO_STR_128'
+                      [attr.aria-label]="'DASHBOARD.AUTO_STR_128' | translate"
                     >
                       <lucide-icon [img]="ChevronLeftIcon" [size]="18" strokeWidth="2.2"></lucide-icon>
                     </button>
@@ -242,7 +242,7 @@ import { buildWhatsAppUrl } from '../../shared/utils/phone.utils';
         </table>
       </div>
 
-      <nav class="dashboard-orders-pagination" *ngIf="totalPages > 1" aria-label='DASHBOARD.AUTO_STR_220'>
+      <nav class="dashboard-orders-pagination" *ngIf="totalPages > 1" [attr.aria-label]="'DASHBOARD.AUTO_STR_220' | translate">
         <button type="button" [disabled]="ordersPage === 1" (click)="pageChange.emit(ordersPage - 1)">{{ 'COMMON.PREVIOUS' | translate }}</button>
         <span class="dashboard-orders-pagination__info">صفحة {{ ordersPage }} من {{ totalPages }}</span>
         <button type="button" [disabled]="ordersPage === totalPages" (click)="pageChange.emit(ordersPage + 1)">{{ 'COMMON.NEXT' | translate }}</button>

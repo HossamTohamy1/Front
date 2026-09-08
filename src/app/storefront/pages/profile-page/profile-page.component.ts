@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
+import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
 import {
   Building2,
   Camera,
@@ -31,7 +32,7 @@ export type ProfilePageConfig = {
 
 const DEFAULT_CONFIG: ProfilePageConfig = {
     headerTitle: 'PROFILE.TITLE',
-    headerSubtitle: 'حدّث صورتك وبيانات التواصل والعنوان المستخدم في طلباتك.',
+    headerSubtitle: 'PROFILE.SUBTITLE',
     showAvatarSection: true,
     showBasicInfoSection: true,
     showAddressSection: true,
@@ -250,7 +251,9 @@ export class ProfilePageComponent implements OnInit {
     try {
       const saved = localStorage.getItem('loxx-profile-config');
       if (saved) {
-        this.config.set({ ...DEFAULT_CONFIG, ...JSON.parse(saved) });
+        const clean = sanitizeWithInitial(JSON.parse(saved), DEFAULT_CONFIG);
+        this.config.set(clean);
+        localStorage.setItem('loxx-profile-config', JSON.stringify(clean));
       }
     } catch {
         // ignore
@@ -259,7 +262,7 @@ export class ProfilePageComponent implements OnInit {
     const handleStorage = (e: StorageEvent) => {
         if (e.key === 'loxx-profile-config' && e.newValue) {
             try {
-                this.config.set(JSON.parse(e.newValue));
+                this.config.set(sanitizeWithInitial(JSON.parse(e.newValue), DEFAULT_CONFIG));
             } catch {
                 // ignore
             }

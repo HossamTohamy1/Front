@@ -1,6 +1,6 @@
 <app-store-layout>
 
-  <main class="lk-profile-form-page" dir="rtl">
+  <main class="lk-profile-form-page">
     <div class="lk-profile-form-page__container">
       <header class="lk-profile-form-page__heading">
         <h1>{{ config().headerTitle | translate}}</h1>
@@ -47,7 +47,7 @@
           </div>
 
           <div class="lk-profile-avatar-section__text">
-            <h2>{{ profile().name.trim() || 'STOREFRONT.AUTO_STR_408' }}</h2>
+            <h2>{{ profile().name.trim() || ('STOREFRONT.AUTO_STR_408' | translate) }}</h2>
           
             <button
               type="button"
@@ -67,13 +67,13 @@
 
           <div class="lk-profile-fields-grid">
             <label class="lk-profile-field lk-profile-field--wide">
-              <span>الاسم بالكامل *</span>
+              <span>{{ 'STOREFRONT.AUTO_STR_311' | translate }} *</span>
               <div>
                 <lucide-icon [img]="UserRound" size="18"></lucide-icon>
                 <input
                   [value]="profile().name"
                   (input)="updateField('name', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_192'
+                  [placeholder]="'STOREFRONT.AUTO_STR_192' | translate"
                   autocomplete="name"
                   required
                 />
@@ -96,7 +96,7 @@
             </label>
 
             <label class="lk-profile-field">
-              <span>رقم الهاتف *</span>
+              <span>{{ 'COMMON.PHONE' | translate }} *</span>
               <div>
                 <lucide-icon [img]="Phone" size="18"></lucide-icon>
                 <input
@@ -118,7 +118,7 @@
                 <input
                   [value]="profile().alternatePhone"
                   (input)="updateField('alternatePhone', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_214'
+                  [placeholder]="'STOREFRONT.AUTO_STR_214' | translate"
                   inputmode="tel"
                   dir="ltr"
                 />
@@ -132,7 +132,7 @@
             <span><lucide-icon [img]="MapPin" size="20"></lucide-icon></span>
             <div>
               <h2>{{ 'DASHBOARD.AUTO_STR_178' | translate }}</h2>
-              <p>سيظهر هذا العنوان تلقائيًا عند إتمام الطلب.</p>
+              <p>{{ 'STOREFRONT.AUTO_STR_45' | translate }}</p>
             </div>
           </div>
 
@@ -142,14 +142,14 @@
 
           <div class="lk-profile-fields-grid">
             <label class="lk-profile-field">
-              <span>الدولة *</span>
+              <span>{{ 'CHECKOUT.COUNTRY' | translate }} *</span>
               <div>
                 <lucide-icon [img]="Landmark" size="18"></lucide-icon>
                 <input
                   list="lk-profile-country-options"
                   [value]="profile().country"
                   (input)="updateField('country', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_313'
+                  [placeholder]="'STOREFRONT.AUTO_STR_313' | translate"
                   autocomplete="country-name"
                   required
                 />
@@ -157,13 +157,13 @@
             </label>
 
             <label class="lk-profile-field">
-              <span>المدينة *</span>
+              <span>{{ 'CHECKOUT.CITY' | translate }} *</span>
               <div>
                 <lucide-icon [img]="Building2" size="18"></lucide-icon>
                 <input
                   [value]="profile().city"
                   (input)="updateField('city', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_314'
+                  [placeholder]="'STOREFRONT.AUTO_STR_314' | translate"
                   autocomplete="address-level2"
                   required
                 />
@@ -177,7 +177,7 @@
                 <input
                   [value]="profile().area"
                   (input)="updateField('area', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_259'
+                  [placeholder]="'STOREFRONT.AUTO_STR_259' | translate"
                   autocomplete="address-level3"
                 />
               </div>
@@ -190,7 +190,7 @@
                 <input
                   [value]="profile().postalCode"
                   (input)="updateField('postalCode', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_315'
+                  [placeholder]="'STOREFRONT.AUTO_STR_315' | translate"
                   inputmode="numeric"
                   autocomplete="postal-code"
                 />
@@ -198,13 +198,13 @@
             </label>
 
             <label class="lk-profile-field lk-profile-field--wide">
-              <span>اسم الشارع والعنوان بالتفصيل *</span>
+              <span>{{ 'STOREFRONT.AUTO_STR_104' | translate }} *</span>
               <div>
                 <lucide-icon [img]="HomeIcon" size="18"></lucide-icon>
                 <input
                   [value]="profile().street"
                   (input)="updateField('street', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_56'
+                  [placeholder]="'STOREFRONT.AUTO_STR_56' | translate"
                   autocomplete="street-address"
                   required
                 />
@@ -218,7 +218,7 @@
                 <input
                   [value]="profile().building"
                   (input)="updateField('building', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_409'
+                  [placeholder]="'STOREFRONT.AUTO_STR_409' | translate"
                 />
               </div>
             </label>
@@ -230,7 +230,7 @@
                 <input
                   [value]="profile().floor"
                   (input)="updateField('floor', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_430'
+                  [placeholder]="'STOREFRONT.AUTO_STR_430' | translate"
                 />
               </div>
             </label>
@@ -242,7 +242,7 @@
                 <input
                   [value]="profile().apartment"
                   (input)="updateField('apartment', $any($event.target).value)"
-                  placeholder='STOREFRONT.AUTO_STR_431'
+                  [placeholder]="'STOREFRONT.AUTO_STR_431' | translate"
                 />
               </div>
             </label>
@@ -254,7 +254,7 @@
                 <input
                   [value]="profile().landmark"
                   (input)="updateField('landmark', $any($event.target).value)"
-                  placeholder="مثال: بجوار المدرسة أو أمام الصيدلية"
+                  [placeholder]="'STOREFRONT.AUTO_STR_93' | translate"
                 />
               </div>
             </label>
@@ -267,7 +267,7 @@
 
           <button type="submit" [disabled]="isSaving()">
             <lucide-icon [img]="Save" size="18"></lucide-icon>
-            {{ isSaving() ? 'جاري الحفظ...' : 'STOREFRONT.AUTO_STR_343' }}
+            {{ (isSaving() ? 'COMMON.LOADING' : 'STOREFRONT.AUTO_STR_343') | translate }}
           </button>
         </footer>
       </form>

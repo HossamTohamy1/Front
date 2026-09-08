@@ -14,13 +14,13 @@ import { StaffAccount } from '../../domain/models/staff-account.model';
         type="button"
         class="dashboard-sidebar-layer__backdrop"
         (click)="close.emit()"
-        aria-label='DASHBOARD.AUTO_STR_221'
+        [attr.aria-label]="'DASHBOARD.AUTO_STR_221' | translate"
       ></button>
 
-      <aside class="dashboard-sidebar" dir="rtl" aria-label='DASHBOARD.AUTO_STR_20'>
+      <aside class="dashboard-sidebar" dir="rtl" [attr.aria-label]="'DASHBOARD.AUTO_STR_20' | translate">
         <header class="dashboard-sidebar__header">
           <img src="assets/home/logo-header.png" alt="LOXX KING" />
-          <button type="button" (click)="close.emit()" aria-label='COMMON.CLOSE'>
+          <button type="button" (click)="close.emit()" [attr.aria-label]="'COMMON.CLOSE' | translate">
             <lucide-icon [img]="XIcon" [size]="18"></lucide-icon>
           </button>
         </header>

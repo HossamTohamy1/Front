@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -35,33 +36,33 @@ export interface CheckoutPageConfig {
 
 
 const initialConfig: CheckoutPageConfig = {
-    headerTitle: 'CART.CHECKOUT',
-    headerSubtitle: 'CHECKOUT.ENTER_DETAILS',
+    headerTitle: 'إتمام الطلب',
+    headerSubtitle: 'أدخل بياناتك لإكمال الطلب',
     
     showCustomerInfo: true,
-    customerInfoTitle: 'CHECKOUT.CUSTOMER_DETAILS',
+    customerInfoTitle: 'بيانات العميل',
     
     showPaymentInfo: true,
-    paymentInfoTitle: 'CHECKOUT.PAYMENT_METHOD',
+    paymentInfoTitle: 'طريقة الدفع',
     
     showOrderSummary: true,
-    summaryTitle: 'CHECKOUT.ORDER_SUMMARY',
+    summaryTitle: 'ملخص الطلب',
     
     showSafeShopping: true,
-    safeShoppingTitle: 'CHECKOUT.SECURE_SHOPPING',
-    safeShoppingText: 'CHECKOUT.DATA_PROTECTION',
+    safeShoppingTitle: 'تسوق آمن',
+    safeShoppingText: 'نحن نضمن حماية بياناتك ومعلوماتك الشخصية',
     
     showTrustBadges: true,
     trustBadges: [
-        { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
-        { id: '2', icon: 'Truck', title: 'CART.FAST_SHIPPING', subtitle: 'CART.DELIVERY_TIME' },
-        { id: '3', icon: 'RotateCcw', title: 'CART.EASY_RETURNS', subtitle: 'CART.RETURN_PERIOD' },
-        { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'CART.SECURE_100' }
+        { id: '1', icon: 'BadgeCheck', title: 'منتجات أصلية', subtitle: '100% مضمونة' },
+        { id: '2', icon: 'Truck', title: 'شحن سريع', subtitle: 'خلال 2 - 5 أيام' },
+        { id: '3', icon: 'RotateCcw', title: 'إرجاع سهل', subtitle: 'خلال 14 يوم' },
+        { id: '4', icon: 'ShieldCheck', title: 'دفع آمن', subtitle: '100% آمن' }
     ],
     
-    emptyStateTitle: 'CHECKOUT.NO_PRODUCTS',
-    emptyStateText: 'CHECKOUT.ADD_FIRST',
-    emptyStateCta: 'CHECKOUT.BACK_TO_CART'
+    emptyStateTitle: 'لا توجد منتجات لإتمام الطلب',
+    emptyStateText: 'أضيفي المنتجات إلى السلة أولًا ثم تابعي إتمام الطلب.',
+    emptyStateCta: 'عودة إلى السلة'
 }
 
 @Injectable({
@@ -111,10 +112,7 @@ export class CheckoutPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): CheckoutPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

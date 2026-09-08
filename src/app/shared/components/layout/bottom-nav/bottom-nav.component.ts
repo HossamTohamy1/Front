@@ -10,7 +10,7 @@ import { CartService } from '../../../../core/services/cart/cart.service';
   standalone: true,
   imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, RouterLinkActive, LucideAngularModule],
   template: `
-    <nav class="lk-mobile-nav" aria-label='SHARED.AUTO_STR_52'>
+    <nav class="lk-mobile-nav" [attr.aria-label]="'SHARED.AUTO_STR_52' | translate">
       <div class="lk-mobile-nav__inner">
         @for (item of navigationItems; track item.to) {
           <a
@@ -35,7 +35,7 @@ import { CartService } from '../../../../core/services/cart/cart.service';
               }
             </span>
 
-            <span>{{ item.label }}</span>
+            <span>{{ item.label | translate }}</span>
           </a>
         }
       </div>

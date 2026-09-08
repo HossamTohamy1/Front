@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 export type WalletPaymentProvider = 'apple-pay' | 'stc-pay' | 'visa' | 'mastercard' | 'mada';
 export type WalletPaymentStep = 1 | 2 | 3;
@@ -106,6 +107,7 @@ export class WalletPaymentFlowComponent implements OnInit, OnDestroy {
   @Output() onComplete = new EventEmitter<void>();
 
   private router = inject(Router);
+  private langService = inject(LangService);
 
   step: WalletPaymentStep = 1;
   maxUnlockedStep: WalletPaymentStep = 1;
@@ -139,19 +141,19 @@ export class WalletPaymentFlowComponent implements OnInit, OnDestroy {
     const normalizedName = this.cardholderName.trim();
 
     if (!passesLuhnCheck(cardDigits)) {
-        errors.cardNumber = 'Ø±Ù‚Ù… Ø§Ù„Ø¨Ø·Ø§Ù‚Ø© ØºÙŠØ± ØµØ­ÙŠØ­.';
+        errors.cardNumber = this.langService.effectiveLang() === 'ar' ? 'رقم البطاقة غير صحيح.' : 'Invalid card number.';
     }
 
     if (!isExpiryValid(this.expiryDate)) {
-        errors.expiryDate = 'ØªØ§Ø±ÙŠØ® Ø§Ù„Ø§Ù†ØªÙ‡Ø§Ø¡ ØºÙŠØ± ØµØ­ÙŠØ­.';
+        errors.expiryDate = this.langService.effectiveLang() === 'ar' ? 'تاريخ الانتهاء غير صحيح.' : 'Invalid expiry date.';
     }
 
-    if (!/^\\d{3,4}$/.test(cvvDigits)) {
-        errors.cvv = 'Ø±Ù…Ø² Ø§Ù„Ù€ CVV ØºÙŠØ± ØµØ­ÙŠØ­.';
+    if (!/^\d{3,4}$/.test(cvvDigits)) {
+        errors.cvv = this.langService.effectiveLang() === 'ar' ? 'رمز الـ CVV غير صحيح.' : 'Invalid CVV code.';
     }
 
-    if (normalizedName.length < 3 || /\\d/.test(normalizedName)) {
-        errors.cardholderName = 'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø§Ù„Ø§Ø³Ù… ÙƒØ§Ù…Ù„Ø§Ù‹.';
+    if (normalizedName.length < 3 || /\d/.test(normalizedName)) {
+        errors.cardholderName = this.langService.effectiveLang() === 'ar' ? 'يرجى إدخال الاسم كاملاً.' : 'Please enter full name.';
     }
 
     return errors;
@@ -190,7 +192,7 @@ export class WalletPaymentFlowComponent implements OnInit, OnDestroy {
   onCardNumberChange(event: any) {
     const value = event.target.value || '';
     const digits = value.replace(/\D/g, '').slice(0, 16);
-    this.cardNumber = digits.replace(/(\\d{4})(?=\\d)/g, '$1 ');
+    this.cardNumber = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
   }
 
   onExpiryChange(event: any) {
@@ -281,8 +283,8 @@ export class WalletPaymentFlowComponent implements OnInit, OnDestroy {
       area: this.session!.area,
       address: this.session!.address,
       notes: this.session!.notes,
-      paymentMethod: `Ø¨Ø·Ø§Ù‚Ø© Ø§Ø¦ØªÙ…Ø§Ù†ÙŠØ© - ${this.providerLabel}`,
-      estimatedDelivery: new Intl.DateTimeFormat('ar-EG', {
+      paymentMethod: `${this.langService.effectiveLang() === 'ar' ? 'بطاقة ائتمانية' : 'Credit Card'} - ${this.providerLabel}`,
+      estimatedDelivery: new Intl.DateTimeFormat(this.langService.effectiveLang() === 'ar' ? 'ar-EG' : 'en-US', {
         day: 'numeric',
         month: 'long',
       }).format(estimatedDate),
@@ -307,14 +309,16 @@ export class WalletPaymentFlowComponent implements OnInit, OnDestroy {
   }
 
   downloadInvoice() {
+    const isAr = this.langService.effectiveLang() === 'ar';
+    const currency = isAr ? 'ر.س' : 'SAR';
     const invoice = [
-      `LOXX KING - ÙØ§ØªÙˆØ±Ø© Ø§Ù„Ø·Ù„Ø¨ ${this.session!.orderNumber}`,
-      `Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯ÙØ¹: ${this.providerLabel}`,
-      `ØªØ§Ø±ÙŠØ® Ø§Ù„Ø·Ù„Ø¨: ${this.orderDate}`,
-      `Ø§Ù„Ù…Ø¬Ù…ÙˆØ¹ Ø§Ù„ÙØ±Ø¹ÙŠ: ${this.session!.subtotal} Ø±.Ø³`,
-      `ØªÙƒÙ„ÙØ© Ø§Ù„ØªÙˆØµÙŠÙ„: ${this.session!.shipping} Ø±.Ø³`,
-      `Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ: ${this.session!.total} Ø±.Ø³`,
-    ].join('\\n');
+      isAr ? `LOXX KING - فاتورة الطلب ${this.session!.orderNumber}` : `LOXX KING - Order Invoice ${this.session!.orderNumber}`,
+      isAr ? `طريقة الدفع: ${this.providerLabel}` : `Payment Method: ${this.providerLabel}`,
+      isAr ? `تاريخ الطلب: ${this.orderDate}` : `Order Date: ${this.orderDate}`,
+      isAr ? `المجموع الفرعي: ${this.session!.subtotal} ${currency}` : `Subtotal: ${this.session!.subtotal} ${currency}`,
+      isAr ? `تكلفة التوصيل: ${this.session!.shipping} ${currency}` : `Shipping: ${this.session!.shipping} ${currency}`,
+      isAr ? `الإجمالي النهائي: ${this.session!.total} ${currency}` : `Total: ${this.session!.total} ${currency}`,
+    ].join('\n');
 
     const blob = new Blob([invoice], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);

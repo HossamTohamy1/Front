@@ -80,19 +80,19 @@ export class DashboardHomePageComponent implements OnInit, OnDestroy {
   readonly router = inject(Router);
 
   readonly dashboardWeekOrder = DASHBOARD_WEEK_ORDER;
-  readonly deliveryCompanies = ['DASHBOARD.AUTO_STR_456', 'DASHBOARD.AUTO_STR_417', 'DHL', 'DASHBOARD.AUTO_STR_124', 'DASHBOARD.AUTO_STR_125'];
-  readonly paymentMethods = ['COMMON.CASHONDELIVERY', 'CHECKOUT.BANK_TRANSFER', 'DASHBOARD.AUTO_STR_380', 'DASHBOARD.AUTO_STR_434', 'DASHBOARD.AUTO_STR_457'];
+  readonly deliveryCompanies = ['سمسا', 'أرامكس', 'DHL', 'شركة كامكس للتوصيل', 'شركة أميال للتوصيل'];
+  readonly paymentMethods = ['الدفع عند الاستلام', 'تحويل بنكي', 'بطاقة مدى', 'تمارا', 'تابي'];
 
   readonly filterShortcuts: FilterShortcut[] = [
-    { key: 'all-orders', label: 'DASHBOARD.AUTO_STR_366', icon: Database },
-    { key: 'status-filter', label: 'DASHBOARD.AUTO_STR_169', icon: Filter },
-    { key: 'country-filter', label: 'DASHBOARD.AUTO_STR_170', icon: Globe },
-    { key: 'city-filter', label: 'DASHBOARD.AUTO_STR_150', icon: MapPin },
-    { key: 'area-filter', label: 'DASHBOARD.AUTO_STR_151', icon: MapIcon },
-    { key: 'gender-filter', label: 'DASHBOARD.AUTO_STR_189', icon: Users },
-    { key: 'delivery-company-filter', label: 'DASHBOARD.AUTO_STR_62', icon: Truck },
-    { key: 'payment-filter', label: 'DASHBOARD.AUTO_STR_190', icon: Wallet },
-    { key: 'product-filter', label: 'DASHBOARD.AUTO_STR_108', icon: Package },
+    { key: 'all-orders', label: 'كل الطلبات', icon: Database },
+    { key: 'status-filter', label: 'فلترة حسب الحالة', icon: Filter },
+    { key: 'country-filter', label: 'تصفية حسب الدولة', icon: Globe },
+    { key: 'city-filter', label: 'تصفية حسب المدينة', icon: MapPin },
+    { key: 'area-filter', label: 'تصفية حسب المنطقة', icon: MapIcon },
+    { key: 'gender-filter', label: 'فلترة حسب الجنس', icon: Users },
+    { key: 'delivery-company-filter', label: 'تصفية حسب شركة التوصيل', icon: Truck },
+    { key: 'payment-filter', label: 'تصفية حسب الدفع', icon: Wallet },
+    { key: 'product-filter', label: 'فلترة حسب نوع المشد', icon: Package },
   ];
 
   readonly filterKeyMap: Partial<Record<string, FilterSelectionKey>> = {
@@ -173,7 +173,7 @@ export class DashboardHomePageComponent implements OnInit, OnDestroy {
   toggleFilter(key: string): void {
     if (key === 'all-orders') {
       this.facade.resetAllFilters();
-      this.facade.showNotice('DASHBOARD.AUTO_STR_33');
+      this.facade.showNotice('تمت إعادة ضبط جميع الفلاتر');
       return;
     }
     const targetKey = this.filterKeyMap[key];
@@ -201,7 +201,7 @@ export class DashboardHomePageComponent implements OnInit, OnDestroy {
         await navigator.clipboard.writeText(value);
       }
     } catch {}
-    this.facade.showNotice(`ØªÙ… Ù†Ø³Ø® ${label}`);
+    this.facade.showNotice(`تم نسخ ${label}`);
   }
 
   toggleExpandRow(orderId: string): void {
@@ -304,13 +304,13 @@ export class DashboardHomePageComponent implements OnInit, OnDestroy {
         subtotal,
         total,
       });
-      this.facade.showNotice('DASHBOARD.AUTO_STR_27');
+      this.facade.showNotice('تم تحديث بيانات الطلب بنجاح');
     } else if (kind === 'status') {
       this.facade.updateOrder(orderId, { status: event.value as TrackedOrderStatus });
-      this.facade.showNotice(`ØªÙ… ØªØºÙŠÙŠØ± Ø­Ø§Ù„Ø© Ø§Ù„Ø·Ù„Ø¨ Ø¥Ù„Ù‰ ${ORDER_STATUS_LABELS[event.value as TrackedOrderStatus]}`);
+      this.facade.showNotice(`تم تغيير حالة الطلب إلى ${ORDER_STATUS_LABELS[event.value as TrackedOrderStatus]}`);
     } else if (kind === 'payment') {
       this.facade.updateOrder(orderId, { paymentStatus: event.value as TrackedOrderPaymentStatus });
-      this.facade.showNotice('DASHBOARD.AUTO_STR_109');
+      this.facade.showNotice('تم تحديث حالة الدفع');
     } else if (kind === 'postpone') {
       const days = parseInt(event.value, 10) || 14;
       const date = new Date();
@@ -319,17 +319,17 @@ export class DashboardHomePageComponent implements OnInit, OnDestroy {
         status: 'postponed',
         estimatedDelivery: this.rowActionCustomDate || formatISODate(date),
       });
-      this.facade.showNotice('DASHBOARD.AUTO_STR_89');
+      this.facade.showNotice('تم تأجيل الطلب بنجاح');
     } else if (kind === 'approve') {
       this.facade.updateOrder(orderId, { status: 'confirmed', paymentStatus: 'paid' });
-      this.facade.showNotice('DASHBOARD.AUTO_STR_46');
+      this.facade.showNotice('تم اعتماد التحويل البنكي');
     }
     this.closeRowAction();
   }
 
   approveBankTransfer(orderId: string): void {
     this.facade.updateOrder(orderId, { status: 'confirmed', paymentStatus: 'paid' });
-    this.facade.showNotice('DASHBOARD.AUTO_STR_46');
+    this.facade.showNotice('تم اعتماد التحويل البنكي');
     this.isApprovalsOpen = false;
   }
 

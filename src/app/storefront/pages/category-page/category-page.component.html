@@ -2,30 +2,30 @@
   <div class="max-w-7xl mx-auto px-4 py-6">
     <div class="mb-2 animate-fade-in">
       <p class="text-xs text-muted-foreground mb-1">
-        {{ lang() === 'ar' ? 'NAV.HOME' : 'Home' }} / 
-        {{ category() ? (lang() === 'ar' ? category()!.nameAr : category()!.nameEn) : (lang() === 'ar' ? 'COMMON.ALL' : 'All Products') }}
+        {{ 'NAV.HOME' | translate }} / 
+        {{ category() ? (lang() === 'ar' ? category()!.nameAr : category()!.nameEn) : ('COMMON.ALL' | translate) }}
       </p>
     </div>
     
     <div class="mb-6 animate-fade-in">
       <h1 class="font-display font-bold text-2xl">
-        {{ queryString() ? '"' + queryString() + '"' : category() ? (lang() === 'ar' ? category()!.nameAr : category()!.nameEn) : (lang() === 'ar' ? 'STOREFRONT.AUTO_STR_298' : 'All Products') }}
+        {{ queryString() ? '"' + queryString() + '"' : category() ? (lang() === 'ar' ? category()!.nameAr : category()!.nameEn) : ('STOREFRONT.AUTO_STR_298' | translate) }}
       </h1>
       <p class="text-sm text-muted-foreground mt-1">
-        {{ isLoading() ? '...' : filtered().length + ' ' + (lang() === 'ar' ? 'STOREFRONT.AUTO_STR_471' : 'products') }}
+        {{ isLoading() ? '...' : filtered().length + ' ' + (filtered().length === 1 ? ('STOREFRONT.AUTO_STR_471' | translate) : ('STOREFRONT.AUTO_STR_448' | translate)) }}
       </p>
     </div>
 
     <div class="flex items-center justify-between gap-3 mb-6 relative z-20">
       <app-button variant="outline" size="sm" (click)="filterOpen.set(true)">
         <lucide-icon leftIcon name="sliders-horizontal" [img]="SlidersHorizontal" [size]="15"></lucide-icon>
-        {{t('filter', lang())}}
+        {{ 'COMMON.FILTER' | translate }}
       </app-button>
 
       <div class="flex items-center gap-2 ms-auto">
         <div class="relative">
           <button (click)="showSortDropdown.set(!showSortDropdown())" class="flex items-center gap-2 h-9 px-3 rounded-xl border border-border text-sm hover:bg-muted transition-colors tap-highlight">
-            <span class="hidden sm:inline text-muted-foreground">{{t('sort', lang())}}:</span>
+            <span class="hidden sm:inline text-muted-foreground">{{ 'COMMON.SORT' | translate }}:</span>
             {{ lang() === 'ar' ? currentSort()?.ar : currentSort()?.en }}
             <lucide-icon name="chevron-down" [img]="ChevronDown" [size]="14"></lucide-icon>
           </button>
@@ -51,7 +51,7 @@
          (mouseenter)="prefetchCategory('all')"
          class="shrink-0 flex items-center h-8 px-4 rounded-full text-sm font-medium border transition-all tap-highlight"
          [ngClass]="slug() === 'all' ? 'bg-brand border-brand text-[#0E0E11]' : 'border-border text-muted-foreground hover:border-brand hover:text-brand'">
-        {{ lang() === 'ar' ? 'COMMON.ALL' : 'All' }}
+        {{ 'COMMON.ALL' | translate }}
       </a>
       <a *ngFor="let cat of categories"
          [routerLink]="'/category/' + cat.slug"
@@ -79,7 +79,7 @@
 
         <div *ngIf="hasMore()" class="flex justify-center mt-10 animate-fade-in">
           <app-button variant="outline" size="lg" (click)="page.set(page() + 1)" className="rounded-full px-8">
-            {{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_391' : 'Load More' }}
+            {{ 'STOREFRONT.AUTO_STR_391' | translate }}
           </app-button>
         </div>
       </ng-container>
@@ -87,8 +87,8 @@
       <ng-template #emptyTpl>
         <div class="text-center py-20 text-muted-foreground animate-fade-in">
           <div class="text-5xl mb-3">🔍</div>
-          <p class="font-semibold">{{ lang() === 'ar' ? 'COMMON.NO_RESULTS' : 'No results found' }}</p>
-          <p class="text-sm mt-1">{{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_225' : 'Try a different search' }}</p>
+          <p class="font-semibold">{{ 'COMMON.NO_RESULTS' | translate }}</p>
+          <p class="text-sm mt-1">{{ 'STOREFRONT.AUTO_STR_225' | translate }}</p>
         </div>
       </ng-template>
     </ng-template>
@@ -98,7 +98,7 @@
   <app-modal [open]="filterOpen()" (onClose)="filterOpen.set(false)" [title]="t('filter', lang())" size="sm">
     <div class="space-y-5">
       <div>
-        <p class="font-semibold text-sm mb-3">{{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_392' : 'Price Range' }}</p>
+        <p class="font-semibold text-sm mb-3">{{ 'STOREFRONT.AUTO_STR_392' | translate }}</p>
         <div class="flex items-center gap-3">
           <input type="number" [value]="priceRange()[0]" (input)="setPriceMin($event)" class="flex-1 h-9 px-3 rounded-xl bg-muted text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Min" />
           <span class="text-muted-foreground">—</span>
@@ -107,7 +107,7 @@
       </div>
 
       <div>
-        <p class="font-semibold text-sm mb-3">{{ lang() === 'ar' ? 'COMMON.CATEGORY' : 'Category' }}</p>
+        <p class="font-semibold text-sm mb-3">{{ 'COMMON.CATEGORY' | translate }}</p>
         <div class="space-y-2">
           <a *ngFor="let cat of categories"
              [routerLink]="'/category/' + cat.slug"
@@ -122,10 +122,10 @@
 
       <div class="flex gap-2 pt-2">
         <app-button variant="outline" size="md" [fullWidth]="true" (click)="resetFilter()">
-          {{ lang() === 'ar' ? 'STOREFRONT.AUTO_STR_356' : 'Reset' }}
+          {{ 'STOREFRONT.AUTO_STR_356' | translate }}
         </app-button>
         <app-button variant="primary" size="md" [fullWidth]="true" (click)="filterOpen.set(false)">
-          {{ lang() === 'ar' ? 'COMMON.APPLY' : 'Apply' }}
+          {{ 'COMMON.APPLY' | translate }}
         </app-button>
       </div>
     </div>

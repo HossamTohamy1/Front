@@ -11,6 +11,7 @@ import { ToastService } from '../../../core/services/toast/toast.service';
 import { products, Product } from '../../../shared/data/mockData';
 
 import { ProductFeatureIconComponent } from '../../../shared/components/ui/feature-icon/product-feature-icon.component';
+import { LangService } from '../../../core/services/lang/lang.service';
 
 export interface ProductPageConfig {
     showBreadcrumb: boolean;
@@ -52,7 +53,7 @@ const initialConfig: ProductPageConfig = {
     buyNowText: 'PRODUCT.BUY_NOW',
     showServiceRow: true,
     services: [
-        { id: '1', icon: 'Truck', text: 'توصيل مجاني للطلبات فوق 300 ر.س' },
+        { id: '1', icon: 'Truck', text: 'PRODUCT.SERVICE_FREE_SHIPPING' },
         { id: '2', icon: 'RotateCcw', text: 'PRODUCT.SERVICE_EASY_RETURNS' }
     ],
     showTabs: true,
@@ -83,6 +84,7 @@ export class ProductDetailPageComponent {
   cartService = inject<any>(CartService);
   favoritesService = inject<any>(FavoritesService);
   toastService = inject<any>(ToastService);
+  readonly langService = inject(LangService);
   route = inject(ActivatedRoute);
   router = inject(Router);
 

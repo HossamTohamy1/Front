@@ -12,8 +12,8 @@ export const notifications: NotificationItem[] = [
   {
     id: 'notif-1',
     type: 'order',
-    title: 'Order Shipped',
-    message: 'Your order #LK-2025-1847 has been shipped! Tracking code: TK-882910-FX',
+    title: 'NOTIFICATIONS.ORDER_SHIPPED_TITLE',
+    message: 'NOTIFICATIONS.ORDER_SHIPPED_MSG',
     read: false,
     createdAt: '2025-11-22T09:20:00Z',
     orderId: 'ord-1',
@@ -21,8 +21,8 @@ export const notifications: NotificationItem[] = [
   {
     id: 'notif-2',
     type: 'offer',
-    title: 'Flash Sale — 40% Off!',
-    message: 'Limited time offer on all waist trainers. Shop now before it ends!',
+    title: 'NOTIFICATIONS.FLASH_SALE_TITLE',
+    message: 'NOTIFICATIONS.FLASH_SALE_MSG',
     read: false,
     createdAt: '2025-11-21T12:00:00Z',
   },

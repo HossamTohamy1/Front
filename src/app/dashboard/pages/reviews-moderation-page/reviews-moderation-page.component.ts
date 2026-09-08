@@ -33,7 +33,7 @@ export class ReviewsModerationPageComponent {
 
   toggleApprove(id: string) {
     this.reviews.update((prev: any[]) => prev.map(r => r.id === id ? { ...r, approved: !r.approved } : r));
-    this.toastService.showToast(this.lang() === 'ar' ? 'DASHBOARD.AUTO_STR_173' : 'Review updated');
+    this.toastService.showToast('تم تحديث التقييم');
   }
 
   getArray(length: number): number[] {

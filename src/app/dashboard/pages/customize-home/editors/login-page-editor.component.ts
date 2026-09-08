@@ -100,7 +100,7 @@ export interface LoginBenefit {
         <div class="bg-card border border-border rounded-2xl overflow-hidden mb-4">
             <div class="p-4 bg-muted/30 border-b border-border font-medium flex justify-between items-center">
                 <span>{{ 'DASHBOARD.AUTO_STR_165' | translate }}</span>
-                <app-add-item-button (onClick)="addBenefit()" label='DASHBOARD.AUTO_STR_450'></app-add-item-button>
+                <app-add-item-button (onClick)="addBenefit()" label="ميزة جديدة"></app-add-item-button>
             </div>
             <div class="p-4 space-y-4">
                 <div *ngFor="let benefit of config().benefits || []; trackBy: trackById" class="p-4 bg-muted/30 rounded-xl border border-border space-y-3 relative group">
@@ -166,9 +166,9 @@ export class LoginPageEditorComponent {
   addBenefit() {
       const newBenefit: LoginBenefit = {
           id: crypto.randomUUID(),
-          title: 'DASHBOARD.AUTO_STR_350',
-          line1: 'DASHBOARD.AUTO_STR_465',
-          line2: 'DASHBOARD.AUTO_STR_465',
+          title: 'ميزة جديدة',
+          line1: 'وصف الميزة الرئيسية',
+          line2: 'تفاصيل إضافية عن الميزة',
       };
       this.updateConfig('benefits', [...(this.config().benefits || []), newBenefit]);
   }

@@ -1,77 +1,93 @@
-<main class="dashboard-login" dir="rtl">
-  <header class="dashboard-login__header">
-    <button
-      type="button"
-      class="dashboard-login__header-icon dashboard-login__header-icon--users"
-      aria-label='DASHBOARD.AUTO_STR_385'
-    >
-      <lucide-icon [img]="UsersRound" [size]="17" [strokeWidth]="2"></lucide-icon>
-    </button>
+<main class="admin-login" dir="rtl">
+  <div class="admin-login__container">
+    <div class="admin-login__card">
+      <!-- Brand Header -->
+      <div class="admin-login__header">
+        <div class="admin-login__brand">
+          <span class="admin-login__brand-primary">LOXX</span>
+          <span class="admin-login__brand-secondary">KING</span>
+        </div>
+        <h1 class="admin-login__title">تسجيل الدخول إلى لوحة التحكم</h1>
+        <p class="admin-login__subtitle">أدخل بيانات الاعتماد للمتابعة إلى لوحة الإدارة</p>
+      </div>
 
-    <div class="dashboard-login__brand" aria-label="LOXX KING">
-      <span class="dashboard-login__brand-first">LOXX</span>
-      <span class="dashboard-login__brand-second">KING</span>
-    </div>
+      <!-- Error Alert -->
+      <div *ngIf="error" class="admin-login__alert" role="alert">
+        <lucide-icon [img]="CircleAlert" class="admin-login__alert-icon" [size]="18"></lucide-icon>
+        <span>{{ error }}</span>
+      </div>
 
-    <button
-      type="button"
-      class="dashboard-login__header-icon dashboard-login__header-icon--bell"
-      aria-label='NOTIFICATIONS.TITLE'
-    >
-      <lucide-icon [img]="Bell" [size]="17" [strokeWidth]="2"></lucide-icon>
-    </button>
-  </header>
+      <!-- Form -->
+      <form class="admin-login__form" (ngSubmit)="onSubmit($event)" novalidate>
+        <!-- Email Field -->
+        <div class="admin-login__field-group">
+          <label for="admin-email" class="admin-login__label">البريد الإلكتروني</label>
+          <div class="admin-login__input-wrapper">
+            <input
+              id="admin-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              dir="ltr"
+              [(ngModel)]="email"
+              (input)="error = ''"
+              placeholder="admin@loxxking.com"
+              class="admin-login__input"
+            />
+            <span class="admin-login__input-icon">
+              <lucide-icon [img]="Mail" [size]="18"></lucide-icon>
+            </span>
+          </div>
+        </div>
 
-  <section class="dashboard-login__content">
-    <div class="dashboard-login__card">
-      <img src="assets/home/logo-header.png" alt="LOXX KING" class="dashboard-login__logo" />
+        <!-- Password Field -->
+        <div class="admin-login__field-group">
+          <label for="admin-password" class="admin-login__label">كلمة المرور</label>
+          <div class="admin-login__input-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="admin-password"
+              name="password"
+              autocomplete="current-password"
+              required
+              dir="ltr"
+              [(ngModel)]="password"
+              (input)="error = ''"
+              placeholder="••••••••"
+              class="admin-login__input admin-login__input--password"
+            />
+            <span class="admin-login__input-icon">
+              <lucide-icon [img]="Lock" [size]="18"></lucide-icon>
+            </span>
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="admin-login__toggle-btn"
+              [attr.aria-label]="showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'"
+            >
+              <lucide-icon [img]="showPassword ? EyeOff : Eye" [size]="18"></lucide-icon>
+            </button>
+          </div>
+        </div>
 
-      <h1>{{ 'DASHBOARD.AUTO_STR_345' | translate }}</h1>
-
-      <form class="dashboard-login__form" (submit)="submitLogin($event)" novalidate>
-        <label class="dashboard-login__field">
-          <lucide-icon [img]="Mail" [size]="16"></lucide-icon>
-          <input
-            type="email"
-            [(ngModel)]="form.email"
-            name="email"
-            placeholder='DASHBOARD.AUTO_STR_55'
-            autocomplete="email"
-            autofocus
-            required
-            (input)="error = ''"
-          />
-        </label>
-
-        <label class="dashboard-login__field">
-          <lucide-icon [img]="LockKeyhole" [size]="16"></lucide-icon>
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            [(ngModel)]="form.password"
-            name="password"
-            placeholder='DASHBOARD.AUTO_STR_161'
-            autocomplete="current-password"
-            required
-            (input)="error = ''"
-          />
-          <button
-            type="button"
-            class="dashboard-login__password-toggle"
-            (click)="togglePassword()"
-            [attr.aria-label]="showPassword ? 'DASHBOARD.AUTO_STR_130' : 'DASHBOARD.AUTO_STR_131'"
-          >
-            <lucide-icon [img]="showPassword ? EyeOff : Eye" [size]="15"></lucide-icon>
-          </button>
-        </label>
-
-        @if (error) {
-          <p class="dashboard-login__error">{{ error }}</p>
-        }
-
-        <button type="submit" class="dashboard-login__submit" [disabled]="loading">
-          {{ loading ? 'جاري تسجيل الدخول...' : 'AUTH.LOGIN' }}
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="admin-login__submit"
+          [disabled]="loading || !email || !password"
+        >
+          <span *ngIf="loading" class="admin-login__spinner"></span>
+          <lucide-icon *ngIf="!loading" [img]="LogIn" [size]="18"></lucide-icon>
+          <span>{{ loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول' }}</span>
         </button>
+
+        <!-- Security Badge -->
+        <div class="admin-login__security">
+          <lucide-icon [img]="ShieldCheck" [size]="16" class="admin-login__security-icon"></lucide-icon>
+          <span>بوابة آمنة ومحمية خاصة بإدارة LOXX KING</span>
+        </div>
       </form>
     </div>
-  </section>
+  </div>
 </main>

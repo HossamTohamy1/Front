@@ -17,7 +17,7 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_35' | translate }}</p>
         </div>
 
-        <app-section-card title='DASHBOARD.AUTO_STR_138' [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false">
+        <app-section-card title="رأس الصفحة والبحث" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false">
             <div class="flex flex-col gap-1.5 mb-2">
                 <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
                 <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().title" (ngModelChange)="updateConfig({title: $event})" />
@@ -39,12 +39,12 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             </div>
         </app-section-card>
 
-        <app-section-card title='DASHBOARD.AUTO_STR_236' [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" [addAction]="{ label: 'DASHBOARD.AUTO_STR_357', onClick: addFaq }">
+        <app-section-card title="قائمة الأسئلة" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" [addAction]="{ label: 'إضافة سؤال', onClick: addFaq }">
             <div class="flex flex-col gap-3">
                 <div *ngFor="let faq of config().faqs; let idx = index; trackBy: trackById" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <div class="flex flex-col gap-2 flex-1">
-                        <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="faq.question" (ngModelChange)="updateFaq(idx, { question: $event })" placeholder='DASHBOARD.AUTO_STR_415' />
-                        <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="faq.answer" (ngModelChange)="updateFaq(idx, { answer: $event })" placeholder='DASHBOARD.AUTO_STR_399' rows="2"></textarea>
+                        <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="faq.question" (ngModelChange)="updateFaq(idx, { question: $event })" placeholder="السؤال" />
+                        <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="faq.answer" (ngModelChange)="updateFaq(idx, { answer: $event })" placeholder="الإجابة" rows="2"></textarea>
                     </div>
                     <button (click)="removeFaq(idx)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md h-fit">
                         <lucide-icon name="trash-2" [size]="16"></lucide-icon>
@@ -73,7 +73,7 @@ export class FaqPageEditorComponent {
 
   addFaq = () => {
       const faqs = [...this.config().faqs];
-      faqs.push({ id: 'f-' + Date.now(), question: 'DASHBOARD.AUTO_STR_375', answer: 'DASHBOARD.AUTO_STR_326' });
+      faqs.push({ id: 'f-' + Date.now(), question: 'سؤال جديد', answer: 'إجابة جديدة' });
       this.updateConfig({ faqs });
   };
 

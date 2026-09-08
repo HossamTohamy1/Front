@@ -8,7 +8,7 @@
 <app-store-layout *ngIf="!(isWalletPaymentFlow() && walletPaymentSession())" [showFloatingChat]="false">
   
 
-  <main class="lk-checkout-page" dir="rtl">
+  <main class="lk-checkout-page">
     <section class="lk-checkout-page__hero">
       <div class="lk-checkout-page__title-wrap">
         <h1>{{ config.headerTitle | translate}}</h1>
@@ -16,7 +16,7 @@
       </div>
 
       <a routerLink="/cart" class="lk-checkout-page__back-link">
-        <lucide-icon name="arrow-left" aria-hidden="true"></lucide-icon>{{ 'CHECKOUT.BACK_TO_CART' | translate }}</a>
+        <lucide-icon name="arrow-left" class="rtl-flip" aria-hidden="true"></lucide-icon>{{ 'CHECKOUT.BACK_TO_CART' | translate }}</a>
     </section>
 
     <ng-container *ngIf="displayItems().length === 0; else checkoutContent">
@@ -262,11 +262,11 @@
                   <lucide-icon *ngIf="!bankReceipt()" name="cloud-upload"></lucide-icon>
                 </span>
                 <span class="lk-bank-receipt-upload__copy">
-                  <strong>{{ bankReceipt() ? bankReceipt()!.name : 'إرفاق إيصال التحويل (مطلوب)' }}</strong>
+                  <strong>{{ bankReceipt() ? bankReceipt()!.name : ('STOREFRONT.AUTO_STR_185' | translate) }}</strong>
                   <small>
-                    {{ bankReceipt() ? (bankReceipt()!.size / 1024 / 1024 | number:'1.2-2') + ' MB' : 'STOREFRONT.AUTO_STR_55' }}
+                    {{ bankReceipt() ? (bankReceipt()!.size / 1024 / 1024 | number:'1.2-2') + ' MB' : ('STOREFRONT.AUTO_STR_55' | translate) }}
                   </small>
-                  <em>الحد الأقصى 5MB — JPG, PNG, PDF</em>
+                  <em>{{ 'SHARED.AUTO_STR_6' | translate }} — JPG, PNG, PDF</em>
                 </span>
               </label>
             </div>
@@ -302,20 +302,20 @@
                   <a [routerLink]="['/product', item.cartItem.product.id]">
                     <h3>{{ item.name | translate}}</h3>
                   </a>
-                  <p>اللون: {{ item.color }}</p>
-                  <p>المقاس: {{ item.cartItem.size }}</p>
-                  <strong>{{ item.price }} ر.س</strong>
+                  <p>{{ 'PRODUCT.COLOR' | translate }}: {{ item.color | translate }}</p>
+                  <p>{{ 'PRODUCT.SIZE' | translate }}: {{ item.cartItem.size }}</p>
+                  <strong>{{ item.price }} {{ 'COMMON.CURRENCY' | translate }}</strong>
                 </div>
               </article>
             </div>
 
             <div class="lk-checkout-summary-totals">
-              <div><span>{{ 'COMMON.SUBTOTAL' | translate }}</span><strong>{{ subtotal() | number }} ر.س</strong></div>
-              <div><span>{{ 'STOREFRONT.AUTO_STR_288' | translate }}</span><strong>{{ shipping() | number }} ر.س</strong></div>
-              <div class="is-discount"><span>{{ 'COMMON.DISCOUNT' | translate }}</span><strong>- {{ discount() | number }} ر.س</strong></div>
+              <div><span>{{ 'COMMON.SUBTOTAL' | translate }}</span><strong>{{ subtotal() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong></div>
+              <div><span>{{ 'STOREFRONT.AUTO_STR_288' | translate }}</span><strong>{{ shipping() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong></div>
+              <div class="is-discount"><span>{{ 'COMMON.DISCOUNT' | translate }}</span><strong>- {{ discount() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong></div>
               <div class="lk-checkout-summary-totals__grand">
                 <span>{{ 'STOREFRONT.AUTO_STR_219' | translate }}</span>
-                <strong>{{ total() | number }} ر.س</strong>
+                <strong>{{ total() | number }} {{ 'COMMON.CURRENCY' | translate }}</strong>
               </div>
               <small>{{ 'STOREFRONT.AUTO_STR_117' | translate }}</small>
             </div>

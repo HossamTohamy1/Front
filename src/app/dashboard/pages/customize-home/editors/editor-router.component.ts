@@ -80,9 +80,9 @@ import { SizeGuidePageEditorComponent } from './size-guide-page-editor.component
         @case ('sizeguide') { <app-size-guide-page-editor></app-size-guide-page-editor> }
         @default {
           <div class="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
-            <h3 class="text-lg font-bold text-gray-900 mb-2">UOU O U,OU?O-Oc OUSO U,O O"U,Oc U,U,OO1O_USU,</h3>
-            <p class="text-sm">U,O  USU.UU+ OOrOUSO UOU O U,OU?O-Oc U.U+ OrU,O U, O U,U.O-OO O U,O"OOUS O-O U,USO U<.</p>
-            <p class="text-sm mt-2">U,U. O"OOU?O- O U,U.OOO (U.OU,: O U,OOUSO3USOcOO O U,U.U+OOO OOO O U,O3U,Oc) U,U,O"O_O U?US O U,OO1O_USU,.</p>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">هذه الصفحة غير قابلة للتعديل</h3>
+            <p class="text-sm">لا يمكن تعديل هذه الصفحة من خلال لوحة التحكم حالياً.</p>
+            <p class="text-sm mt-2">قم باختيار صفحة أخرى من القائمة (مثل: الرئيسية، من نحن، السلة) للبدء في التعديل.</p>
           </div>
         }
       }

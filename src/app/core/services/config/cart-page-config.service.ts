@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 
 export interface TrustBadgeConfig {
     id: string;
@@ -80,7 +81,7 @@ export class CartPageConfigService {
     window.addEventListener('storage', (e: StorageEvent) => {
       if (e.key === this.STORAGE_KEY && e.newValue) {
         try {
-          this.config.set(JSON.parse(e.newValue));
+          this.config.set(sanitizeWithInitial(JSON.parse(e.newValue), initialConfig));
         } catch (_) {}
       }
     });
@@ -90,8 +91,9 @@ export class CartPageConfigService {
     const saved = localStorage.getItem(this.STORAGE_KEY);
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        return { ...initialConfig, ...parsed };
+        const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(clean));
+        return clean;
       } catch (e) {}
     }
     return initialConfig;

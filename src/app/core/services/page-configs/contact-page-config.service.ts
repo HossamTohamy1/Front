@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 type ContactMethod = {
     id: string;
@@ -8,16 +9,16 @@ type ContactMethod = {
 };
 
 const DEFAULT_CONFIG = {
-    pageTitle: 'CONTACT.TITLE',
-    pageSubtitle: 'CONTACT.SUBTITLE',
-    formTitle: 'CONTACT.FORM_TITLE',
-    formSubtitle: 'CONTACT.FORM_SUBTITLE',
+    pageTitle: 'تواصل معنا',
+    pageSubtitle: 'نحن هنا لمساعدتك والإجابة على كافة استفساراتك.',
+    formTitle: 'أرسل لنا رسالة',
+    formSubtitle: 'سنقوم بالرد عليك في أقرب وقت ممكن.',
     showContactForm: true,
     bannerImage: '',
     contactMethods: [
-        { id: '1', type: 'phone', title: 'CONTACT.CUSTOMER_SERVICE', value: '920000000', link: 'tel:920000000' },
-        { id: '2', type: 'whatsapp', title: 'CONTACT.WHATSAPP', value: '+966500000000', link: 'https://wa.me/966500000000' },
-        { id: '3', type: 'email', title: 'CONTACT.EMAIL', value: 'support@loxxking.com', link: 'mailto:support@loxxking.com' },
+        { id: '1', type: 'phone', title: 'خدمة العملاء', value: '920000000', link: 'tel:920000000' },
+        { id: '2', type: 'whatsapp', title: 'واتساب', value: '+966500000000', link: 'https://wa.me/966500000000' },
+        { id: '3', type: 'email', title: 'البريد الإلكتروني', value: 'support@loxxking.com', link: 'mailto:support@loxxking.com' },
     ]
 };
 
@@ -75,9 +76,6 @@ export class ContactPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...DEFAULT_CONFIG, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, DEFAULT_CONFIG);
   }
 }

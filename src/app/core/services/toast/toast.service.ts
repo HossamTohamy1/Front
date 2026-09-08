@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject, Injector } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface Toast {
   id: string;
@@ -10,11 +11,20 @@ export interface Toast {
   providedIn: 'root'
 })
 export class ToastService {
+  private injector = inject(Injector);
   toasts = signal<Toast[]>([]);
 
   showToast(message: string, type: Toast['type'] = 'success') {
+    let msg = message;
+    try {
+      const translate = this.injector.get(TranslateService, null, { optional: true });
+      if (translate) {
+        msg = translate.instant(message);
+      }
+    } catch {}
+
     const id = Math.random().toString(36).slice(2);
-    this.toasts.update(current => [...current, { id, type, message }]);
+    this.toasts.update(current => [...current, { id, type, message: msg }]);
     
     setTimeout(() => {
       this.dismissToast(id);

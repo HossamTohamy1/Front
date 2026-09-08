@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -54,9 +55,6 @@ export class LoginPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfigValue, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, initialConfigValue);
   }
 }

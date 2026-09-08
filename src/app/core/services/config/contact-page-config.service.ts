@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 
 export type ContactMethod = {
     id: string;
@@ -46,7 +47,7 @@ export class ContactPageConfigService {
     this.loadConfig();
     window.addEventListener('storage', (e) => {
       if (e.key === 'loxx-contact-config' && e.newValue) {
-        this.configSignal.set(JSON.parse(e.newValue));
+        this.configSignal.set(sanitizeWithInitial(JSON.parse(e.newValue), DEFAULT_CONFIG));
       }
     });
   }
@@ -54,7 +55,9 @@ export class ContactPageConfigService {
   private loadConfig() {
     const saved = localStorage.getItem('loxx-contact-config');
     if (saved) {
-      this.configSignal.set({ ...DEFAULT_CONFIG, ...JSON.parse(saved) });
+      const clean = sanitizeWithInitial(JSON.parse(saved), DEFAULT_CONFIG);
+      localStorage.setItem('loxx-contact-config', JSON.stringify(clean));
+      this.configSignal.set(clean);
     }
   }
 
