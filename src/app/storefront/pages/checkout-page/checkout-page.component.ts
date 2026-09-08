@@ -262,10 +262,9 @@ export class CheckoutPageComponent implements OnInit {
             this.cartService.clearCart();
             this.router.navigate(['/orders']);
           },
-          error: () => {
-            this.toastService.showToast('STOREFRONT.AUTO_STR_174', 'success');
-            this.cartService.clearCart();
-            this.router.navigate(['/orders']);
+          error: (err) => {
+            console.error('Order creation failed:', err);
+            this.toastService.showToast('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى', 'error');
           }
         });
       };
@@ -279,10 +278,9 @@ export class CheckoutPageComponent implements OnInit {
         this.cartService.clearCart();
         this.router.navigate(['/orders']);
       },
-      error: () => {
-        this.toastService.showToast('STOREFRONT.AUTO_STR_174', 'success');
-        this.cartService.clearCart();
-        this.router.navigate(['/orders']);
+      error: (err) => {
+        console.error('Order creation failed:', err);
+        this.toastService.showToast('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى', 'error');
       }
     });
   }

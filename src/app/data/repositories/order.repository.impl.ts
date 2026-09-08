@@ -20,37 +20,44 @@ export class OrderRepositoryImpl implements IOrderRepository {
       return this.http.get<any>(`${environment.apiBaseUrl}/orders`).pipe(
         map(res => {
           const items = res?.data?.data || res?.data || [];
-          return items.map((o: any) => ({
-            id: o.id,
-            orderNumber: o.orderNumber || o.id.split('-')[0].toUpperCase(),
-            createdAt: o.createdAt,
-            updatedAt: o.createdAt,
-            status: o.status,
-            paymentStatus: o.paymentMethod === 'CashOnDelivery' ? 'unpaid' : 'paid',
-            items: (o.items || []).map((i: any) => ({
-              productId: i.productId,
-              quantity: i.quantity,
-              unitPrice: i.value || i.unitPrice || 0
-            })),
-            subtotal: o.total || 0,
-            shipping: 0,
-            discount: 0,
-            total: o.total || 0,
-            customerName: o.customerName || 'Guest',
-            phone: o.phone || '',
-            city: o.country || '',
-            area: '',
-            address: o.address || '',
-            paymentMethod: o.paymentMethod === 'BankTransfer' ? 'ØªØ­ÙˆÙŠÙ„ Ø¨Ù†ÙƒÙŠ' : 'Ø§Ù„Ø¯ÙØ¹ Ø¹Ù†Ø¯ Ø§Ù„Ø§Ø³ØªÙ„Ø§Ù…',
-            country: o.country || '',
-            deliveryCompany: 'Loxxking Delivery',
-            estimatedDelivery: '',
-            bankTransferReceipt: o.bankTransfers && o.bankTransfers.length > 0 ? {
-              name: 'Receipt',
-              type: 'image/jpeg',
-              dataUrl: o.bankTransfers[0].proofImageUrl
-            } : undefined
-          } as TrackedOrder));
+          return items.map((o: any) => {
+            const isBank = o.paymentMethod === 'BankTransfer' || o.paymentMethod === 2 || o.paymentMethod === 'تحويل بنكي' || o.paymentMethod === 'CHECKOUT.BANK_TRANSFER';
+            let receiptUrl = o.proofImageUrl || o.bankTransferReceiptUrl || (o.bankTransfers && o.bankTransfers.length > 0 ? o.bankTransfers[0].proofImageUrl : undefined);
+            if (receiptUrl && receiptUrl.startsWith('/uploads/')) {
+              receiptUrl = `http://localhost:5050${receiptUrl}`;
+            }
+            return {
+              id: o.id,
+              orderNumber: o.orderNumber || o.id.split('-')[0].toUpperCase(),
+              createdAt: o.createdAt,
+              updatedAt: o.createdAt,
+              status: o.status,
+              paymentStatus: o.paymentStatus === 'Paid' ? 'paid' : (isBank ? 'unpaid' : (o.paymentMethod === 'CashOnDelivery' ? 'unpaid' : 'paid')),
+              items: (o.items || []).map((i: any) => ({
+                productId: i.productId,
+                quantity: i.quantity,
+                unitPrice: i.value || i.unitPrice || 0
+              })),
+              subtotal: o.total || o.totalAmount || 0,
+              shipping: 0,
+              discount: 0,
+              total: o.total || o.totalAmount || 0,
+              customerName: o.customerName || 'Guest',
+              phone: o.phone || '',
+              city: o.city || o.country || '',
+              area: o.area || '',
+              address: o.address || '',
+              paymentMethod: isBank ? 'تحويل بنكي' : 'الدفع عند الاستلام',
+              country: o.country || '',
+              deliveryCompany: o.deliveryCompany || 'Loxxking Delivery',
+              estimatedDelivery: o.estimatedDelivery || '',
+              bankTransferReceipt: receiptUrl ? {
+                name: 'Receipt',
+                type: 'image/jpeg',
+                dataUrl: receiptUrl
+              } : undefined
+            } as TrackedOrder;
+          });
         })
       );
     }
@@ -79,12 +86,19 @@ export class OrderRepositoryImpl implements IOrderRepository {
 
   createOrder(order: TrackedOrder): Observable<TrackedOrder> {
     if (!environment.useMockData) {
+      const isGuid = (val: any) => typeof val === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+      const DEFAULT_PRODUCT_ID = '199dab15-2e2e-41a6-83d6-445cecae2681';
+      const isBank = (order.paymentMethod || '').includes('تحويل') || (order.paymentMethod || '').toLowerCase().includes('bank') || !!order.bankTransferReceipt;
+
       const payload = {
         address: order.address,
         phone: order.phone,
         notes: order.notes,
-        paymentMethod: order.paymentMethod.includes('ØªØ­ÙˆÙŠÙ„') ? 2 : 1, // 1: COD, 2: BankTransfer
-        items: order.items.map(i => ({ productId: i.productId, quantity: i.quantity })),
+        paymentMethod: isBank ? 2 : 1, // 1: COD, 2: BankTransfer
+        items: (order.items && order.items.length > 0 ? order.items : [{ productId: DEFAULT_PRODUCT_ID, quantity: 1 }]).map(i => ({
+          productId: isGuid(i.productId) ? i.productId : DEFAULT_PRODUCT_ID,
+          quantity: i.quantity || 1
+        })),
         guestName: order.customerName,
         guestCountryName: order.country
       };
