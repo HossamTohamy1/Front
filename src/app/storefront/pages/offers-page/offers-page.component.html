@@ -1,0 +1,189 @@
+<app-store-layout [showFloatingChat]="false">
+    
+    <main class="lk-offers-page" dir="rtl">
+        <section *ngIf="pageConfig().showHero" class="lk-offers-hero" aria-labelledby="offers-title" [ngStyle]="heroStyle">
+            <div class="lk-offers-hero__copy">
+                <h1 id="offers-title">{{ pageConfig().heroTitle | translate }}</h1>
+                <p>{{ pageConfig().heroSubtitle | translate }}</p>
+                <button type="button" (click)="scrollToOffers()">
+                    <lucide-icon [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
+                    <span>{{ 'STOREFRONT.AUTO_STR_368' | translate }}</span>
+                </button>
+            </div>
+
+            <div class="lk-offers-hero__visual" aria-hidden="true">
+                <img [src]="offerProducts" alt="" />
+            </div>
+        </section>
+
+        <section class="lk-offers-section" id="current-offers" aria-labelledby="current-offers-title">
+            <div class="lk-offers-section__heading">
+                <h2 id="current-offers-title">{{ pageConfig().currentOffersTitle | translate }}</h2>
+                <a href="#bundles">{{ 'COMMON.SEEALL' | translate }}</a>
+            </div>
+
+            <div class="lk-offer-products-grid">
+                <article *ngFor="let product of currentOffers" class="lk-offer-product-card">
+                    <span class="lk-offer-product-card__discount">-20%</span>
+
+                    <button
+                        type="button"
+                        class="lk-offer-product-card__heart"
+                        [class.is-active]="isFavorite(product.id)"
+                        (click)="toggleFavorite(product.id)"
+                        [attr.aria-label]="isFavorite(product.id) ? 'STOREFRONT.AUTO_STR_222' : 'STOREFRONT.AUTO_STR_206'"
+                    >
+                        <lucide-icon [img]="Heart" [attr.fill]="isFavorite(product.id) ? 'currentColor' : 'none'" aria-hidden="true"></lucide-icon>
+                    </button>
+
+                    <div class="lk-offer-product-card__image">
+                        <img [src]="product.images[0]" [alt]="product.nameAr" />
+                    </div>
+
+                    <div class="lk-offer-product-card__body">
+                        <h3>{{ product.nameAr }}</h3>
+                        <div class="lk-offer-product-card__prices">
+                            <strong>{{ product.price }} <span>ر.س</span></strong>
+                            <del>{{ product.originalPrice }}</del>
+                        </div>
+
+                        <button type="button" (click)="addOfferProduct(product)">
+                            <lucide-icon [img]="ShoppingBag" aria-hidden="true"></lucide-icon>
+                            <span>{{ 'PRODUCT.ADD_TO_CART' | translate }}</span>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="lk-offers-section" id="bundles" aria-labelledby="bundles-title">
+            <div class="lk-offers-section__heading">
+                <h2 id="bundles-title">{{ pageConfig().bundlesTitle | translate }}</h2>
+                <button
+                    type="button"
+                    class="lk-offers-section__show-all"
+                    (click)="toggleAllBundles()"
+                    [attr.aria-expanded]="showAllBundles()"
+                >
+                    {{ showAllBundles() ? 'STOREFRONT.AUTO_STR_445' : 'COMMON.SEEALL' }}
+                </button>
+            </div>
+
+            <div class="lk-offers-bundles-grid" [class.is-expanded]="showAllBundles()">
+                <article *ngFor="let bundle of getVisibleBundles()" class="lk-offer-bundle-card" [ngClass]="'lk-offer-bundle-card--' + bundle.imageType">
+                    <div class="lk-offer-bundle-card__copy">
+                        <h3>{{ bundle.title | translate}}</h3>
+                        <p>{{ bundle.subtitle | translate}}</p>
+                        <strong>{{ bundle.price }} <span>ر.س</span></strong>
+                        <del>{{ bundle.originalPrice }} ر.س</del>
+                    </div>
+
+                    <div *ngIf="bundle.imageType === 'three'" class="lk-offer-bundle-card__media lk-offer-bundle-card__media--three" aria-hidden="true">
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--black-left" [src]="bundleBlackShaper" alt="" draggable="false" />
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--beige-center" [src]="bundleBeigeShaper" alt="" draggable="false" />
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--black-right" [src]="bundleBlackShaper" alt="" draggable="false" />
+                    </div>
+
+                    <div *ngIf="bundle.imageType === 'black-two'" class="lk-offer-bundle-card__media lk-offer-bundle-card__media--two-black" aria-hidden="true">
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--black-pair-left" [src]="bundleBlackShaper" alt="" draggable="false" />
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--black-pair-right" [src]="bundleBlackShaper" alt="" draggable="false" />
+                    </div>
+
+                    <div *ngIf="bundle.imageType === 'beige-two'" class="lk-offer-bundle-card__media lk-offer-bundle-card__media--two-beige" aria-hidden="true">
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--beige-pair-left" [src]="bundleBeigeShaper" alt="" draggable="false" />
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--beige-pair-right" [src]="bundleBeigeShaper" alt="" draggable="false" />
+                    </div>
+
+                    <div *ngIf="bundle.imageType === 'mixed-two'" class="lk-offer-bundle-card__media lk-offer-bundle-card__media--mixed-two" aria-hidden="true">
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--mixed-black" [src]="bundleBlackShaper" alt="" draggable="false" />
+                        <img class="lk-offer-bundle-card__product lk-offer-bundle-card__product--mixed-beige" [src]="bundleBeigeShaper" alt="" draggable="false" />
+                    </div>
+
+                    <div class="lk-offer-bundle-card__footer">
+                        <span>وفر {{ bundle.saving }} ر.س</span>
+                        <button type="button" (click)="addBundle(bundle)">
+                            <span>{{ 'STOREFRONT.AUTO_STR_277' | translate }}</span>
+                            <lucide-icon [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="lk-offers-section" id="multi-buy" aria-labelledby="multi-buy-title">
+            <div class="lk-offers-section__heading lk-offers-section__heading--single">
+                <h2 id="multi-buy-title">{{ 'STOREFRONT.AUTO_STR_154' | translate }}</h2>
+            </div>
+
+            <div class="lk-offers-multi-grid">
+                <article class="lk-offers-multi-card lk-offers-multi-card--two">
+                    <span class="lk-offers-multi-card__icon" aria-hidden="true">
+                        <img [src]="multiBuyTwoIcon" alt="" draggable="false" />
+                    </span>
+                    <div class="lk-offers-multi-card__content">
+                        <h3>{{ 'STOREFRONT.AUTO_STR_462' | translate }}<b>2</b></h3>
+                        <p>{{ 'STOREFRONT.AUTO_STR_188' | translate }}</p>
+                        <strong>{{ 'STOREFRONT.AUTO_STR_424' | translate }}<b>10%</b></strong>
+                    </div>
+                </article>
+
+                <article class="lk-offers-multi-card lk-offers-multi-card--three">
+                    <span class="lk-offers-multi-card__icon" aria-hidden="true">
+                        <img [src]="multiBuyThreeIcon" alt="" draggable="false" />
+                    </span>
+                    <div class="lk-offers-multi-card__content">
+                        <h3>{{ 'STOREFRONT.AUTO_STR_462' | translate }}<b>3</b></h3>
+                        <p>{{ 'STOREFRONT.AUTO_STR_425' | translate }}</p>
+                        <strong>{{ 'STOREFRONT.AUTO_STR_424' | translate }}<b>15%</b></strong>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="lk-offers-section lk-offers-section--limited" aria-labelledby="limited-offer-title">
+            <div class="lk-offers-section__heading lk-offers-section__heading--single">
+                <h2 id="limited-offer-title">{{ 'STOREFRONT.AUTO_STR_189' | translate }}</h2>
+            </div>
+
+            <article class="lk-offers-limited-card" aria-label='STOREFRONT.AUTO_STR_189'>
+                <div class="lk-offers-limited-card__timer" aria-label='STOREFRONT.AUTO_STR_307'>
+                    <span class="lk-offers-limited-card__clock" aria-hidden="true">
+                        <lucide-icon [img]="Clock3"></lucide-icon>
+                    </span>
+
+                    <div class="lk-offers-limited-card__timer-copy">
+                        <span class="lk-offers-limited-card__ends">{{ 'STOREFRONT.AUTO_STR_399' | translate }}</span>
+
+                        <div class="lk-offers-limited-card__values" dir="ltr">
+                            <div class="lk-offers-limited-card__unit">
+                                <b>{{ countdown().hours }}</b>
+                                <small>{{ 'STOREFRONT.AUTO_STR_476' | translate }}</small>
+                            </div>
+                            <i>:</i>
+                            <div class="lk-offers-limited-card__unit">
+                                <b>{{ countdown().minutes }}</b>
+                                <small>{{ 'STOREFRONT.AUTO_STR_459' | translate }}</small>
+                            </div>
+                            <i>:</i>
+                            <div class="lk-offers-limited-card__unit">
+                                <b>{{ countdown().seconds }}</b>
+                                <small>{{ 'STOREFRONT.AUTO_STR_463' | translate }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lk-offers-limited-card__copy">
+                    <h3>{{ 'STOREFRONT.AUTO_STR_211' | translate }}</h3>
+                    <p>سارعي قبل انتهاء الوقت!</p>
+                </div>
+
+                <span class="lk-offers-limited-card__percent" aria-hidden="true">
+                    <lucide-icon [img]="Percent"></lucide-icon>
+                </span>
+            </article>
+        </section>
+
+        <div class="lk-offers-page__bottom-space"></div>
+    </main>
+</app-store-layout>

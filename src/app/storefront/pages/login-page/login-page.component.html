@@ -1,0 +1,164 @@
+<app-store-layout>
+  <main class="lk-login-page" dir="rtl">
+    <div
+      class="lk-login-page__shell"
+      [style.--login-scene]="'url(' + sceneImage + ')'"
+    >
+      <section class="lk-login-main">
+        <aside class="lk-login-brand" aria-label="LOXX KING">
+          <img
+            class="lk-login-logo"
+            [src]="logoImage"
+            alt="LOXX KING"
+            draggable="false"
+          />
+
+          <div class="lk-login-intro">
+            <h1>
+              {{ pageConfig().heroTitlePrefix | translate }} <strong>{{ pageConfig().heroTitleHighlight | translate }}</strong>
+            </h1>
+
+            <span class="lk-login-intro__line" aria-hidden="true"></span>
+
+            <p>
+              @for (line of pageConfig().heroSubtitle.split('\n'); track $index) {
+                {{ line }}<br/>
+              }
+            </p>
+          </div>
+        </aside>
+
+        <section class="lk-login-card" aria-labelledby="login-title">
+          <div class="lk-login-lock" aria-hidden="true">
+            <lucide-icon [img]="Lock"></lucide-icon>
+          </div>
+
+          <header class="lk-login-card__header">
+            <h2 id="login-title">{{ pageConfig().welcomeTitle | translate }}</h2>
+
+            <p>
+              <lucide-icon [img]="Heart" aria-hidden="true"></lucide-icon>
+              <span>
+                {{ pageConfig().welcomeSubtitle | translate }}
+              </span>
+            </p>
+          </header>
+
+          <form class="lk-login-form" (submit)="handleSubmit($event)">
+            <label class="lk-login-field lk-login-field--email">
+              <lucide-icon [img]="Mail" class="lk-login-field__leading" aria-hidden="true"></lucide-icon>
+
+              <input
+                type="email"
+                [(ngModel)]="form.email"
+                name="email"
+                placeholder='CONTACT.EMAIL'
+                autocomplete="email"
+                required
+              />
+            </label>
+
+            <label class="lk-login-field lk-login-field--password">
+              <lucide-icon [img]="Lock" class="lk-login-field__leading" aria-hidden="true"></lucide-icon>
+
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                [(ngModel)]="form.password"
+                name="password"
+                placeholder='AUTH.PASSWORD'
+                autocomplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                class="lk-login-field__eye"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword() ? 'DASHBOARD.AUTO_STR_130' : 'DASHBOARD.AUTO_STR_131'"
+              >
+                @if (showPassword()) {
+                  <lucide-icon [img]="EyeOff"></lucide-icon>
+                } @else {
+                  <lucide-icon [img]="Eye"></lucide-icon>
+                }
+              </button>
+            </label>
+
+            <div class="lk-login-options">
+              <label class="lk-login-remember">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="form.remember"
+                  name="remember"
+                />
+
+                <span class="lk-login-remember__box" aria-hidden="true"></span>
+                <span>{{ 'STOREFRONT.AUTO_STR_452' | translate }}</span>
+              </label>
+
+              <a routerLink="/forgot-password">{{ 'COMMON.FORGOTPASSWORD' | translate }}</a>
+            </div>
+
+            <button
+              type="submit"
+              class="lk-login-submit"
+              [disabled]="isSubmitting()"
+            >
+              <lucide-icon [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
+              <span>{{ isSubmitting() ? 'جاري تسجيل الدخول...' : 'AUTH.LOGIN' }}</span>
+            </button>
+          </form>
+
+          @if (pageConfig().showSocialLogin) {
+            <div class="lk-login-divider" aria-hidden="true">
+              <span></span>
+              <b>{{ 'STOREFRONT.AUTO_STR_153' | translate }}</b>
+              <span></span>
+            </div>
+            <div class="lk-login-socials">
+              <button type="button" (click)="handleSocialLogin()" aria-label="Google">
+                <img [src]="googleIcon" alt="Google" draggable="false" />
+              </button>
+              <button type="button" (click)="handleSocialLogin()" aria-label="Apple">
+                <img [src]="appleIcon" alt="Apple" draggable="false" />
+              </button>
+              <button type="button" (click)="handleSocialLogin()" aria-label="Facebook">
+                <img [src]="facebookIcon" alt="Facebook" draggable="false" />
+              </button>
+            </div>
+          }
+          <p class="lk-login-register">
+            <span>{{ 'COMMON.NOACCOUNT' | translate }}</span>
+            <a routerLink="/register">{{ 'STOREFRONT.AUTO_STR_250' | translate }}</a>
+          </p>
+        </section>
+      </section>
+
+      <section class="lk-login-benefits" aria-label='STOREFRONT.AUTO_STR_304'>
+        @for (benefit of pageConfig().benefits; track benefit.title) {
+          <article>
+            <lucide-icon [img]="ShieldCheck" aria-hidden="true"></lucide-icon>
+            <h3>{{ benefit.title | translate}}</h3>
+            <p>
+              {{ benefit.line1 }}
+              <br />
+              {{ benefit.line2 }}
+            </p>
+          </article>
+        }
+      </section>
+
+      <footer class="lk-login-footer">
+        <p>جميع الحقوق محفوظة © 2024 LOXX KING.</p>
+
+        <nav aria-label='STOREFRONT.AUTO_STR_276'>
+          <a routerLink="/policies">{{ 'POLICIES.PRIVACY' | translate }}</a>
+          <span aria-hidden="true"></span>
+          <a routerLink="/policies">{{ 'STOREFRONT.AUTO_STR_249' | translate }}</a>
+          <span aria-hidden="true"></span>
+          <a routerLink="/contact">{{ 'STOREFRONT.AUTO_STR_438' | translate }}</a>
+        </nav>
+      </footer>
+    </div>
+  </main>
+</app-store-layout>

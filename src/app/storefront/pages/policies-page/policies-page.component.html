@@ -1,0 +1,86 @@
+<app-store-layout [hasCustomHeader]="true" [showFloatingChat]="false">
+  <ng-container header>
+    <ng-container *ngIf="!selectedPolicy; else detailsHeader">
+      <app-home-header></app-home-header>
+    </ng-container>
+    <ng-template #detailsHeader>
+      <header class="lk-policies-header" aria-label='STOREFRONT.AUTO_STR_145'>
+          <div class="lk-policies-header__inner">
+              <button
+                  type="button"
+                  class="lk-policies-header__back"
+                  (click)="goBack()"
+                  aria-label='COMMON.BACK'
+              >
+                  <lucide-icon [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+              </button>
+
+              <a routerLink="/" class="lk-policies-header__logo" aria-label='SHARED.AUTO_STR_28'>
+                  <img [src]="logoHeader" alt='SHARED.AUTO_STR_72' />
+              </a>
+
+              <a routerLink="/cart" class="lk-policies-header__cart" aria-label='CART.TITLE'>
+                  <lucide-icon [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
+                  <span *ngIf="cartCount > 0">{{ cartCount > 9 ? '9+' : cartCount }}</span>
+              </a>
+          </div>
+          <span class="sr-only">{{ 'STOREFRONT.AUTO_STR_190' | translate }}</span>
+      </header>
+    </ng-template>
+  </ng-container>
+
+
+  <div class="lk-policies-page" dir="rtl">
+    <ng-container *ngIf="selectedPolicy; else gridView">
+      <article class="lk-policy-details">
+          <header class="lk-policy-details__intro">
+              <span class="lk-policy-details__accent" aria-hidden="true"></span>
+              <h1>{{ selectedPolicy.title | translate}}</h1>
+              <p>{{ selectedPolicy.subtitle | translate}}</p>
+
+              <div class="lk-policy-details__hero-icon" aria-hidden="true">
+                  <lucide-icon [img]="selectedPolicy.heroIcon"></lucide-icon>
+              </div>
+          </header>
+
+          <div class="lk-policy-sections">
+              <section class="lk-policy-info-card" *ngFor="let section of selectedPolicy.sections">
+                  <span class="lk-policy-info-card__icon" aria-hidden="true">
+                      <lucide-icon [img]="section.icon"></lucide-icon>
+                  </span>
+
+                  <div class="lk-policy-info-card__copy">
+                      <h2>{{ section.title | translate }}</h2>
+                      <p *ngIf="section.description">{{ section.description }}</p>
+                      <ul *ngIf="section.bullets">
+                          <li *ngFor="let item of section.bullets">{{ item }}</li>
+                      </ul>
+                  </div>
+              </section>
+          </div>
+
+          <a *ngIf="selectedPolicy.showWhatsApp" routerLink="/chat" class="lk-policy-whatsapp">{{ 'STOREFRONT.AUTO_STR_92' | translate }}<span aria-hidden="true">◉</span>
+          </a>
+      </article>
+    </ng-container>
+
+    <ng-template #gridView>
+      <section class="lk-policies-index" aria-labelledby="policies-title">
+          <header class="lk-policies-index__heading">
+              <h1 id="policies-title">{{ 'POLICIES.TITLE' | translate }}</h1>
+              <p>{{ 'POLICIES.SUBTITLE' | translate }}</p>
+          </header>
+
+          <div class="lk-policies-grid">
+              <button type="button" class="lk-policy-grid-card" *ngFor="let policy of policies" (click)="selectPolicy(policy.key)">
+                  <span class="lk-policy-grid-card__icon" aria-hidden="true">
+                      <lucide-icon [img]="policy.icon"></lucide-icon>
+                  </span>
+                  <strong>{{ policy.gridTitle | translate }}</strong>
+                  <small>{{ policy.gridDescription }}</small>
+              </button>
+          </div>
+      </section>
+    </ng-template>
+  </div>
+</app-store-layout>

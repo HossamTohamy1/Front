@@ -1,0 +1,52 @@
+<app-store-layout [showFloatingChat]="false">
+
+  <main class="lk-categories-page" dir="rtl">
+    <nav class="lk-categories-breadcrumb" aria-label='STOREFRONT.AUTO_STR_351'>
+      <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
+      <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+      <span aria-current="page">{{ 'CATEGORIES.TITLE' | translate }}</span>
+    </nav>
+
+    <header class="lk-categories-intro" *ngIf="pageConfig().showTitle">
+      <h1>{{pageConfig().headerTitle | translate}}</h1>
+      <p>{{pageConfig().headerSubtitle | translate}}</p>
+      <span aria-hidden="true"></span>
+    </header>
+
+    <section class="lk-categories-grid" aria-label='STOREFRONT.AUTO_STR_224'>
+      <a *ngFor="let category of getStoreCategories(); let i = index"
+         [routerLink]="category.path"
+         class="lk-category-showcase-card"
+         [ngStyle]="{'--lk-category-delay': (i * 70) + 'ms'}"
+         [attr.aria-label]="'عرض منتجات ' + category.title + ' ' + category.accent">
+        
+        <div class="lk-category-showcase-card__image">
+          <img [src]="category.image"
+               [alt]="category.imageAlt"
+               [loading]="i < 2 ? 'eager' : 'lazy'"
+               decoding="async"
+               [ngStyle]="{'object-position': category.imagePosition}" />
+        </div>
+
+        <div class="lk-category-showcase-card__content">
+          <h2>
+            <span>{{category.title | translate}}</span>
+            <strong>{{category.accent | translate}}</strong>
+          </h2>
+
+          <i aria-hidden="true"></i>
+
+          <p>
+            <span *ngFor="let line of splitDescription(category.description)">
+              {{line}}
+            </span>
+          </p>
+
+          <span class="lk-category-showcase-card__arrow" aria-hidden="true">
+            <lucide-icon name="arrow-right" [img]="ArrowRight"></lucide-icon>
+          </span>
+        </div>
+      </a>
+    </section>
+  </main>
+</app-store-layout>

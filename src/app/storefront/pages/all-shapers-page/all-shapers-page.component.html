@@ -1,0 +1,166 @@
+<app-store-layout [showFloatingChat]="false">
+  <main class="lk-all-shapers-page" dir="rtl">
+    <header class="lk-all-shapers-title">
+      <h1>{{ selectedType() === 'all' ? pageConfig().headerTitle : pageConfig().headerTitle + ' - ' + getTypeLabel(selectedType()) | translate }}</h1>
+    </header>
+
+    <section class="lk-all-shapers-filters" aria-label='STOREFRONT.AUTO_STR_266'>
+      <div class="lk-all-shapers-filter-row">
+        <button type="button" [class.is-active]="activeFilter() === 'type' || selectedType() !== 'all'" (click)="toggleFilter('type')">
+          <lucide-icon name="layers-3" [img]="Layers3" aria-hidden="true"></lucide-icon>
+          <span>{{ selectedType() === 'all' ? 'STOREFRONT.AUTO_STR_244' : getTypeLabel(selectedType()) | translate }}</span>
+          <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
+        </button>
+
+        <button type="button" [class.is-active]="activeFilter() === 'price' || selectedPrice() !== 'all'" (click)="toggleFilter('price')">
+          <lucide-icon name="tag" [img]="Tag" aria-hidden="true"></lucide-icon>
+          <span>{{ selectedPrice() === 'all' ? 'COMMON.PRICE' : getPriceLabel(selectedPrice()) | translate }}</span>
+          <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
+        </button>
+
+        <button type="button" [class.is-active]="activeFilter() === 'color' || selectedColor() !== 'all'" (click)="toggleFilter('color')">
+          <lucide-icon name="droplets" [img]="Droplets" aria-hidden="true"></lucide-icon>
+          <span>{{ selectedColor() === 'all' ? 'PRODUCT.COLOR' : getColorLabel(selectedColor()) | translate }}</span>
+          <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
+        </button>
+
+        <button type="button" [class.is-active]="activeFilter() === 'size' || selectedSize() !== 'all'" (click)="toggleFilter('size')">
+          <lucide-icon name="ruler" [img]="Ruler" aria-hidden="true"></lucide-icon>
+          <span>{{ selectedSize() === 'all' ? 'PRODUCT.SIZE' : selectedSize() }}</span>
+          <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
+        </button>
+      </div>
+
+      <div *ngIf="activeFilter()" class="lk-all-shapers-filter-panel">
+        <button type="button" class="lk-all-shapers-filter-panel__close" (click)="activeFilter.set(null)" aria-label='STOREFRONT.AUTO_STR_323'>
+          <lucide-icon name="x" [img]="X" aria-hidden="true"></lucide-icon>
+        </button>
+
+        <div *ngIf="activeFilter() === 'type'" class="lk-all-shapers-options-grid">
+          <button *ngFor="let option of productTypeOptions" type="button" [class.is-selected]="selectedType() === option.value" (click)="applyTypeFilter(option.value)">
+            {{ option.label | translate}}
+          </button>
+        </div>
+
+        <div *ngIf="activeFilter() === 'price'" class="lk-all-shapers-options-grid">
+          <button *ngFor="let option of priceOptions" type="button" [class.is-selected]="selectedPrice() === option.value" (click)="selectedPrice.set(option.value); activeFilter.set(null)">
+            {{ option.label | translate}}
+          </button>
+        </div>
+
+        <div *ngIf="activeFilter() === 'color'" class="lk-all-shapers-options-grid lk-all-shapers-options-grid--colors">
+          <button *ngFor="let option of colorOptions" type="button" [class.is-selected]="selectedColor() === option.value" (click)="selectedColor.set(option.value); activeFilter.set(null)">
+            <i *ngIf="option.value !== 'all'" [class]="'is-' + option.value" aria-hidden="true"></i>
+            {{ option.label | translate}}
+          </button>
+        </div>
+
+        <div *ngIf="activeFilter() === 'size'" class="lk-all-shapers-options-grid lk-all-shapers-options-grid--sizes">
+          <button *ngFor="let size of sizeOptions" type="button" [class.is-selected]="selectedSize() === size" (click)="selectedSize.set(size); activeFilter.set(null)">
+            {{ size === 'all' ? 'STOREFRONT.AUTO_STR_352' : size }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="lk-all-shapers-sort" aria-label='STOREFRONT.AUTO_STR_267'>
+      <button type="button" [class.is-active]="sortMode() === 'bestseller'" (click)="sortMode.set('bestseller')">
+        <lucide-icon name="flame" [img]="Flame" aria-hidden="true"></lucide-icon>
+        <span>{{ 'COMMON.BESTSELLERS' | translate }}</span>
+      </button>
+      <button type="button" [class.is-active]="sortMode() === 'latest'" (click)="sortMode.set('latest')">
+        <img class="lk-all-shapers-sort__new-icon" [src]="newSortIcon" alt="" aria-hidden="true" />
+        <span>{{ 'STOREFRONT.AUTO_STR_447' | translate }}</span>
+      </button>
+    </section>
+
+    <div class="lk-all-shapers-toolbar">
+      <div class="lk-all-shapers-view-toggle" aria-label='STOREFRONT.AUTO_STR_353'>
+        <button type="button" [class.is-active]="viewMode() === 'list'" (click)="viewMode.set('list')" aria-label='STOREFRONT.AUTO_STR_419'>
+          <lucide-icon name="list" [img]="List" aria-hidden="true"></lucide-icon>
+        </button>
+        <button type="button" [class.is-active]="viewMode() === 'grid'" (click)="viewMode.set('grid')" aria-label='STOREFRONT.AUTO_STR_436'>
+          <lucide-icon name="grid-2-x-2" [img]="Grid2X2" aria-hidden="true"></lucide-icon>
+        </button>
+      </div>
+
+      <p><strong>{{ filteredItems().length }}</strong>{{ 'STOREFRONT.AUTO_STR_471' | translate }}</p>
+
+      <button *ngIf="hasActiveFilters()" type="button" class="lk-all-shapers-reset" (click)="resetFilters()">{{ 'STOREFRONT.AUTO_STR_354' | translate }}</button>
+    </div>
+
+    <ng-container *ngIf="filteredItems().length; else emptyState">
+      <section class="lk-all-shapers-products is-{{viewMode()}}" aria-label='STOREFRONT.AUTO_STR_292'>
+        <article *ngFor="let item of visibleItems()" class="lk-all-shapers-card">
+          <a [routerLink]="'/product/' + item.productId" class="lk-all-shapers-card__image">
+            <img [src]="item.image" [alt]="item.name" loading="lazy" decoding="async" />
+          </a>
+
+          <button type="button" class="lk-all-shapers-card__favorite" [class.is-active]="isFavorite(item.productId)" (click)="toggleFavorite(item.productId, isFavorite(item.productId))" [attr.aria-label]="isFavorite(item.productId) ? 'STOREFRONT.AUTO_STR_222' : 'STOREFRONT.AUTO_STR_206'">
+            <lucide-icon name="heart" [img]="Heart" [attr.fill]="isFavorite(item.productId) ? 'currentColor' : 'none'" aria-hidden="true"></lucide-icon>
+          </button>
+
+          <div class="lk-all-shapers-card__body">
+            <a [routerLink]="'/product/' + item.productId">
+              <h2>{{ item.name | translate}}</h2>
+            </a>
+
+            <div class="lk-all-shapers-card__price" [class.has-discount]="item.originalPrice && item.originalPrice > item.price && pageConfig().showOriginalPrice">
+              <div class="lk-all-shapers-card__current-price">
+                <strong>{{ item.price }}</strong>
+                <span>ر.س</span>
+              </div>
+              <del *ngIf="pageConfig().showOriginalPrice && item.originalPrice && item.originalPrice > item.price">
+                <strong>{{ item.originalPrice }}</strong>
+                <span>ر.س</span>
+              </del>
+            </div>
+
+            <div class="lk-all-shapers-card__footer">
+              <div *ngIf="pageConfig().showRating" class="lk-all-shapers-card__rating">
+                <span>
+                  <lucide-icon *ngFor="let _ of getFiveStars()" name="star" [img]="Star" fill="currentColor" aria-hidden="true"></lucide-icon>
+                </span>
+                <small *ngIf="pageConfig().showReviewsCount">({{ item.reviews }})</small>
+              </div>
+
+              <button type="button" class="lk-all-shapers-card__cart" (click)="addCatalogItemToCart(item)" [attr.aria-label]="'إضافة ' + item.name + ' إلى السلة'">
+                <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
+              </button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <section class="lk-all-shapers-empty">
+        <h2>{{ pageConfig().emptyTitle | translate }}</h2>
+        <p>{{ pageConfig().emptyText | translate }}</p>
+        <button type="button" (click)="resetFilters()">{{ pageConfig().emptyCta | translate }}</button>
+      </section>
+    </ng-template>
+
+    <nav *ngIf="filteredItems().length > 12" class="lk-all-shapers-pagination" aria-label='STOREFRONT.AUTO_STR_116'>
+      <ng-container *ngIf="!showAllProducts()">
+        <button type="button" class="lk-all-shapers-pagination__arrow" [disabled]="currentPage() === 1" (click)="currentPage.set(currentPage() > 1 ? currentPage() - 1 : 1)" aria-label='STOREFRONT.AUTO_STR_268'>
+          <lucide-icon name="chevron-right" [img]="ChevronRight" aria-hidden="true"></lucide-icon>
+        </button>
+
+        <div class="lk-all-shapers-pagination__pages">
+          <button *ngFor="let page of pageNumbers()" type="button" [class.is-active]="currentPage() === page" (click)="currentPage.set(page)" [attr.aria-label]="'الانتقال إلى الصفحة ' + page" [attr.aria-current]="currentPage() === page ? 'page' : null">
+            {{ page }}
+          </button>
+        </div>
+
+        <button type="button" class="lk-all-shapers-pagination__arrow" [disabled]="currentPage() === totalPages()" (click)="currentPage.set(currentPage() < totalPages() ? currentPage() + 1 : totalPages())" aria-label='STOREFRONT.AUTO_STR_269'>
+          <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+        </button>
+      </ng-container>
+
+      <button type="button" class="lk-all-shapers-pagination__show-all" (click)="showAllProducts.set(!showAllProducts()); currentPage.set(1)">
+        {{ showAllProducts() ? 'STOREFRONT.AUTO_STR_142' : 'STOREFRONT.AUTO_STR_245' }}
+      </button>
+    </nav>
+  </main>
+</app-store-layout>

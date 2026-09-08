@@ -1,0 +1,238 @@
+<app-store-layout [showFloatingChat]="false">
+
+    <div class="lk-size-guide-page" dir="rtl">
+        <section class="lk-size-guide-hero" aria-labelledby="size-guide-title">
+            <img class="lk-size-guide-hero__model" src="assets/size-guide/hero-model.png" alt='STOREFRONT.AUTO_STR_85' />
+
+            <div class="lk-size-guide-hero__content">
+                <h1 id="size-guide-title">{{ 'PRODUCT.SIZE_GUIDE' | translate }}</h1>
+                <p>{{ 'STOREFRONT.AUTO_STR_98' | translate }}</p>
+                <i aria-hidden="true"></i>
+            </div>
+
+            <img class="lk-size-guide-hero__tape" src="assets/size-guide/hero-tape.png" alt="" aria-hidden="true" />
+        </section>
+
+        <section class="lk-size-guide-measuring" aria-labelledby="measure-title">
+            <div class="lk-size-guide-section-title" aria-label='STOREFRONT.AUTO_STR_181'>
+                <span aria-hidden="true"></span>
+                <h2>{{ 'STOREFRONT.AUTO_STR_181' | translate }}</h2>
+                <span aria-hidden="true"></span>
+            </div>
+
+            <div class="lk-size-guide-measure-grid" id="measure-title">
+                <article class="lk-size-guide-measure-card lk-size-guide-measure-card--waist">
+                    <img src="assets/size-guide/measure-waist.png" alt='STOREFRONT.AUTO_STR_64' />
+
+                    <div class="lk-size-guide-measure-card__copy">
+                        <div class="lk-size-guide-step-heading">
+                            <b aria-label='STOREFRONT.AUTO_STR_318'>1</b>
+                            <h3>{{ 'STOREFRONT.AUTO_STR_411' | translate }}</h3>
+                        </div>
+
+                        <p>قس محيط الخصر من أضيق منطقة في الخصر، عادةً فوق منطقة السرة.</p>
+                        <svg class="lk-size-guide-measure-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                            <circle cx="32" cy="32" r="29.5" stroke="#D8E3EC" />
+                            <path
+                                d="M24.5 13.5c.4 5.8-.9 10.3-3.5 14.2-1.4 2.1-2.2 4.6-2.2 7.1v12.7c0 1.7 1.3 3 3 3h20.4c1.7 0 3-1.3 3-3V34.8c0-2.5-.8-5-2.2-7.1-2.6-3.9-3.9-8.4-3.5-14.2"
+                                stroke="#24313E"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                            <path d="M21 31.2c7.3-2.7 14.7-2.7 22 0" stroke="#168CF1" stroke-width="1.5" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                            <path d="M20 35.4c8-2.3 16-2.3 24 0" stroke="#24313E" stroke-width="1.35" stroke-linecap="round" />
+                            <path d="M22.5 36.2v9.4M41.5 36.2v9.4M32 35.3v11.4" stroke="#24313E" stroke-width="1.35" stroke-linecap="round" />
+                            <path d="M22.5 45.6c3.1 0 6.5 1.4 9.5 3.6 3-2.2 6.4-3.6 9.5-3.6" stroke="#24313E" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </article>
+
+                <article class="lk-size-guide-measure-card lk-size-guide-measure-card--belly">
+                    <img src="assets/size-guide/measure-belly.png" alt='STOREFRONT.AUTO_STR_65' />
+
+                    <div class="lk-size-guide-measure-card__copy">
+                        <div class="lk-size-guide-step-heading">
+                            <b aria-label='STOREFRONT.AUTO_STR_286'>2</b>
+                            <h3>{{ 'STOREFRONT.AUTO_STR_412' | translate }}</h3>
+                        </div>
+
+                        <p>قس محيط البطن من أوسع منطقة، عادةً حول السرة، وأنت واقف بشكل مستقيم.</p>
+                        <svg class="lk-size-guide-measure-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                            <circle cx="32" cy="32" r="29.5" stroke="#D8E3EC" />
+                            <path
+                                d="M23.5 13.5c.2 6.5-1 10.8-3.1 14.8-1.2 2.2-1.9 4.7-1.9 7.2v12c0 1.7 1.3 3 3 3h21c1.7 0 3-1.3 3-3v-12c0-2.5-.7-5-1.9-7.2-2.1-4-3.3-8.3-3.1-14.8"
+                                stroke="#24313E"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                            <path d="M19.3 31.8h25.4" stroke="#168CF1" stroke-width="1.5" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                            <path d="M20.2 36.5c7.8 2.5 15.8 2.5 23.6 0" stroke="#24313E" stroke-width="1.35" stroke-linecap="round" />
+                            <path d="M21.5 37v9M42.5 37v9M32 38.5v8.2" stroke="#24313E" stroke-width="1.35" stroke-linecap="round" />
+                            <path d="M21.5 46c3.3 0 7 1.2 10.5 3.2 3.5-2 7.2-3.2 10.5-3.2" stroke="#24313E" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="lk-size-guide-chart" aria-labelledby="chart-title">
+            <div class="lk-size-guide-section-title" aria-label='STOREFRONT.AUTO_STR_319'>
+                <span aria-hidden="true"></span>
+                <h2>{{ 'STOREFRONT.AUTO_STR_319' | translate }}</h2>
+                <span aria-hidden="true"></span>
+            </div>
+
+            <div class="lk-size-guide-chart-layout" id="chart-title">
+                <aside class="lk-size-guide-note-card">
+                    <div class="lk-size-guide-note-card__icon">
+                        <img src="assets/size-guide/note-tape-icon.png" alt="" aria-hidden="true" />
+                    </div>
+
+                    <h3>{{ 'STOREFRONT.AUTO_STR_379' | translate }}</h3>
+
+                    <p>
+                        جميع المقاسات بالسنتيمتر (سم)
+                        <br />{{ 'STOREFRONT.AUTO_STR_99' | translate }}<br />
+                        بـ 1–2 سم.
+                    </p>
+
+                    <p>{{ 'STOREFRONT.AUTO_STR_79' | translate }}<br />
+                        المقاس الأكبر لراحة أفضل.
+                    </p>
+                </aside>
+
+                <div class="lk-size-guide-table-wrap">
+                    <table class="lk-size-guide-table">
+                        <thead>
+                            <tr>
+                                <th>{{ 'PRODUCT.SIZE' | translate }}</th>
+                                <th>مقاس رقمي (تقريبي)</th>
+                                <th>محيط الخصر (سم)</th>
+                                <th>محيط البطن (سم)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of sizeRows">
+                                <th scope="row">{{row.size}}</th>
+                                <td>{{row.numeric}}</td>
+                                <td>{{row.waist}}</td>
+                                <td>{{row.belly}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="lk-size-guide-tips" aria-labelledby="tips-title">
+            <div class="lk-size-guide-section-title" aria-label='STOREFRONT.AUTO_STR_147'>
+                <span aria-hidden="true"></span>
+                <h2>{{ 'STOREFRONT.AUTO_STR_147' | translate }}</h2>
+                <span aria-hidden="true"></span>
+            </div>
+
+            <div class="lk-size-guide-tip-grid" id="tips-title">
+                <article>
+                    <svg class="lk-size-guide-tip-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                        <path d="M25.5 16.5c2.8 2 10.2 2 13 0M16.5 25.5c2-2.8 2-10.2 0-13M47.5 25.5c-2-2.8-2-10.2 0-13M16.5 38.5c2 2.8 2 10.2 0 13M47.5 38.5c-2-2.8-2 10.2 0 13M25.5 47.5c2.8-2 10.2-2 13 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M23.5 17.5c-5 3.2-7.8 9-7.8 14.5s2.8 11.3 7.8 14.5M40.5 17.5c5 3.2 7.8 9 7.8 14.5s-2.8 11.3-7.8 14.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M23.5 17.5h17M23.5 46.5h17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                    <h3>{{ 'STOREFRONT.AUTO_STR_345' | translate }}</h3>
+                    <p>منتجاتنا مصنوعة من خامات مرنة تتكيف مع جسمك.</p>
+                </article>
+
+                <article>
+                    <svg class="lk-size-guide-tip-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                        <path d="M27 11c.3 4-1.4 7.2-3.5 10.3-1.5 2.2-2.2 4.8-2.2 7.4v12.2c0 2 1.6 3.6 3.6 3.6h14.2c2 0 3.6-1.6 3.6-3.6V28.7c0-2.6-.7-5.2-2.2-7.4C38.4 18.2 36.7 15 37 11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M17 25l-3.5 3.5L17 32M47 25l3.5 3.5L47 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M13.5 28.5h8M42.5 28.5h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M23.5 35c5.6 2.2 11.4 2.2 17 0" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" />
+                        <path d="M26 42.8c1.8.1 4.2 1.2 6 2.6 1.8-1.4 4.2-2.5 6-2.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <h3>{{ 'STOREFRONT.AUTO_STR_320' | translate }}</h3>
+                    <p>للاستخدام اليومي اختاري مقاسك المعتاد، وللتنحيف أكثر اختاري مقاساً أصغر.</p>
+                </article>
+
+                <article>
+                    <svg class="lk-size-guide-tip-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                        <rect x="15" y="17" width="34" height="32" rx="4" stroke="currentColor" stroke-width="2.7" />
+                        <path d="M15 27h34M24 13v8M40 13v8" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" />
+                        <rect x="21" y="32" width="5" height="5" rx="1" stroke="currentColor" stroke-width="2" />
+                        <rect x="30" y="32" width="5" height="5" rx="1" stroke="currentColor" stroke-width="2" />
+                        <rect x="39" y="32" width="5" height="5" rx="1" stroke="currentColor" stroke-width="2" />
+                        <rect x="21" y="40" width="5" height="5" rx="1" stroke="currentColor" stroke-width="2" />
+                        <rect x="30" y="40" width="5" height="5" rx="1" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    <h3>{{ 'STOREFRONT.AUTO_STR_287' | translate }}</h3>
+                    <p>عند تجربة المنتج لأول مرة، ارتديه لمدة قصيرة للتأكد من المقاس المناسب.</p>
+                </article>
+
+                <article>
+                    <svg class="lk-size-guide-tip-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                        <g transform="rotate(-42 32 32)">
+                            <rect x="15" y="25" width="34" height="14" rx="2.8" stroke="currentColor" stroke-width="2.7" />
+                            <path d="M21 25v4.5M26 25v7M31 25v4.5M36 25v7M41 25v4.5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                    <h3>{{ 'STOREFRONT.AUTO_STR_168' | translate }}</h3>
+                    <p>إذا كنت مترددة بين مقاسين، أعيدي القياس مرة أخرى في وضعية صحيحة.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="lk-size-guide-help" aria-label='STOREFRONT.AUTO_STR_124'>
+            <div class="lk-size-guide-help__team">
+                <img src="assets/size-guide/support-team.png" alt='STOREFRONT.AUTO_STR_203' />
+                <div>
+                    <strong>{{ 'STOREFRONT.AUTO_STR_136' | translate }}</strong>
+                    <span><i aria-hidden="true"></i>{{ 'STOREFRONT.AUTO_STR_194' | translate }}</span>
+                </div>
+            </div>
+
+            <div class="lk-size-guide-help__divider" aria-hidden="true"></div>
+
+            <div class="lk-size-guide-help__copy">
+                <h2>{{ 'STOREFRONT.AUTO_STR_86' | translate }}</h2>
+                <p>تواصل معنا وسنساعدك في اختيار المقاس المناسب لك.</p>
+
+                <a routerLink="/chat" class="lk-whatsapp-button">
+                    <svg class="lk-whatsapp-button__icon" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+                        <path
+                            d="M13 2.4C7.18 2.4 2.4 7.1 2.4 12.95c0 1.93.52 3.77 1.5 5.38L2.7 23.6l5.41-1.16a10.4 10.4 0 0 0 4.89 1.23c5.81 0 10.6-4.71 10.6-10.56C23.6 7.12 18.81 2.4 13 2.4Z"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linejoin="round"
+                        />
+                        <path
+                            d="M17.18 15.33c-.24-.12-1.41-.7-1.63-.78-.22-.08-.38-.12-.54.12-.16.23-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.95-1.22-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.42-.54-.43h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.68 2.63 4.08 3.68.57.25 1.02.4 1.37.51.58.18 1.1.16 1.52.1.46-.07 1.41-.58 1.61-1.14.2-.56.2-1.03.14-1.13-.06-.1-.22-.16-.46-.28Z"
+                            fill="currentColor"
+                        />
+                    </svg>
+                    <span>{{ 'STOREFRONT.AUTO_STR_217' | translate }}</span>
+                </a>
+            </div>
+        </section>
+
+        <footer class="lk-size-guide-trust" aria-label='STOREFRONT.AUTO_STR_304'>
+            <div>
+                <lucide-icon [img]="ShieldCheck" aria-hidden="true"></lucide-icon>
+                <span><strong>{{ 'CART.SECURE_PAYMENT' | translate }}</strong><small>100%</small></span>
+            </div>
+            <div>
+                <lucide-icon [img]="Truck" aria-hidden="true"></lucide-icon>
+                <span><strong>{{ 'CART.FAST_SHIPPING' | translate }}</strong><small>2 - 5 أيام</small></span>
+            </div>
+            <div>
+                <lucide-icon [img]="PackageCheck" aria-hidden="true"></lucide-icon>
+                <span><strong>{{ 'STOREFRONT.AUTO_STR_346' | translate }}</strong><small>14 يوم</small></span>
+            </div>
+            <div>
+                <lucide-icon [img]="BadgeCheck" aria-hidden="true"></lucide-icon>
+                <span><strong>{{ 'CART.ORIGINAL_PRODUCTS' | translate }}</strong><small>100%</small></span>
+            </div>
+        </footer>
+    </div>
+</app-store-layout>

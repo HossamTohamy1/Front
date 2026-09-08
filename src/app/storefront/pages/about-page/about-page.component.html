@@ -1,0 +1,107 @@
+<app-store-layout [showFloatingChat]="false">
+
+  <div class="about-page" dir="rtl">
+    <div class="about-page__container">
+      <nav class="about-breadcrumb" aria-label='STOREFRONT.AUTO_STR_351'>
+        <a routerLink="/" class="about-breadcrumb__home">
+          <lucide-icon [img]="ChevronLeft" [size]="19" [strokeWidth]="2.1"></lucide-icon>
+          <span>{{ 'NAV.HOME' | translate }}</span>
+        </a>
+        <lucide-icon [img]="ChevronLeft" [size]="16" class="about-breadcrumb__separator"></lucide-icon>
+        <span class="about-breadcrumb__current">{{ 'ABOUT.TITLE' | translate }}</span>
+      </nav>
+
+      <header *ngIf="config.showTitle" class="about-title-block">
+        <h1>{{ config.headerTitle | translate}}</h1>
+        <p>{{ config.headerSubtitle | translate}}</p>
+      </header>
+
+      <section *ngIf="config.showIntroSection" class="about-intro-card">
+        <div class="about-intro-card__logo-wrap">
+          <div class="about-intro-card__logo-halo"></div>
+          <img [src]="logoImg" alt="LOXX KING" class="about-intro-card__logo" />
+        </div>
+        <p class="about-intro-card__text" [innerHTML]="replaceNewlines(config.introText)"></p>
+      </section>
+
+      <section *ngIf="config.showReasonsSection" class="about-section">
+        <h2 class="about-section__title">{{ config.reasonsTitle | translate }}</h2>
+        <div class="about-title-underline"></div>
+        <div class="about-reasons-grid">
+          <article *ngFor="let reason of config.reasons" class="about-reason-card">
+            <div class="about-reason-card__icon">
+              <lucide-icon *ngIf="reason.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="31" [strokeWidth]="1.9"></lucide-icon>
+              <lucide-icon *ngIf="reason.icon === 'Check'" [img]="Check" [size]="31" [strokeWidth]="1.9"></lucide-icon>
+              <lucide-icon *ngIf="reason.icon === 'Star'" [img]="Star" [size]="31" [strokeWidth]="1.9"></lucide-icon>
+            </div>
+            <h3>{{ reason.title | translate }}</h3>
+            <p>{{ reason.text | translate}}</p>
+          </article>
+        </div>
+      </section>
+
+      <section *ngIf="config.showVisionSection" class="about-section about-section--compact">
+        <h2 class="about-section__title">{{ config.visionTitle | translate }}</h2>
+        <div class="about-title-underline"></div>
+        <div class="about-wide-card">
+          <div class="about-wide-card__icon">
+            <lucide-icon [img]="Eye" [size]="32" [strokeWidth]="1.9"></lucide-icon>
+          </div>
+          <p [innerHTML]="replaceNewlines(config.visionText, '<br class=&quot;about-desktop-break&quot; />')"></p>
+        </div>
+      </section>
+
+      <section *ngIf="config.showMissionSection" class="about-section about-section--compact">
+        <h2 class="about-section__title">{{ config.missionTitle | translate }}</h2>
+        <div class="about-title-underline"></div>
+        <div class="about-wide-card">
+          <div class="about-wide-card__icon">
+            <lucide-icon [img]="Target" [size]="31" [strokeWidth]="1.9"></lucide-icon>
+          </div>
+          <p [innerHTML]="replaceNewlines(config.missionText, '<br class=&quot;about-desktop-break&quot; />')"></p>
+        </div>
+      </section>
+
+      <section *ngIf="config.showValuesSection" class="about-section about-section--compact">
+        <h2 class="about-section__title">{{ config.valuesTitle | translate }}</h2>
+        <div class="about-title-underline"></div>
+        <div class="about-values-card">
+          <div *ngFor="let value of config.values" class="about-value-item">
+            <lucide-icon *ngIf="value.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'Check'" [img]="Check" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'Star'" [img]="Star" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+            <lucide-icon *ngIf="value.icon === 'Target'" [img]="Target" [size]="28" [strokeWidth]="1.9"></lucide-icon>
+            <span>{{ value.label | translate}}</span>
+          </div>
+        </div>
+      </section>
+
+      <section *ngIf="config.showContactSection" class="about-section about-section--contact">
+        <h2 class="about-section__title">{{ config.contactTitle | translate }}</h2>
+        <div class="about-title-underline"></div>
+        <div class="about-contact-card">
+          <a *ngFor="let contact of config.contacts" 
+             [href]="contact.link" 
+             [target]="contact.icon === 'phone' || contact.icon === 'mail' ? undefined : '_blank'" 
+             rel="noreferrer" 
+             class="about-contact-item">
+            <img *ngIf="contact.icon === 'facebook'" [src]="facebookIcon" alt="" class="about-contact-item__brand-icon" />
+            
+            <svg *ngIf="contact.icon === 'instagram'" viewBox="0 0 24 24" aria-hidden="true" class="about-contact-item__brand-icon about-contact-item__brand-icon--instagram">
+                <rect x="3.1" y="3.1" width="17.8" height="17.8" rx="5" fill="none" stroke="currentColor" stroke-width="2" />
+                <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2" />
+                <circle cx="17.4" cy="6.8" r="1.15" fill="currentColor" />
+            </svg>
+
+            <lucide-icon *ngIf="contact.icon === 'mail'" [img]="Mail" class="about-contact-item__icon about-contact-item__icon--mail"></lucide-icon>
+            <lucide-icon *ngIf="contact.icon === 'phone'" [img]="Phone" class="about-contact-item__icon about-contact-item__icon--phone"></lucide-icon>
+            
+            <img *ngIf="contact.icon === 'whatsapp'" [src]="whatsappIcon" alt="" class="about-contact-item__brand-icon" />
+            
+            <span>{{ contact.label | translate}}</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+</app-store-layout>

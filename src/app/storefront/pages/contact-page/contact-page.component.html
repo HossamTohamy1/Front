@@ -1,0 +1,140 @@
+<app-store-layout [showBottomNav]="false" [showFloatingChat]="false">
+
+  <main class="lk-contact-page" dir="rtl">
+      <img class="lk-contact-page__plant" [src]="contactPlant" alt="" aria-hidden="true" />
+
+      <div class="lk-contact-page__content">
+          <header class="lk-contact-page__hero">
+              <h1>{{ config.pageTitle | translate }}</h1>
+              <p>نحن هنا للإجابة على استفساراتك ومساعدتك في أي وقت.</p>
+          </header>
+
+          <section class="lk-contact-methods" aria-label='STOREFRONT.AUTO_STR_300'>
+              @for (method of contactMethods; track method.id) {
+                <a
+                    [href]="method.href"
+                    class="lk-contact-method"
+                    [target]="method.external ? '_blank' : null"
+                    [rel]="method.external ? 'noreferrer' : null"
+                >
+                    <span class="lk-contact-method__arrow" aria-hidden="true">
+                        <lucide-icon [name]="ChevronLeft"></lucide-icon>
+                    </span>
+
+                    <span class="lk-contact-method__details">
+                        <span class="lk-contact-method__icon" aria-hidden="true">
+                            <img [src]="method.icon" alt="" />
+                        </span>
+
+                        <span class="lk-contact-method__content">
+                            <strong>{{ method.title | translate}}</strong>
+                            <small [class.is-ltr]="method.ltr">{{ method.subtitle | translate}}</small>
+                        </span>
+                    </span>
+                </a>
+              }
+          </section>
+
+          <section class="lk-contact-form-card" id="contact-form" aria-label='STOREFRONT.AUTO_STR_361'>
+              <h2>{{ 'CONTACT.FORM_TITLE' | translate }}</h2>
+
+              <form class="lk-contact-form" (ngSubmit)="submitContactForm(contactForm)" #contactForm="ngForm">
+                  <label class="lk-contact-field">
+                      <lucide-icon [name]="User" aria-hidden="true"></lucide-icon>
+                      <input
+                          type="text"
+                          [(ngModel)]="form.name"
+                          name="name"
+                          placeholder='DASHBOARD.AUTO_STR_427'
+                          aria-label='DASHBOARD.AUTO_STR_427'
+                      />
+                  </label>
+
+                  <label class="lk-contact-field">
+                      <lucide-icon [name]="Phone" aria-hidden="true"></lucide-icon>
+                      <input
+                          type="tel"
+                          [(ngModel)]="form.phone"
+                          name="phone"
+                          placeholder='CHECKOUT.PHONE'
+                          aria-label='CHECKOUT.PHONE'
+                      />
+                  </label>
+
+                  <label class="lk-contact-field">
+                      <lucide-icon [name]="Mail" aria-hidden="true"></lucide-icon>
+                      <input
+                          type="email"
+                          [(ngModel)]="form.email"
+                          name="email"
+                          placeholder='CONTACT.EMAIL'
+                          aria-label='CONTACT.EMAIL'
+                      />
+                  </label>
+
+                  <label class="lk-contact-field lk-contact-field--message">
+                      <lucide-icon [name]="PencilLine" aria-hidden="true"></lucide-icon>
+                      <textarea
+                          rows="4"
+                          [(ngModel)]="form.message"
+                          name="message"
+                          placeholder='STOREFRONT.AUTO_STR_362'
+                          aria-label='STOREFRONT.AUTO_STR_362'
+                      ></textarea>
+                  </label>
+
+                  <button type="submit" class="lk-contact-submit">
+                      <lucide-icon [name]="Send" aria-hidden="true"></lucide-icon>
+                      <span>{{ 'SHARED.AUTO_STR_55' | translate }}</span>
+                  </button>
+              </form>
+          </section>
+
+          <section class="lk-contact-whatsapp-banner" aria-label='STOREFRONT.AUTO_STR_113'>
+              <img
+                  class="lk-contact-whatsapp-banner__bubble"
+                  [src]="contactChatBubble"
+                  alt=""
+                  aria-hidden="true"
+              />
+
+              <a
+                  class="lk-contact-whatsapp-banner__arrow"
+                  href="https://wa.me/966501234567"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label='STOREFRONT.AUTO_STR_395'
+              >
+                  <lucide-icon [name]="ArrowLeft" aria-hidden="true"></lucide-icon>
+              </a>
+
+              <div class="lk-contact-whatsapp-banner__content">
+                  <h3>{{ 'STOREFRONT.AUTO_STR_103' | translate }}</h3>
+                  <p>{{ 'STOREFRONT.AUTO_STR_91' | translate }}</p>
+              </div>
+
+              <a
+                  class="lk-contact-whatsapp-banner__whatsapp"
+                  href="https://wa.me/966501234567"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label='STOREFRONT.AUTO_STR_395'
+              >
+                  <img [src]="contactWhatsappBanner" alt="" aria-hidden="true" />
+              </a>
+          </section>
+      </div>
+
+      <nav class="lk-contact-mobile-nav" aria-label='SHARED.AUTO_STR_52'>
+          @for (item of mobileNavigation; track item.to) {
+            <a 
+                [routerLink]="item.to" 
+                [class.is-active]="item.active || location.path() === item.to"
+            >
+                <lucide-icon [name]="item.icon" aria-hidden="true"></lucide-icon>
+                <span>{{ item.label | translate}}</span>
+            </a>
+          }
+      </nav>
+  </main>
+</app-store-layout>

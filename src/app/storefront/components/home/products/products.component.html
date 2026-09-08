@@ -1,0 +1,41 @@
+<section class="lk-home-section lk-products-section" aria-labelledby="best-sellers-heading">
+    @if (title) {
+        <div id="best-sellers-heading">
+            <div class="lk-section-heading">
+                <h2>{{title | translate}}</h2>
+                <a routerLink="/all-shapers">{{ 'COMMON.SEEALL' | translate }}</a>
+            </div>
+        </div>
+    }
+    <div class="lk-products-scroller">
+        @for (rawProduct of displayProducts; track rawProduct.id) {
+            @let product = getMappedProduct(rawProduct);
+            <a [routerLink]="['/product', product.productId]" class="lk-home-product-card">
+                @if (product.discount) {
+                    <span class="lk-home-product-card__discount">-{{product.discount}}%</span>
+                }
+                <div class="lk-home-product-card__image">
+                    <img [src]="product.image" [alt]="product.name" width="800" height="650" loading="lazy" decoding="async" />
+                </div>
+                <div class="lk-home-product-card__body">
+                    <h3>{{product.name | translate}}</h3>
+                    <div class="lk-home-product-card__price">
+                        <strong>{{product.price}} ر.س</strong>
+                        <del>{{product.oldPrice}} ر.س</del>
+                    </div>
+                    <div class="lk-home-product-card__rating">
+                        <span class="lk-home-product-card__stars" [attr.aria-label]="'التقييم ' + product.rating + ' من 5'">
+                            @for (i of [1,2,3,4,5]; track i) {
+                                <lucide-icon name="star" [size]="12" fill="currentColor" [strokeWidth]="0" aria-hidden="true"></lucide-icon>
+                            }
+                        </span>
+                        <small>({{product.reviews}})</small>
+                    </div>
+                </div>
+                <button type="button" class="lk-home-product-card__cart" (click)="handleAddToCart($event, product)" [attr.aria-label]="'أضف ' + product.name + ' إلى السلة'">
+                    <lucide-icon name="shopping-cart" [size]="18" [strokeWidth]="1.8" aria-hidden="true"></lucide-icon>
+                </button>
+            </a>
+        }
+    </div>
+</section>

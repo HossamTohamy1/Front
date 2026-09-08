@@ -1,0 +1,598 @@
+{
+  "بحث": {
+    "key": "COMMON.SEARCH",
+    "en": "Search"
+  },
+  "المخزون": {
+    "key": "COMMON.STOCK",
+    "en": "Stock"
+  },
+  "تحويل بنكي": {
+    "key": "COMMON.BANKTRANSFER",
+    "en": "Bank Transfer"
+  },
+  "طلب رقم": {
+    "key": "DASHBOARD.CHAT.ORDER_NO",
+    "en": "Order #"
+  },
+  "تم الشحن": {
+    "key": "COMMON.SHIPPED",
+    "en": "Shipped"
+  },
+  "إلغاء": {
+    "key": "COMMON.CANCEL",
+    "en": "Cancel"
+  },
+  "رقم الهاتف": {
+    "key": "COMMON.PHONE",
+    "en": "Phone Number"
+  },
+  "الدولة": {
+    "key": "COMMON.COUNTRY",
+    "en": "Country"
+  },
+  "المدينة": {
+    "key": "COMMON.CITY",
+    "en": "City"
+  },
+  "العنوان": {
+    "key": "COMMON.ADDRESS",
+    "en": "Address"
+  },
+  "طريقة الدفع": {
+    "key": "CHECKOUT.PAYMENT_METHOD",
+    "en": "Payment Method"
+  },
+  "رقم الطلب": {
+    "key": "COMMON.ORDER_NUMBER",
+    "en": "Order Number"
+  },
+  "تاريخ الطلب": {
+    "key": "COMMON.ORDERDATE",
+    "en": "Order Date"
+  },
+  "المنتجات": {
+    "key": "NAV.PRODUCTS",
+    "en": "Products"
+  },
+  "نسائي": {
+    "key": "COMMON.WOMENS",
+    "en": "Women's"
+  },
+  "تعديل الطلب": {
+    "key": "COMMON.EDITORDER",
+    "en": "Edit Order"
+  },
+  "الكمية": {
+    "key": "COMMON.QUANTITY",
+    "en": "Quantity"
+  },
+  "المقاس": {
+    "key": "PRODUCT.SIZE",
+    "en": "Size"
+  },
+  "السابق": {
+    "key": "COMMON.PREVIOUS",
+    "en": "Previous"
+  },
+  "التالي": {
+    "key": "COMMON.NEXT",
+    "en": "Next"
+  },
+  "إغلاق": {
+    "key": "COMMON.CLOSE",
+    "en": "Close"
+  },
+  "التقييمات": {
+    "key": "PRODUCT.REVIEWS",
+    "en": "Reviews"
+  },
+  "الفواتير": {
+    "key": "COMMON.INVOICES",
+    "en": "Invoices"
+  },
+  "الإشعارات": {
+    "key": "NOTIFICATIONS.TITLE",
+    "en": "Notifications"
+  },
+  "سجل التعديلات": {
+    "key": "COMMON.EDITLOGS",
+    "en": "Edit Logs"
+  },
+  "الحالة": {
+    "key": "COMMON.ORDERSTATUS",
+    "en": "Status"
+  },
+  "الإجمالي": {
+    "key": "COMMON.TOTAL",
+    "en": "Total"
+  },
+  "رجوع": {
+    "key": "COMMON.BACK",
+    "en": "Back"
+  },
+  "السلة": {
+    "key": "NAV.CART",
+    "en": "Cart"
+  },
+  "العروض": {
+    "key": "NAV.OFFERS",
+    "en": "Offers"
+  },
+  "الرئيسية": {
+    "key": "NAV.HOME",
+    "en": "Home"
+  },
+  "المفضلة": {
+    "key": "FAVORITES.TITLE",
+    "en": "Favorites"
+  },
+  "حسابي": {
+    "key": "COMMON.PROFILE",
+    "en": "Profile"
+  },
+  "تعديل": {
+    "key": "COMMON.EDIT",
+    "en": "Edit"
+  },
+  "حذف": {
+    "key": "COMMON.DELETE",
+    "en": "Delete"
+  },
+  "سلة التسوق": {
+    "key": "CART.TITLE",
+    "en": "Shopping Cart"
+  },
+  "التصنيفات": {
+    "key": "CATEGORIES.TITLE",
+    "en": "Categories"
+  },
+  "كل المشدات": {
+    "key": "PRODUCTS.ALL_SHAPERS",
+    "en": "All Shapers"
+  },
+  "دليل المقاسات": {
+    "key": "PRODUCT.SIZE_GUIDE",
+    "en": "Size Guide"
+  },
+  "تتبع الطلب": {
+    "key": "ORDERS.TRACK",
+    "en": "Track Order"
+  },
+  "الأسئلة الشائعة": {
+    "key": "FAQ.TITLE",
+    "en": "Frequently Asked Questions"
+  },
+  "السياسات والمعلومات": {
+    "key": "POLICIES.TITLE",
+    "en": "Policies and Information"
+  },
+  "من نحن": {
+    "key": "ABOUT.TITLE",
+    "en": "About Us"
+  },
+  "رجالي": {
+    "key": "COMMON.MENS",
+    "en": "Men's"
+  },
+  "المتجر": {
+    "key": "COMMON.SHOP",
+    "en": "Shop"
+  },
+  "طلباتي": {
+    "key": "COMMON.ORDERS",
+    "en": "My Orders"
+  },
+  "الدعم": {
+    "key": "COMMON.CHAT",
+    "en": "Support"
+  },
+  "عنا": {
+    "key": "COMMON.ABOUT",
+    "en": "About Us"
+  },
+  "تسجيل الخروج": {
+    "key": "AUTH.LOGOUT",
+    "en": "Logout"
+  },
+  "تسجيل الدخول": {
+    "key": "AUTH.LOGIN",
+    "en": "Login"
+  },
+  "إنشاء حساب": {
+    "key": "COMMON.REGISTER",
+    "en": "Register"
+  },
+  "تصفية": {
+    "key": "COMMON.FILTER",
+    "en": "Filter"
+  },
+  "ترتيب": {
+    "key": "COMMON.SORT",
+    "en": "Sort"
+  },
+  "حفظ": {
+    "key": "COMMON.SAVE",
+    "en": "Save"
+  },
+  "تأكيد": {
+    "key": "COMMON.CONFIRM",
+    "en": "Confirm"
+  },
+  "إضافة": {
+    "key": "COMMON.ADD",
+    "en": "Add"
+  },
+  "عرض": {
+    "key": "COMMON.VIEW",
+    "en": "View"
+  },
+  "حدث خطأ ما": {
+    "key": "COMMON.ERROR",
+    "en": "Something went wrong"
+  },
+  "لا يوجد شيء هنا بعد": {
+    "key": "COMMON.EMPTY",
+    "en": "Nothing here yet"
+  },
+  "عرض الكل": {
+    "key": "COMMON.SEEALL",
+    "en": "See All"
+  },
+  "متوفر": {
+    "key": "COMMON.INSTOCK",
+    "en": "In Stock"
+  },
+  "غير متوفر": {
+    "key": "COMMON.OUTOFSTOCK",
+    "en": "Out of Stock"
+  },
+  "مجاني": {
+    "key": "COMMON.FREE",
+    "en": "Free"
+  },
+  "أضف للسلة": {
+    "key": "PRODUCT.ADD_TO_CART",
+    "en": "Add to Cart"
+  },
+  "اطلب الآن": {
+    "key": "COMMON.ORDERNOW",
+    "en": "Order Now"
+  },
+  "الوصف": {
+    "key": "PRODUCT.DESCRIPTION",
+    "en": "Description"
+  },
+  "اكتب تقييمًا": {
+    "key": "COMMON.WRITEREVIEW",
+    "en": "Write a Review"
+  },
+  "منتجات مشابهة": {
+    "key": "COMMON.RELATEDPRODUCTS",
+    "en": "Related Products"
+  },
+  "السعر": {
+    "key": "COMMON.PRICE",
+    "en": "Price"
+  },
+  "السعر الأصلي": {
+    "key": "COMMON.ORIGINALPRICE",
+    "en": "Original Price"
+  },
+  "خصم": {
+    "key": "COMMON.DISCOUNT",
+    "en": "Off"
+  },
+  "اختر مقاسًا": {
+    "key": "COMMON.SELECTSIZE",
+    "en": "Select a size"
+  },
+  "مشدات الخصر": {
+    "key": "COMMON.WAISTTRAINERS",
+    "en": "Waist Trainers"
+  },
+  "مشدات الجسم": {
+    "key": "COMMON.BODYSHAPERS",
+    "en": "Body Shapers"
+  },
+  "مشدات ما بعد الولادة": {
+    "key": "COMMON.POSTPARTUM",
+    "en": "Postpartum Shapers"
+  },
+  "سترات الضغط": {
+    "key": "COMMON.COMPRESSIONVESTS",
+    "en": "Compression Vests"
+  },
+  "رافعات الأرداف": {
+    "key": "COMMON.BUTTLIFTERS",
+    "en": "Butt Lifters"
+  },
+  "إكسسوارات": {
+    "key": "COMMON.ACCESSORIES",
+    "en": "Accessories"
+  },
+  "سلتك فارغة": {
+    "key": "COMMON.CARTEMPTY",
+    "en": "Your cart is empty"
+  },
+  "أضف بعض المنتجات للبدء": {
+    "key": "COMMON.CARTEMPTYDESC",
+    "en": "Add some items to get started"
+  },
+  "المجموع الفرعي": {
+    "key": "COMMON.SUBTOTAL",
+    "en": "Subtotal"
+  },
+  "التوصيل": {
+    "key": "COMMON.DELIVERY",
+    "en": "Delivery"
+  },
+  "المتابعة للدفع": {
+    "key": "COMMON.PROCEEDCHECKOUT",
+    "en": "Proceed to Checkout"
+  },
+  "إزالة": {
+    "key": "COMMON.REMOVE",
+    "en": "Remove"
+  },
+  "الدفع": {
+    "key": "COMMON.STEP2",
+    "en": "Payment"
+  },
+  "معلومات التوصيل": {
+    "key": "COMMON.STEP1",
+    "en": "Delivery Info"
+  },
+  "مراجعة وتأكيد": {
+    "key": "COMMON.STEP3",
+    "en": "Review & Confirm"
+  },
+  "الاسم الكامل": {
+    "key": "COMMON.FULLNAME",
+    "en": "Full Name"
+  },
+  "الدفع عند الاستلام": {
+    "key": "COMMON.CASHONDELIVERY",
+    "en": "Cash on Delivery"
+  },
+  "تأكيد الطلب": {
+    "key": "COMMON.PLACEORDER",
+    "en": "Place Order"
+  },
+  "رفع إثبات التحويل": {
+    "key": "COMMON.UPLOADPROOF",
+    "en": "Upload Transfer Proof"
+  },
+  "مواصلة التسوق": {
+    "key": "COMMON.CONTINUESHOPPING",
+    "en": "Continue Shopping"
+  },
+  "تم إرسال تفاصيل طلبك عبر واتساب والبريد الإلكتروني": {
+    "key": "COMMON.ORDERSENT",
+    "en": "We've sent your order details to WhatsApp & Email"
+  },
+  "قيد الانتظار": {
+    "key": "COMMON.PENDING",
+    "en": "Pending"
+  },
+  "مؤكد": {
+    "key": "COMMON.CONFIRMED",
+    "en": "Confirmed"
+  },
+  "تم التوصيل": {
+    "key": "COMMON.DELIVERED",
+    "en": "Delivered"
+  },
+  "ملغي": {
+    "key": "COMMON.CANCELLED",
+    "en": "Cancelled"
+  },
+  "البريد الإلكتروني أو الهاتف": {
+    "key": "COMMON.EMAILORPHONE",
+    "en": "Email or Phone"
+  },
+  "كلمة المرور": {
+    "key": "AUTH.PASSWORD",
+    "en": "Password"
+  },
+  "نسيت كلمة المرور؟": {
+    "key": "COMMON.FORGOTPASSWORD",
+    "en": "Forgot Password?"
+  },
+  "ليس لديك حساب؟": {
+    "key": "COMMON.NOACCOUNT",
+    "en": "Don't have an account?"
+  },
+  "هل لديك حساب بالفعل؟": {
+    "key": "COMMON.HASACCOUNT",
+    "en": "Already have an account?"
+  },
+  "الاسم الأول": {
+    "key": "COMMON.FIRSTNAME",
+    "en": "First Name"
+  },
+  "اسم العائلة": {
+    "key": "COMMON.LASTNAME",
+    "en": "Last Name"
+  },
+  "البريد الإلكتروني": {
+    "key": "CONTACT.EMAIL",
+    "en": "Email"
+  },
+  "العناوين المحفوظة": {
+    "key": "COMMON.SAVEDADDRESSES",
+    "en": "Saved Addresses"
+  },
+  "التفضيلات": {
+    "key": "COMMON.PREFERENCES",
+    "en": "Preferences"
+  },
+  "اللغة": {
+    "key": "COMMON.LANGUAGE",
+    "en": "Language"
+  },
+  "المظهر": {
+    "key": "COMMON.THEME",
+    "en": "Theme"
+  },
+  "فاتح": {
+    "key": "COMMON.LIGHTMODE",
+    "en": "Light"
+  },
+  "داكن": {
+    "key": "COMMON.DARKMODE",
+    "en": "Dark"
+  },
+  "المعلومات الشخصية": {
+    "key": "COMMON.PERSONALINFO",
+    "en": "Personal Info"
+  },
+  "إرسال": {
+    "key": "COMMON.SENDMESSAGE",
+    "en": "Send"
+  },
+  "إرفاق ملف": {
+    "key": "COMMON.ATTACHFILE",
+    "en": "Attach File"
+  },
+  "الدعم متاح": {
+    "key": "COMMON.SUPPORTONLINE",
+    "en": "Support Online"
+  },
+  "الدعم غير متاح": {
+    "key": "COMMON.SUPPORTOFFLINE",
+    "en": "Support Offline"
+  },
+  "لوحة التحكم": {
+    "key": "COMMON.DASHBOARD",
+    "en": "Dashboard"
+  },
+  "طلبات اليوم": {
+    "key": "COMMON.TODAYORDERS",
+    "en": "Today's Orders"
+  },
+  "إجمالي المنتجات": {
+    "key": "COMMON.TOTALPRODUCTS",
+    "en": "Total Products"
+  },
+  "الفئات": {
+    "key": "COMMON.CATEGORIESMANAGEMENT",
+    "en": "Categories"
+  },
+  "زوار اليوم": {
+    "key": "COMMON.TODAYVISITORS",
+    "en": "Today's Visitors"
+  },
+  "الطلبات الأخيرة": {
+    "key": "COMMON.RECENTORDERS",
+    "en": "Recent Orders"
+  },
+  "الطلبات": {
+    "key": "COMMON.ORDERSMANAGEMENT",
+    "en": "Orders"
+  },
+  "دردشة الدعم": {
+    "key": "COMMON.ADMINCHAT",
+    "en": "Support Chat"
+  },
+  "قبول الطلب": {
+    "key": "COMMON.ACCEPTORDER",
+    "en": "Accept Order"
+  },
+  "تغيير الحالة": {
+    "key": "COMMON.CHANGESTATUS",
+    "en": "Change Status"
+  },
+  "كود الشحن": {
+    "key": "COMMON.SHIPMENTCODE",
+    "en": "Shipment Code"
+  },
+  "إجراء جماعي": {
+    "key": "COMMON.BULKACTION",
+    "en": "Bulk Action"
+  },
+  "إضافة منتج": {
+    "key": "COMMON.ADDPRODUCT",
+    "en": "Add Product"
+  },
+  "اسم المنتج": {
+    "key": "COMMON.PRODUCTNAME",
+    "en": "Product Name"
+  },
+  "الفئة": {
+    "key": "COMMON.CATEGORY",
+    "en": "Category"
+  },
+  "موافقة": {
+    "key": "COMMON.APPROVE",
+    "en": "Approve"
+  },
+  "إخفاء": {
+    "key": "COMMON.HIDE",
+    "en": "Hide"
+  },
+  "تصعيد للدردشة": {
+    "key": "COMMON.ESCALATE",
+    "en": "Escalate to Chat"
+  },
+  "عن لوكس كينج": {
+    "key": "COMMON.ABOUTTITLE",
+    "en": "About LOXX KING"
+  },
+  "دفع آمن": {
+    "key": "CART.SECURE_PAYMENT",
+    "en": "Secure Payment"
+  },
+  "توصيل سريع": {
+    "key": "COMMON.FASTDELIVERY",
+    "en": "Fast Delivery"
+  },
+  "إرجاع سهل": {
+    "key": "CART.EASY_RETURNS",
+    "en": "Easy Returns"
+  },
+  "دعم على مدار الساعة": {
+    "key": "COMMON.SUPPORT24",
+    "en": "24/7 Support"
+  },
+  "الخصر": {
+    "key": "CATEGORIES.WAIST",
+    "en": "Waist"
+  },
+  "شكّلي ثقتك": {
+    "key": "COMMON.HEROTITLE",
+    "en": "Shape Your Confidence"
+  },
+  "تسوقي الآن": {
+    "key": "COMMON.SHOPNOW",
+    "en": "Shop Now"
+  },
+  "الأكثر مبيعًا": {
+    "key": "COMMON.BESTSELLERS",
+    "en": "Best Sellers"
+  },
+  "وصل حديثًا": {
+    "key": "COMMON.NEWARRIVALS",
+    "en": "New Arrivals"
+  },
+  "العروض النشطة": {
+    "key": "COMMON.ACTIVEOFFERS",
+    "en": "Active Offers"
+  },
+  "تسوقي حسب الفئة": {
+    "key": "HOME.SHOP_BY_CATEGORY",
+    "en": "Shop by Category"
+  },
+  "لا توجد إشعارات بعد": {
+    "key": "COMMON.NONOTIFICATIONS",
+    "en": "No notifications yet"
+  },
+  "تعليم الكل كمقروء": {
+    "key": "COMMON.MARKALLREAD",
+    "en": "Mark all as read"
+  },
+  "غير مقروء": {
+    "key": "COMMON.UNREAD",
+    "en": "Unread"
+  }
+}

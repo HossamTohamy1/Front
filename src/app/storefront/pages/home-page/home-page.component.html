@@ -1,0 +1,20 @@
+<app-store-layout [showFloatingChat]="false">
+
+  <div class="lk-home-page" dir="rtl">
+    @for (section of pageConfig().sections; track section.id) {
+      @if (section.enabled) {
+        @switch (section.type) {
+          @case ('hero') { <app-hero [config]="section"></app-hero> }
+          @case ('benefits') { <app-benefits [config]="section"></app-benefits> }
+          @case ('categories') { <app-categories [config]="section"></app-categories> }
+          @case ('bestsellers') { <app-products [config]="section"></app-products> }
+          @case ('promo') { <app-offer [config]="section"></app-offer> }
+        }
+      }
+    }
+
+    <!-- These were not in the customizer, keeping them at the bottom -->
+    <app-testimonials></app-testimonials>
+    <app-faq className="lk-faq-section--home"></app-faq>
+  </div>
+</app-store-layout>

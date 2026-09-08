@@ -1,0 +1,28 @@
+<app-admin-layout>
+  <div class="max-w-2xl mx-auto space-y-5">
+    <div class="flex items-center justify-between">
+      <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'NOTIFICATIONS.TITLE' : 'Notifications' }}</h1>
+      <p class="text-sm text-muted-foreground">{{ unreadCount() }} {{ lang() === 'ar' ? 'DASHBOARD.NEW_NOTIFICATIONS' : 'new' }}</p>
+    </div>
+
+    <div class="space-y-2">
+      <div 
+        *ngFor="let n of adminNotifs"
+        class="flex items-start gap-3 p-4 rounded-2xl border transition-all"
+        [ngClass]="!n.read ? 'bg-secondary border-brand/20' : 'bg-card border-border'"
+      >
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" [ngClass]="n.color">
+          <lucide-icon [img]="n.icon" [size]="17"></lucide-icon>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-semibold text-sm">{{ lang() === 'ar' ? n.titleAr : n.titleEn }}</p>
+            <span *ngIf="!n.read" class="w-2 h-2 rounded-full bg-brand shrink-0"></span>
+          </div>
+          <p class="text-xs text-muted-foreground mt-0.5">{{ lang() === 'ar' ? n.msgAr : n.msgEn }}</p>
+          <p class="text-[10px] text-muted-foreground mt-1">{{ n.time }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-admin-layout>

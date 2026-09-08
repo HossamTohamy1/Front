@@ -1,0 +1,260 @@
+<app-store-layout [showFloatingChat]="false">
+
+  <ng-container *ngIf="!product; else content">
+    <div class="lk-product-not-found">
+        <p>{{ 'STOREFRONT.AUTO_STR_234' | translate }}</p>
+        <a routerLink="/category/all">{{ 'STOREFRONT.AUTO_STR_309' | translate }}</a>
+    </div>
+  </ng-container>
+
+  <ng-template #content>
+    <main class="lk-product-page" dir="rtl">
+        <nav *ngIf="pageConfig().showBreadcrumb" class="lk-product-breadcrumb" aria-label='STOREFRONT.AUTO_STR_374'>
+            <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
+            <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+            <a [routerLink]="'/category/' + product!.category">{{ display.categoryLabel | translate }}</a>
+            <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+            <span>{{display.name | translate}}</span>
+        </nav>
+
+        <section class="lk-product-summary">
+            <div class="lk-product-gallery">
+                <div class="lk-product-main-image">
+                    <img
+                        [src]="display.images[activeImage()]"
+                        [alt]="display.name"
+                        class="lk-product-main-image__asset lk-product-main-image__asset--{{activeImage()}}"
+                    />
+
+                    <span *ngIf="display.discount" class="lk-product-discount">-{{display.discount}}%</span>
+
+                    <button
+                        type="button"
+                        [class.is-active]="wishlist()"
+                        class="lk-product-favorite"
+                        (click)="toggleCurrentFavorite()"
+                        aria-label='STOREFRONT.AUTO_STR_206'
+                    >
+                        <lucide-icon name="heart" [img]="Heart" [attr.fill]="wishlist() ? 'currentColor' : 'none'" aria-hidden="true"></lucide-icon>
+                    </button>
+                </div>
+
+                <div class="lk-product-thumbnails">
+                    <button type="button" class="lk-gallery-arrow" (click)="previousImage()" aria-label='STOREFRONT.AUTO_STR_281'>
+                        <lucide-icon name="chevron-right" [img]="ChevronRight" aria-hidden="true"></lucide-icon>
+                    </button>
+
+                    <div class="lk-product-thumbnails__list">
+                        <button *ngFor="let image of display.images; let i = index"
+                            type="button"
+                            [class.is-active]="i === activeImage()"
+                            class="lk-product-thumbnail"
+                            (click)="selectImage(i)"
+                            [attr.aria-label]="'عرض الصورة ' + (i + 1)"
+                        >
+                            <img [src]="image" alt="" class="lk-product-thumbnail__image lk-product-thumbnail__image--{{i}}" />
+                        </button>
+                    </div>
+
+                    <button type="button" class="lk-gallery-arrow" (click)="nextImage()" aria-label='STOREFRONT.AUTO_STR_282'>
+                        <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="lk-product-info">
+                <div *ngIf="pageConfig().showBestSellerBadge" class="lk-best-seller-badge">
+                    <lucide-icon name="flame" [img]="Flame" aria-hidden="true"></lucide-icon>
+                    <span>{{ 'HOME.BEST_SELLERS_ALT' | translate }}</span>
+                </div>
+
+                <h1>{{display.name | translate}}</h1>
+
+                <div *ngIf="pageConfig().showRatingLine" class="lk-product-rating-line">
+                    <span>({{display.reviewCount}} تقييم)</span>
+                    <div class="lk-product-stars" [attr.aria-label]="'التقييم ' + display.rating + ' من خمسة'">
+                        <lucide-icon *ngFor="let _ of getFiveStars()" name="star" [img]="Star" fill="currentColor" strokeWidth="0" aria-hidden="true"></lucide-icon>
+                    </div>
+                </div>
+
+                <div class="lk-product-price-row">
+                    <strong class="lk-product-current-price" [attr.aria-label]="display.price + ' ريال سعودي'">
+                        <span class="lk-product-price-number">{{display.price}}</span>
+                        <small>ر.س</small>
+                    </strong>
+                    <del *ngIf="display.oldPrice">{{display.oldPrice}} ر.س</del>
+                </div>
+
+                <p class="lk-tax-note">
+                    <lucide-icon name="shield-check" [img]="ShieldCheck" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_339' | translate }}</p>
+
+                <div class="lk-product-divider"></div>
+
+                <ng-container *ngIf="pageConfig().showColorOptions">
+                    <div class="lk-product-option-heading">
+                        <strong>اللون:</strong>
+                        <span>{{selectedColor() === 0 ? display.color : display.color === 'STOREFRONT.AUTO_STR_472' ? 'STOREFRONT.AUTO_STR_483' : 'STOREFRONT.AUTO_STR_472'}}</span>
+                    </div>
+
+                    <div class="lk-color-options">
+                        <button *ngFor="let color of display.colors; let i = index"
+                            type="button"
+                            [class.is-active]="i === selectedColor()"
+                            class="lk-color-swatch"
+                            (click)="selectedColor.set(i)"
+                            [attr.aria-label]="'اختيار اللون ' + (i + 1)"
+                        >
+                            <span [style.backgroundColor]="color"></span>
+                        </button>
+                    </div>
+
+                    <div class="lk-product-divider"></div>
+                </ng-container>
+
+                <ng-container *ngIf="pageConfig().showSizeOptions">
+                    <div class="lk-size-heading">
+                        <strong>{{ 'PRODUCT.SIZE' | translate }}</strong>
+                        <button type="button" routerLink="/size-guide">
+                            <lucide-icon name="ruler" [img]="Ruler" aria-hidden="true"></lucide-icon>{{ 'PRODUCT.SIZE_GUIDE' | translate }}</button>
+                    </div>
+
+                    <div class="lk-size-options">
+                        <button *ngFor="let size of product!.sizes"
+                            type="button"
+                            [class.is-active]="selectedSize() === size"
+                            (click)="selectedSize.set(size)"
+                        >
+                            {{size}}
+                        </button>
+                    </div>
+
+                    <div class="lk-product-divider"></div>
+                </ng-container>
+
+                <div class="lk-quantity-row">
+                    <strong>{{ 'COMMON.QUANTITY' | translate }}</strong>
+                    <div class="lk-quantity-control">
+                        <button type="button" (click)="quantity.set(quantity() > 1 ? quantity() - 1 : 1)" aria-label='STOREFRONT.AUTO_STR_326'>
+                            <lucide-icon name="minus" [img]="Minus" aria-hidden="true"></lucide-icon>
+                        </button>
+                        <span>{{quantity()}}</span>
+                        <button type="button" (click)="quantity.set(product!.stock > quantity() ? quantity() + 1 : quantity())" aria-label='STOREFRONT.AUTO_STR_327'>
+                            <lucide-icon name="plus" [img]="Plus" aria-hidden="true"></lucide-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="pageConfig().showPurchaseActions" class="lk-product-actions">
+                    <button type="button" class="lk-add-cart-button" (click)="addCurrentProduct()">
+                        <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_256' | translate }}</button>
+                    <button type="button" class="lk-buy-now-button" (click)="buyNow()">
+                        <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_405' | translate }}</button>
+                </div>
+
+                <div *ngIf="pageConfig().showServiceRow" class="lk-product-service-row">
+                    <span><lucide-icon name="circle-dollar-sign" [img]="CircleDollarSign" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_220' | translate }}</span>
+                    <span><lucide-icon name="truck" [img]="Truck" aria-hidden="true"></lucide-icon>{{ 'CART.FAST_SHIPPING' | translate }}</span>
+                    <span><lucide-icon name="package-check" [img]="PackageCheck" aria-hidden="true"></lucide-icon>{{ 'CART.EASY_RETURNS' | translate }}</span>
+                </div>
+            </div>
+        </section>
+
+        <nav *ngIf="pageConfig().showTabs" class="lk-product-tabs" aria-label='DASHBOARD.AUTO_STR_247'>
+            <button *ngIf="pageConfig().showDescriptionSection" [class.is-active]="activeTab() === 'description'" (click)="scrollToSection('description')">{{ 'PRODUCT.DESCRIPTION' | translate }}</button>
+            <button *ngIf="pageConfig().showFeaturesSection" [class.is-active]="activeTab() === 'features'" (click)="scrollToSection('features')">{{ 'PRODUCT.FEATURES' | translate }}</button>
+            <a class="lk-product-tab-link" routerLink="/size-guide">{{ 'PRODUCT.SIZE_GUIDE' | translate }}</a>
+            <button *ngIf="pageConfig().showReviewsSection" [class.is-active]="activeTab() === 'reviews'" (click)="scrollToSection('reviews')">التقييمات ({{display.reviewCount}})</button>
+            <button *ngIf="pageConfig().showPurchaseActions" [class.is-active]="activeTab() === 'purchase'" (click)="scrollToSection('purchase')">{{ 'STOREFRONT.AUTO_STR_453' | translate }}</button>
+        </nav>
+
+        <section *ngIf="pageConfig().showDescriptionSection" id="lk-description" class="lk-product-description-section">
+            <h2>{{ 'STOREFRONT.AUTO_STR_406' | translate }}</h2>
+            <p>{{display.description}}</p>
+        </section>
+
+        <section *ngIf="pageConfig().showFeaturesSection" id="lk-features" class="lk-product-features-section">
+            <h2>{{ 'PRODUCT.FEATURES' | translate }}</h2>
+            <div class="lk-product-features-grid">
+                <article>
+                    <app-product-feature-icon name="shield"></app-product-feature-icon>
+                    <span>{{ 'STOREFRONT.AUTO_STR_200' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_375' | translate }}</span>
+                </article>
+                <article>
+                    <app-product-feature-icon name="feather"></app-product-feature-icon>
+                    <span>{{ 'STOREFRONT.AUTO_STR_478' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_257' | translate }}</span>
+                </article>
+                <article>
+                    <app-product-feature-icon name="posture"></app-product-feature-icon>
+                    <span>{{ 'STOREFRONT.AUTO_STR_341' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_466' | translate }}</span>
+                </article>
+                <article>
+                    <app-product-feature-icon name="fabric"></app-product-feature-icon>
+                    <span>{{ 'STOREFRONT.AUTO_STR_440' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_467' | translate }}</span>
+                </article>
+                <article>
+                    <app-product-feature-icon name="waist"></app-product-feature-icon>
+                    <span>{{ 'STOREFRONT.AUTO_STR_376' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_428' | translate }}</span>
+                </article>
+            </div>
+        </section>
+
+        <section *ngIf="pageConfig().showReviewsSection" id="lk-reviews" class="lk-product-reviews-section">
+            <h2>{{ 'STOREFRONT.AUTO_STR_258' | translate }}</h2>
+            <div class="lk-product-reviews-layout">
+                <div class="lk-rating-score">
+                    <strong>{{display.rating}}</strong>
+                    <div class="lk-product-stars">
+                        <lucide-icon *ngFor="let _ of getFiveStars()" name="star" [img]="Star" fill="currentColor" strokeWidth="0" aria-hidden="true"></lucide-icon>
+                    </div>
+                    <span>{{ 'STOREFRONT.AUTO_STR_470' | translate }}</span>
+                    <small>({{display.reviewCount}} تقييم)</small>
+                </div>
+
+                <div class="lk-review-cards">
+                    <article *ngFor="let review of customerReviews">
+                        <strong>{{review.name}}</strong>
+                        <small>{{review.meta}}</small>
+                        <div class="lk-product-stars">
+                            <lucide-icon *ngFor="let _ of getFiveStars()" name="star" [img]="Star" fill="currentColor" strokeWidth="0" aria-hidden="true"></lucide-icon>
+                        </div>
+                        <p>{{review.comment}}</p>
+                    </article>
+                </div>
+
+                <div class="lk-rating-bars">
+                    <div *ngFor="let row of ratingRows">
+                        <span>{{row.value}} ★</span>
+                        <i><b [style.width]="row.width + '%'"></b></i>
+                        <small>({{row.count}})</small>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="lk-all-reviews-link">
+                عرض جميع التقييمات ({{display.reviewCount}})
+                <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+            </button>
+        </section>
+
+        <section *ngIf="pageConfig().showPurchaseActions" id="lk-purchase" class="lk-product-purchase-section" aria-label='STOREFRONT.AUTO_STR_191'>
+            <div class="lk-product-purchase-actions" dir="rtl">
+                <button type="button" class="lk-purchase-buy" (click)="buyNow()">
+                    <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_405' | translate }}</button>
+
+                <button type="button" class="lk-purchase-cart" (click)="addCurrentProduct()">
+                    <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_256' | translate }}</button>
+
+                <button
+                    type="button"
+                    [class.is-active]="wishlist()"
+                    class="lk-purchase-favorite"
+                    (click)="toggleCurrentFavorite()"
+                    [attr.aria-label]="wishlist() ? 'STOREFRONT.AUTO_STR_222' : 'STOREFRONT.AUTO_STR_206'"
+                    [attr.aria-pressed]="wishlist()"
+                >
+                    <lucide-icon name="heart" [img]="Heart" [attr.fill]="wishlist() ? 'currentColor' : 'none'" aria-hidden="true"></lucide-icon>
+                </button>
+            </div>
+        </section>
+    </main>
+  </ng-template>
+</app-store-layout>

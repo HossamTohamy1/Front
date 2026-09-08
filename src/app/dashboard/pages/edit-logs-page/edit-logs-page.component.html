@@ -1,0 +1,88 @@
+<app-admin-layout>
+  <div class="max-w-6xl mx-auto space-y-5">
+    <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'COMMON.EDITLOGS' : 'Edit Logs' }}</h1>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-3">
+      <div class="relative flex-1 min-w-[208px]">
+        <lucide-icon [img]="SearchIcon" [size]="15" class="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground"></lucide-icon>
+        <input
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          [placeholder]="lang() === 'ar' ? 'ابحث بالطلب أو الحقل...' : 'Search by order or field...'"
+          class="w-full h-9 ps-9 pe-4 rounded-xl bg-card border border-border text-sm outline-none focus:ring-2 focus:ring-ring"
+        />
+      </div>
+      <select
+        [ngModel]="filterUser()"
+        (ngModelChange)="filterUser.set($event)"
+        class="h-9 px-3 rounded-xl bg-card border border-border text-sm outline-none"
+      >
+        <option value="">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_253' : 'All Editors' }}</option>
+        @for (e of editors; track e) {
+          <option [value]="e">{{ e }}</option>
+        }
+      </select>
+      <input
+        type="date"
+        [ngModel]="dateFrom()"
+        (ngModelChange)="dateFrom.set($event)"
+        class="h-9 px-3 rounded-xl bg-card border border-border text-sm outline-none"
+      />
+      <input
+        type="date"
+        [ngModel]="dateTo()"
+        (ngModelChange)="dateTo.set($event)"
+        class="h-9 px-3 rounded-xl bg-card border border-border text-sm outline-none"
+      />
+    </div>
+
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-muted/40">
+              <th class="px-5 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.ORDER_NUMBER' : 'Order #' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_435' : 'Field Changed' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_211' : 'Old Value' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_212' : 'New Value' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_405' : 'Edited By' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_406' : 'Timestamp' }}</th>
+              <th class="w-10"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of filtered(); track log.id) {
+              <tr class="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                <td class="px-5 py-3 font-mono font-semibold text-brand">{{ log.orderNumber }}</td>
+                <td class="px-4 py-3 font-medium">{{ log.field }}</td>
+                <td class="px-4 py-3 text-muted-foreground line-through">{{ log.oldValue }}</td>
+                <td class="px-4 py-3 font-medium text-green-600 dark:text-green-400">{{ log.newValue }}</td>
+                <td class="px-4 py-3">
+                  <div>
+                    <p class="font-medium">{{ log.editedBy }}</p>
+                    <p class="text-xs text-muted-foreground capitalize">{{ log.editorRole }}</p>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-muted-foreground text-xs">
+                  {{ formatDate(log.timestamp) }}
+                </td>
+                <td class="px-4 py-3">
+                  <a [routerLink]="['/admin/orders', log.orderId]" class="text-muted-foreground hover:text-brand transition-colors tap-highlight">
+                    <lucide-icon [img]="ExternalLinkIcon" [size]="14"></lucide-icon>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (filtered().length === 0) {
+        <div class="text-center py-12 text-muted-foreground">
+          <p>{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_254' : 'No logs found' }}</p>
+        </div>
+      }
+    </div>
+    <p class="text-xs text-muted-foreground">{{ filtered().length }} {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_467' : 'records' }}</p>
+  </div>
+</app-admin-layout>

@@ -1,0 +1,47 @@
+<app-store-layout>
+  <div class="max-w-lg mx-auto px-4 py-6">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="font-display font-bold text-2xl">{{ configService.config().pageTitle | translate }}</h1>
+      <button *ngIf="unread() > 0" (click)="markAllRead()" class="flex items-center gap-1.5 text-sm text-brand hover:underline tap-highlight">
+        <lucide-icon name="check-check" [size]="16"></lucide-icon>
+        {{ t('markAllRead', langService.lang()) }}
+      </button>
+    </div>
+
+    <ng-container *ngIf="notifs().length === 0; else notifsList">
+      <div class="text-center py-20">
+        <lucide-icon name="bell" [size]="48" class="text-muted-foreground mx-auto mb-4"></lucide-icon>
+        <p class="font-semibold">{{ configService.config().emptyStateTitle | translate }}</p>
+      </div>
+    </ng-container>
+    <ng-template #notifsList>
+      <div class="space-y-2">
+        <button
+          *ngFor="let n of notifs()"
+          (click)="handleNotifClick(n)"
+          class="w-full text-start flex items-start gap-3 p-4 rounded-2xl border transition-all tap-highlight"
+          [ngClass]="n.read ? 'bg-card border-border' : 'bg-secondary border-brand/30'"
+        >
+          <div class="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0 mt-0.5">
+            <lucide-icon *ngIf="n.type === 'order'" name="package" [size]="18" class="text-brand"></lucide-icon>
+            <lucide-icon *ngIf="n.type === 'offer'" name="tag" [size]="18" class="text-amber-500"></lucide-icon>
+            <lucide-icon *ngIf="n.type === 'chat'" name="message-circle" [size]="18" class="text-green-500"></lucide-icon>
+            <lucide-icon *ngIf="n.type === 'system'" name="info" [size]="18" class="text-muted-foreground"></lucide-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <p class="text-sm font-semibold leading-tight text-foreground">
+                {{ n.title | translate }}
+              </p>
+              <span *ngIf="!n.read" class="w-2 h-2 rounded-full bg-brand shrink-0 mt-1"></span>
+            </div>
+            <p class="text-xs text-muted-foreground mt-0.5 line-clamp-2">{{ n.message | translate }}</p>
+            <p class="text-xs text-muted-foreground mt-1">
+              {{ formatDate(n.createdAt) }}
+            </p>
+          </div>
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</app-store-layout>

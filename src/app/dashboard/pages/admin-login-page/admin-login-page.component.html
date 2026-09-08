@@ -1,0 +1,77 @@
+<main class="dashboard-login" dir="rtl">
+  <header class="dashboard-login__header">
+    <button
+      type="button"
+      class="dashboard-login__header-icon dashboard-login__header-icon--users"
+      aria-label='DASHBOARD.AUTO_STR_385'
+    >
+      <lucide-icon [img]="UsersRound" [size]="17" [strokeWidth]="2"></lucide-icon>
+    </button>
+
+    <div class="dashboard-login__brand" aria-label="LOXX KING">
+      <span class="dashboard-login__brand-first">LOXX</span>
+      <span class="dashboard-login__brand-second">KING</span>
+    </div>
+
+    <button
+      type="button"
+      class="dashboard-login__header-icon dashboard-login__header-icon--bell"
+      aria-label='NOTIFICATIONS.TITLE'
+    >
+      <lucide-icon [img]="Bell" [size]="17" [strokeWidth]="2"></lucide-icon>
+    </button>
+  </header>
+
+  <section class="dashboard-login__content">
+    <div class="dashboard-login__card">
+      <img src="assets/home/logo-header.png" alt="LOXX KING" class="dashboard-login__logo" />
+
+      <h1>{{ 'DASHBOARD.AUTO_STR_345' | translate }}</h1>
+
+      <form class="dashboard-login__form" (submit)="submitLogin($event)" novalidate>
+        <label class="dashboard-login__field">
+          <lucide-icon [img]="Mail" [size]="16"></lucide-icon>
+          <input
+            type="email"
+            [(ngModel)]="form.email"
+            name="email"
+            placeholder='DASHBOARD.AUTO_STR_55'
+            autocomplete="email"
+            autofocus
+            required
+            (input)="error = ''"
+          />
+        </label>
+
+        <label class="dashboard-login__field">
+          <lucide-icon [img]="LockKeyhole" [size]="16"></lucide-icon>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="form.password"
+            name="password"
+            placeholder='DASHBOARD.AUTO_STR_161'
+            autocomplete="current-password"
+            required
+            (input)="error = ''"
+          />
+          <button
+            type="button"
+            class="dashboard-login__password-toggle"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'DASHBOARD.AUTO_STR_130' : 'DASHBOARD.AUTO_STR_131'"
+          >
+            <lucide-icon [img]="showPassword ? EyeOff : Eye" [size]="15"></lucide-icon>
+          </button>
+        </label>
+
+        @if (error) {
+          <p class="dashboard-login__error">{{ error }}</p>
+        }
+
+        <button type="submit" class="dashboard-login__submit" [disabled]="loading">
+          {{ loading ? 'جاري تسجيل الدخول...' : 'AUTH.LOGIN' }}
+        </button>
+      </form>
+    </div>
+  </section>
+</main>

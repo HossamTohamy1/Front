@@ -1,0 +1,60 @@
+<app-admin-layout>
+  <div class="max-w-4xl mx-auto space-y-5">
+    <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'COMMON.INVOICES' : 'Invoices' }}</h1>
+
+    <div class="relative">
+      <lucide-icon [img]="SearchIcon" [size]="15" class="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground"></lucide-icon>
+      <input
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        [placeholder]="lang() === 'ar' ? 'ابحث بالطلب أو الاسم...' : 'Search by order or customer...'"
+        class="w-full h-10 ps-9 pe-4 rounded-xl bg-card border border-border text-sm outline-none focus:ring-2 focus:ring-ring"
+      />
+    </div>
+
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm whitespace-nowrap">
+          <thead>
+            <tr class="border-b border-border bg-muted/40">
+              <th class="px-5 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_294' : 'Invoice #' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_408' : 'Customer' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_407' : 'Date' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_409' : 'Amount' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.STATUS' : 'Status' }}</th>
+              <th class="w-12"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of filtered(); track order.id) {
+              <tr class="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                <td class="px-5 py-3 font-mono font-semibold text-brand">{{ getInvoiceNumber(order.orderNumber) }}</td>
+                <td class="px-4 py-3">{{ order.customerName }}</td>
+                <td class="px-4 py-3 text-muted-foreground">{{ order.createdAt | date:'shortDate' }}</td>
+                <td class="px-4 py-3 font-bold">${{ order.total.toFixed(2) }}</td>
+                <td class="px-4 py-3">
+                  <span class="text-xs font-medium" [ngClass]="order.paymentStatus === 'paid' ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'">
+                    {{ order.paymentStatus === 'paid' ? (lang() === 'ar' ? 'DASHBOARD.AUTO_STR_436' : 'Paid') : (lang() === 'ar' ? 'DASHBOARD.AUTO_STR_458' : 'Pending') }}
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <button
+                    (click)="downloadInvoice()"
+                    class="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center tap-highlight text-muted-foreground hover:text-brand transition-colors"
+                  >
+                    <lucide-icon [img]="DownloadIcon" [size]="15"></lucide-icon>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (filtered().length === 0) {
+        <div class="text-center py-12 text-muted-foreground">
+          <p>{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_213' : 'No invoices found' }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</app-admin-layout>
