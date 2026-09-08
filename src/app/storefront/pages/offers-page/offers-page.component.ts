@@ -1,9 +1,10 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ArrowLeft, Clock3, Heart, Percent, ShoppingBag } from 'lucide-angular';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
+import { LangService } from '../../../core/services/lang/lang.service';
 
 export type SizeChartRow = {
     size: string;
@@ -78,7 +79,7 @@ const currentOffers: Product[] = [
         nameEn: 'Classic Black Waist Shaper',
         nameAr: 'SHARED.AUTO_STR_51',
         descEn: 'Classic black waist shaper with firm support.',
-        descAr: 'Ù…Ø´Ø¯ Ø®ØµØ± Ø£Ø³ÙˆØ¯ ÙƒÙ„Ø§Ø³ÙŠÙƒ Ø¨Ø¯Ø¹Ù… Ù‚ÙˆÙŠ ÙˆÙ…Ø±ÙŠØ­.',
+        descAr: 'مشد خصر أسود كلاسيك بدعم قوي ومريح.',
         price: 200,
         originalPrice: 250,
         images: [blackShaper],
@@ -96,7 +97,7 @@ const currentOffers: Product[] = [
         nameEn: 'Comfort Daily Shaper',
         nameAr: 'STOREFRONT.AUTO_STR_308',
         descEn: 'Soft beige everyday waist shaper.',
-        descAr: 'Ù…Ø´Ø¯ ÙŠÙˆÙ…ÙŠ Ø¨ÙŠØ¬ Ù…Ø±ÙŠØ­ ÙˆØ®ÙÙŠÙ Ù„Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø·ÙˆÙŠÙ„.',
+        descAr: 'مشد يومي بيج مريح وخفيف للاستخدام الطويل.',
         price: 184,
         originalPrice: 230,
         images: [beigeShaper],
@@ -200,6 +201,7 @@ export class OffersPageComponent implements OnInit, OnDestroy {
   });
 
   private timer: any;
+  private langService = inject(LangService);
 
   ngOnInit() {
     this.timer = setInterval(() => {
@@ -236,11 +238,16 @@ export class OffersPageComponent implements OnInit, OnDestroy {
   }
 
   addOfferProduct(product: Product) {
-    alert('STOREFRONT.AUTO_STR_114');
+    const msg = this.langService.effectiveLang() === 'ar' ? 'تمت إضافة المنتج بنجاح' : 'Product added successfully';
+    alert(msg);
   }
 
   addBundle(bundle: BundleOffer) {
-    alert(`ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© ${bundle.title} Ø¨Ø³Ø¹Ø± ${bundle.price} Ø±.Ø³`);
+    const currency = this.langService.effectiveLang() === 'ar' ? 'ر.س' : 'SAR';
+    const msg = this.langService.effectiveLang() === 'ar'
+      ? `تمت إضافة العرض بسعر ${bundle.price} ${currency}`
+      : `Bundle added for ${bundle.price} ${currency}`;
+    alert(msg);
   }
 
   getVisibleBundles() {

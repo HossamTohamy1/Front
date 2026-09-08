@@ -5,31 +5,37 @@ import { catchError, throwError } from 'rxjs';
 import { ToastService } from '../services/toast/toast.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const toastService = inject(ToastService);
+  if (req.url.includes('/assets/') || req.url.includes('assets/i18n')) {
+    return next(req);
+  }
+
   const injector = inject(Injector);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const translateService = injector.get(TranslateService);
-      let errorMessage = translateService.instant('ERROR.UNEXPECTED');
+      const toastService = injector.get(ToastService, null, { optional: true });
+      const translateService = injector.get(TranslateService, null, { optional: true });
+      let errorMessage = translateService ? translateService.instant('ERROR.UNEXPECTED') : 'Unexpected error';
       
       if (error.error instanceof ErrorEvent) {
-        errorMessage = translateService.instant('ERROR.BROWSER').replace('${error.error.message}', error.error.message);
+        errorMessage = (translateService ? translateService.instant('ERROR.BROWSER') : '${error.error.message}').replace('${error.error.message}', error.error.message);
       } else {
         if (error.status === 401) {
-          errorMessage = translateService.instant('ERROR.SESSION_EXPIRED');
+          errorMessage = translateService ? translateService.instant('ERROR.SESSION_EXPIRED') : 'Session expired';
         } else if (error.status === 403) {
-          errorMessage = translateService.instant('ERROR.UNAUTHORIZED');
+          errorMessage = translateService ? translateService.instant('ERROR.UNAUTHORIZED') : 'Unauthorized';
         } else if (error.status === 404) {
-          errorMessage = translateService.instant('ERROR.NOT_FOUND');
+          errorMessage = translateService ? translateService.instant('ERROR.NOT_FOUND') : 'Not found';
         } else if (error.status >= 500) {
-          errorMessage = translateService.instant('ERROR.SERVER_ERROR');
+          errorMessage = translateService ? translateService.instant('ERROR.SERVER_ERROR') : 'Server error';
         } else if (error.error?.message) {
           errorMessage = error.error.message;
         }
       }
 
-      toastService.error(errorMessage);
+      if (toastService) {
+        toastService.error(errorMessage);
+      }
       return throwError(() => error);
     })
   );

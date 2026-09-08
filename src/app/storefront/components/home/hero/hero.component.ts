@@ -1,8 +1,10 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, Input, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { LucideAngularModule, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-angular';
+import { LucideAngularModule, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-angular';
+
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 @Component({
   selector: 'app-hero',
@@ -14,8 +16,10 @@ export class HeroComponent implements OnInit, OnDestroy {
   @Input() config?: any;
 
   readonly ArrowLeft = ArrowLeft;
+  readonly ArrowRight = ArrowRight;
   readonly ChevronLeft = ChevronLeft;
   readonly ChevronRight = ChevronRight;
+  readonly langService = inject(LangService);
 
   slides: any[] = [];
   currentIndex = 0;
@@ -40,7 +44,7 @@ export class HeroComponent implements OnInit, OnDestroy {
   }
 
   getTitle(slide: any): string {
-    return slide.title || this.config?.title || 'شد أقوى\nوقوام أفضل';
+    return slide.title || this.config?.title || (this.langService.storefrontLang() === 'ar' ? 'شد أقوى\nوقوام أفضل' : 'Stronger Shaping\nBetter Silhouette');
   }
 
   prevSlide() {

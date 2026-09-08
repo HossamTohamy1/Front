@@ -3,6 +3,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductRepositoryImpl } from '../../../../data/repositories/product.repository.impl';
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 @Component({
   selector: 'app-categories',
@@ -13,6 +14,7 @@ import { ProductRepositoryImpl } from '../../../../data/repositories/product.rep
 export class CategoriesComponent implements OnInit {
   @Input() config?: any;
   private productRepo = inject(ProductRepositoryImpl);
+  readonly langService = inject(LangService);
 
   title = 'HOME.SHOP_BY_CATEGORY_ALT';
   displayCategories: any[] = [];
@@ -30,8 +32,8 @@ export class CategoriesComponent implements OnInit {
       if (cats && cats.length > 0) {
         this.displayCategories = cats.map(c => ({
           id: c.id,
-          name: c.nameAr || c.nameEn,
-          label: c.nameAr || c.nameEn,
+          name: this.langService.storefrontLang() === 'ar' ? (c.nameAr || c.nameEn) : (c.nameEn || c.nameAr),
+          label: this.langService.storefrontLang() === 'ar' ? (c.nameAr || c.nameEn) : (c.nameEn || c.nameAr),
           image: c.image || '/assets/home/category-full.png',
           path: `/categories/${c.slug || c.id}`
         }));

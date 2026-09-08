@@ -112,7 +112,7 @@ export class AdminLayoutComponent implements OnInit {
     const user = this.authService.user();
     return {
       id: user?.id ?? 'admin',
-      name: user?.name || 'DASHBOARD.AUTO_STR_314',
+      name: user?.name || 'مدير النظام',
       email: user?.email || 'admin@loxxking.com',
       role: this.currentRole,
       roleLabel: this.roleLabel(this.currentRole),
@@ -157,9 +157,9 @@ export class AdminLayoutComponent implements OnInit {
   }
 
   roleLabel(role: StaffRole): string {
-    if (role === 'manager') return 'SHARED.AUTO_STR_110';
-    if (role === 'sales') return 'SHARED.AUTO_STR_65';
-    return 'DASHBOARD.AUTO_STR_314';
+    if (role === 'manager') return 'مدير';
+    if (role === 'sales') return 'مسؤول مبيعات';
+    return 'مدير النظام';
   }
 
   initials(name: string): string {

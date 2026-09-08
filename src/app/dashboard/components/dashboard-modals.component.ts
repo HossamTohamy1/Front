@@ -16,7 +16,7 @@ import { TrackedOrder, TrackedOrderStatus, BankTransferReceipt } from '../../dom
       <div class="dashboard-modal-backdrop" (click)="closeCatalog.emit()"></div>
       <div class="dashboard-modal dashboard-modal--catalog" dir="rtl">
         <header class="dashboard-modal__header">
-          <h3>{{ catalogModal === 'products' ? 'DASHBOARD.AUTO_STR_40' : 'DASHBOARD.AUTO_STR_77' }}</h3>
+          <h3>{{ catalogModal === 'products' ? 'كتالوج المنتجات والمشدات' : 'قائمة الأسعار والتسعير' }}</h3>
           <button type="button" (click)="closeCatalog.emit()" class="dashboard-modal__close">
             <lucide-icon [img]="XIcon" [size]="18"></lucide-icon>
           </button>
@@ -266,7 +266,7 @@ import { TrackedOrder, TrackedOrderStatus, BankTransferReceipt } from '../../dom
           <div *ngIf="rowActionDialog.kind === 'approve'">
             <p>{{ 'DASHBOARD.AUTO_STR_8' | translate }}</p>
             <div *ngIf="selectedBankReceipt" class="bank-receipt-preview">
-              <img [src]="selectedBankReceipt.receipt.dataUrl" alt='DASHBOARD.AUTO_STR_219' />
+              <img [src]="selectedBankReceipt.receipt.dataUrl" alt="إيصال التحويل" />
             </div>
           </div>
         </div>

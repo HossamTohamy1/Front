@@ -13,10 +13,10 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
     <div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
       <div class="text-center mb-4">
         <h2 class="text-xl font-bold text-gray-900 mb-1">{{ 'DASHBOARD.AUTO_STR_226' | translate }}</h2>
-        <p class="text-sm text-gray-500">إدارة صفحة 'PRODUCTS.ALL_SHAPERS'</p>
+        <p class="text-sm text-gray-500">إدارة صفحة 'كل المشدات'</p>
       </div>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_353' [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false"
+      <app-section-card title="رأس الصفحة" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
         <div class="flex flex-col gap-1.5 mb-3">
           <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
@@ -25,7 +25,7 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         </div>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_98' [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false"
+      <app-section-card title="تفاصيل بطاقة المنتج" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
         <div class="flex items-center gap-2 mb-2">
           <input type="checkbox" [ngModel]="config().showRating" (ngModelChange)="updateConfig({ showRating: $event })" class="rounded text-blue-600 focus:ring-blue-500" />
@@ -41,7 +41,7 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         </div>
       </app-section-card>
 
-      <app-section-card title='DASHBOARD.AUTO_STR_100' [index]="2" [enabled]="true" [isFirst]="false" [isLast]="true"
+      <app-section-card title="حالة عدم وجود نتائج" [index]="2" [enabled]="true" [isFirst]="false" [isLast]="true"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
         <div class="flex flex-col gap-1.5 mb-3">
           <span class="text-xs font-bold text-gray-700">{{ 'COMMON.ADDRESS' | translate }}</span>

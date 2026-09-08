@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -23,23 +24,23 @@ export interface MyOrdersPageConfig {
 
 
 const initialConfig: MyOrdersPageConfig = {
-    headerTitle: 'ORDERS.TRACK',
-    headerSubtitle: 'ORDERS.TRACK_DESC',
+    headerTitle: 'تتبع',
+    headerSubtitle: 'أدخل رقم الهاتف ورقم الطلب لمعرفة حالة طلبك بسهولة',
     
-    phonePlaceholder: 'COMMON.PHONE',
-    orderPlaceholder: 'COMMON.ORDER_NUMBER',
-    buttonText: 'ORDERS.TRACK',
+    phonePlaceholder: 'رقم الهاتف',
+    orderPlaceholder: 'رقم الطلب',
+    buttonText: 'تتبع',
     
-    emptyTitle: 'ORDERS.NO_SHIPPED',
-    emptyText: 'ORDERS.NO_ORDERS_DESC',
-    emptyCta: 'COMMON.START_SHOPPING_FEM',
+    emptyTitle: 'ليس لديك طلبات مشحونة',
+    emptyText: 'لا يوجد حاليًا أي طلبات مكتملة أو قيد الشحن. ابدئي التسوق وسيظهر طلبك هنا بعد إتمامه.',
+    emptyCta: 'ابدأي التسوق',
     
-    notFoundTitle: 'ORDERS.NOT_FOUND',
-    notFoundText: 'ORDERS.TRY_AGAIN',
+    notFoundTitle: 'لم يتم العثور على طلب مطابق',
+    notFoundText: 'تأكدي من رقم الهاتف أو رقم الطلب ثم حاولي مرة أخرى.',
     
     showSupportCard: true,
-    supportTitle: 'ORDERS.HELP_TITLE',
-    supportText: 'ORDERS.HELP_DESC'
+    supportTitle: 'نحن هنا لمساعدتك',
+    supportText: 'إذا واجهت أي مشكلة، تواصل معنا عبر واتساب'
 }
 
 @Injectable({
@@ -89,10 +90,7 @@ export class MyOrdersPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): MyOrdersPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

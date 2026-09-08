@@ -5,10 +5,12 @@ import { ThemeService } from './core/services/theme/theme.service';
 import { LangService } from './core/services/lang/lang.service';
 import { filter, Subscription } from 'rxjs';
 
+import { ToastContainerComponent } from './shared/components/ui/toast-container/toast-container.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastContainerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

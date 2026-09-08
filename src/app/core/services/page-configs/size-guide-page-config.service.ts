@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 type SizeGuidePageConfig = {
     pageTitle: string;
@@ -8,8 +9,8 @@ type SizeGuidePageConfig = {
 };
 
 const DEFAULT_CONFIG = {
-    pageTitle: 'PRODUCT.SIZE_GUIDE',
-    pageSubtitle: 'SIZE_GUIDE.SUBTITLE',
+    pageTitle: 'دليل المقاسات',
+    pageSubtitle: 'تعرفي على المقاس المناسب لكِ لضمان أفضل راحة ودعم',
     showMeasurementsTable: true,
     showHelpSection: true,
     heroImage: '',
@@ -69,9 +70,6 @@ export class SizeGuidePageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...DEFAULT_CONFIG, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, DEFAULT_CONFIG);
   }
 }

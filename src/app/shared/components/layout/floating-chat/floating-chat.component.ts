@@ -10,13 +10,13 @@ import { LucideAngularModule } from 'lucide-angular';
   standalone: true,
   imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule],
   template: `
-    <div class="customer-floating-chat" dir="rtl">
+    <div class="customer-floating-chat">
       @if (isOpen) {
         <section
           class="customer-floating-chat__panel"
           role="dialog"
           aria-modal="false"
-          aria-label='SHARED.AUTO_STR_27'
+          [attr.aria-label]="'SHARED.AUTO_STR_27' | translate"
         >
           <header class="customer-floating-chat__header">
             <div class="customer-floating-chat__support">
@@ -27,7 +27,7 @@ import { LucideAngularModule } from 'lucide-angular';
                 <strong>{{ 'SHARED.AUTO_STR_72' | translate }}</strong>
                 <span [class]="isSupportActive ? 'is-active' : 'is-recent'">
                   <i aria-hidden="true"></i>
-                  {{ isSupportActive ? 'SHARED.AUTO_STR_76' : 'SHARED.AUTO_STR_66' }}
+                  {{ (isSupportActive ? 'SHARED.AUTO_STR_76' : 'SHARED.AUTO_STR_66') | translate }}
                 </span>
               </div>
             </div>
@@ -37,11 +37,11 @@ import { LucideAngularModule } from 'lucide-angular';
                 type="button"
                 [class.is-active]="isSearchOpen"
                 (click)="toggleSearch()"
-                aria-label='SHARED.AUTO_STR_37'
+                [attr.aria-label]="'SHARED.AUTO_STR_37' | translate"
               >
                 <lucide-icon name="search" [size]="18" [strokeWidth]="2"></lucide-icon>
               </button>
-              <button type="button" (click)="setIsOpen(false)" aria-label='SHARED.AUTO_STR_47'>
+              <button type="button" (click)="setIsOpen(false)" [attr.aria-label]="'SHARED.AUTO_STR_47' | translate">
                 <lucide-icon name="x" [size]="20" [strokeWidth]="2"></lucide-icon>
               </button>
             </div>
@@ -52,14 +52,14 @@ import { LucideAngularModule } from 'lucide-angular';
               <lucide-icon name="search" [size]="16"></lucide-icon>
               <input
                 [(ngModel)]="messageSearch"
-                placeholder="Ø§Ø¨Ø­Ø«ÙŠ Ø¯Ø§Ø®Ù„ Ø§Ù„Ø±Ø³Ø§Ø¦Ù„..."
+                [placeholder]="'SHARED.AUTO_STR_31' | translate"
                 autofocus
               />
               @if (normalizedMessageSearch) {
-                <span>{{ searchResultCount }} Ù†ØªÙŠØ¬Ø©</span>
+                <span>{{ searchResultCount }} {{ 'COMMON.RESULTS' | translate }}</span>
               }
               @if (messageSearch) {
-                <button type="button" (click)="messageSearch = ''" aria-label='SHARED.AUTO_STR_73'>
+                <button type="button" (click)="messageSearch = ''" [attr.aria-label]="'SHARED.AUTO_STR_73' | translate">
                   <lucide-icon name="x" [size]="15"></lucide-icon>
                 </button>
               }
@@ -73,7 +73,7 @@ import { LucideAngularModule } from 'lucide-angular';
               <div class="customer-floating-chat__welcome">
                 <lucide-icon name="message-circle" [size]="34" [strokeWidth]="1.6"></lucide-icon>
                 <strong>{{ 'SHARED.AUTO_STR_7' | translate }}</strong>
-                <p>Ø§ÙƒØªØ¨ Ø±Ø³Ø§Ù„ØªÙƒ ÙˆØ³ÙŠÙ‚ÙˆÙ… Ø£Ø­Ø¯ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø¨Ø§Ù„Ø±Ø¯ Ø¹Ù„ÙŠÙƒ.</p>
+                <p>{{ 'SHARED.AUTO_STR_4' | translate }}</p>
               </div>
             } @else {
               @for (message of messages; track message.id) {
@@ -92,7 +92,7 @@ import { LucideAngularModule } from 'lucide-angular';
                       <small>{{ 'SHARED.AUTO_STR_72' | translate }}</small>
                     }
                     @if (message.forwarded) {
-                      <em class="customer-floating-chat__forwarded">â†ª Ù…ÙØ¹Ø§Ø¯ ØªÙˆØ¬ÙŠÙ‡Ù‡Ø§</em>
+                      <em class="customer-floating-chat__forwarded">↳ {{ 'SHARED.AUTO_STR_53' | translate }}</em>
                     }
 
                     @if (message.replyTo) {
@@ -101,7 +101,7 @@ import { LucideAngularModule } from 'lucide-angular';
                         class="customer-floating-chat__reply-preview"
                         (click)="scrollToMessage(message.replyTo.messageId)"
                       >
-                        <strong>{{ message.replyTo.sender === 'staff' ? 'SHARED.AUTO_STR_72' : 'SHARED.AUTO_STR_111' }}</strong>
+                        <strong>{{ (message.replyTo.sender === 'staff' ? 'SHARED.AUTO_STR_72' : 'SHARED.AUTO_STR_111') | translate }}</strong>
                         <span>{{ message.replyTo.preview }}</span>
                       </button>
                     }
@@ -116,7 +116,7 @@ import { LucideAngularModule } from 'lucide-angular';
                             class="customer-floating-chat__image"
                             (click)="openImage(message.mediaUrl)"
                           >
-                            <img [src]="message.mediaUrl" [alt]="message.fileName || 'SHARED.AUTO_STR_70'" />
+                            <img [src]="message.mediaUrl" [alt]="message.fileName || ('SHARED.AUTO_STR_70' | translate)" />
                           </button>
                         }
                         @if (messageKind(message) === 'audio' && message.mediaUrl) {
@@ -154,7 +154,7 @@ import { LucideAngularModule } from 'lucide-angular';
                       <button
                         type="button"
                         (click)="toggleMenu(message.id)"
-                        aria-label='SHARED.AUTO_STR_48'
+                        [attr.aria-label]="'SHARED.AUTO_STR_48' | translate"
                       >
                         <lucide-icon name="more-horizontal" [size]="17"></lucide-icon>
                       </button>
@@ -199,10 +199,10 @@ import { LucideAngularModule } from 'lucide-angular';
           @if (replyMessage || editMessage) {
             <div class="customer-floating-chat__composer-context">
               <div>
-                <strong>{{ editMessage ? 'SHARED.AUTO_STR_54' : 'SHARED.AUTO_STR_40' }}</strong>
+                <strong>{{ (editMessage ? 'SHARED.AUTO_STR_54' : 'SHARED.AUTO_STR_40') | translate }}</strong>
                 <span>{{ getPreview(editMessage || replyMessage) | slice:0:90 }}</span>
               </div>
-              <button type="button" (click)="clearComposerMode()" aria-label='COMMON.CANCEL'>
+              <button type="button" (click)="clearComposerMode()" [attr.aria-label]="'COMMON.CANCEL' | translate">
                 <lucide-icon name="x" [size]="17"></lucide-icon>
               </button>
             </div>
@@ -210,7 +210,7 @@ import { LucideAngularModule } from 'lucide-angular';
 
           @if (isRecording) {
             <div class="customer-floating-chat__recording-bar">
-              <span><i ></i> Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ³Ø¬ÙŠÙ„ {{ formatRecordingTime(recordingSeconds) }}</span>
+              <span><i></i> {{ 'SHARED.AUTO_STR_58' | translate }} {{ formatRecordingTime(recordingSeconds) }}</span>
               <button type="button" (click)="stopRecording()">{{ 'SHARED.AUTO_STR_59' | translate }}</button>
             </div>
           }
@@ -227,7 +227,7 @@ import { LucideAngularModule } from 'lucide-angular';
               type="button"
               class="customer-floating-chat__tool"
               (click)="imageInput.click()"
-              aria-label='SHARED.AUTO_STR_71'
+              [attr.aria-label]="'SHARED.AUTO_STR_71' | translate"
               [disabled]="isRecording"
             >
               <lucide-icon name="image" [size]="19"></lucide-icon>
@@ -237,7 +237,7 @@ import { LucideAngularModule } from 'lucide-angular';
               class="customer-floating-chat__tool"
               [class.is-recording]="isRecording"
               (click)="isRecording ? stopRecording() : startRecording()"
-              [attr.aria-label]="isRecording ? 'SHARED.AUTO_STR_20' : 'SHARED.AUTO_STR_38'"
+              [attr.aria-label]="(isRecording ? 'SHARED.AUTO_STR_20' : 'SHARED.AUTO_STR_38') | translate"
             >
               @if (isRecording) {
                 <lucide-icon name="square" [size]="17" fill="currentColor"></lucide-icon>
@@ -249,8 +249,8 @@ import { LucideAngularModule } from 'lucide-angular';
               #inputRef
               [(ngModel)]="messageValue"
               name="messageValue"
-              [placeholder]="editMessage ? 'Ø¹Ø¯Ù„ÙŠ Ø§Ù„Ø±Ø³Ø§Ù„Ø©...' : 'Ø§ÙƒØªØ¨ Ø±Ø³Ø§Ù„ØªÙƒ Ù‡Ù†Ø§...'"
-              aria-label='DASHBOARD.AUTO_STR_348'
+              [placeholder]="(editMessage ? 'SHARED.AUTO_STR_60' : 'SHARED.AUTO_STR_45') | translate"
+              [attr.aria-label]="'DASHBOARD.AUTO_STR_348' | translate"
               rows="1"
               [disabled]="isRecording"
               (keydown)="onTextareaKeyDown($event)"
@@ -259,7 +259,7 @@ import { LucideAngularModule } from 'lucide-angular';
               type="submit"
               class="customer-floating-chat__send"
               [disabled]="!messageValue.trim() || isRecording"
-              [attr.aria-label]="editMessage ? 'SHARED.AUTO_STR_67' : 'SHARED.AUTO_STR_55'"
+              [attr.aria-label]="(editMessage ? 'SHARED.AUTO_STR_67' : 'SHARED.AUTO_STR_55') | translate"
             >
               @if (editMessage) {
                 <lucide-icon name="check-check" [size]="20"></lucide-icon>
@@ -279,7 +279,7 @@ import { LucideAngularModule } from 'lucide-angular';
                   type="button"
                   class="customer-floating-chat__modal-close"
                   (click)="deleteMessage = null"
-                  aria-label='SHARED.AUTO_STR_33'
+                  [attr.aria-label]="'SHARED.AUTO_STR_33' | translate"
                 >
                   <lucide-icon name="x" [size]="18"></lucide-icon>
                 </button>
@@ -300,7 +300,7 @@ import { LucideAngularModule } from 'lucide-angular';
         class="customer-floating-chat__trigger"
         [class.is-open]="isOpen"
         (click)="toggleChat()"
-        [attr.aria-label]="isOpen ? 'SHARED.AUTO_STR_34' : 'SHARED.AUTO_STR_42'"
+        [attr.aria-label]="(isOpen ? 'SHARED.AUTO_STR_34' : 'SHARED.AUTO_STR_42') | translate"
         [attr.aria-expanded]="isOpen"
       >
         @if (isOpen) {
@@ -336,7 +336,7 @@ export class FloatingChatComponent {
   recordingSeconds = 0;
   unreadCount = 0;
 
-  REACTION_OPTIONS = ['ðŸ‘', 'â¤ï¸', 'ðŸ˜‚', 'ðŸ˜®', 'ðŸ˜¢', 'ðŸ™'];
+  REACTION_OPTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
   messages: any[] = []; // Mock messages
 
   @ViewChild('messagesRef') messagesRef!: ElementRef<HTMLDivElement>;

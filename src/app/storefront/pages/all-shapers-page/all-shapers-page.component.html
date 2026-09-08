@@ -1,32 +1,32 @@
 <app-store-layout [showFloatingChat]="false">
-  <main class="lk-all-shapers-page" dir="rtl">
+  <main class="lk-all-shapers-page">
     <header class="lk-all-shapers-title">
-      <h1>{{ selectedType() === 'all' ? pageConfig().headerTitle : pageConfig().headerTitle + ' - ' + getTypeLabel(selectedType()) | translate }}</h1>
+      <h1>{{ pageConfig().headerTitle | translate }}{{ selectedType() !== 'all' ? ' - ' + (getTypeLabel(selectedType()) | translate) : '' }}</h1>
     </header>
 
     <section class="lk-all-shapers-filters" aria-label='STOREFRONT.AUTO_STR_266'>
       <div class="lk-all-shapers-filter-row">
         <button type="button" [class.is-active]="activeFilter() === 'type' || selectedType() !== 'all'" (click)="toggleFilter('type')">
           <lucide-icon name="layers-3" [img]="Layers3" aria-hidden="true"></lucide-icon>
-          <span>{{ selectedType() === 'all' ? 'STOREFRONT.AUTO_STR_244' : getTypeLabel(selectedType()) | translate }}</span>
+          <span>{{ (selectedType() === 'all' ? 'STOREFRONT.AUTO_STR_244' : getTypeLabel(selectedType())) | translate }}</span>
           <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
         </button>
 
         <button type="button" [class.is-active]="activeFilter() === 'price' || selectedPrice() !== 'all'" (click)="toggleFilter('price')">
           <lucide-icon name="tag" [img]="Tag" aria-hidden="true"></lucide-icon>
-          <span>{{ selectedPrice() === 'all' ? 'COMMON.PRICE' : getPriceLabel(selectedPrice()) | translate }}</span>
+          <span>{{ (selectedPrice() === 'all' ? 'COMMON.PRICE' : getPriceLabel(selectedPrice())) | translate }}</span>
           <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
         </button>
 
         <button type="button" [class.is-active]="activeFilter() === 'color' || selectedColor() !== 'all'" (click)="toggleFilter('color')">
           <lucide-icon name="droplets" [img]="Droplets" aria-hidden="true"></lucide-icon>
-          <span>{{ selectedColor() === 'all' ? 'PRODUCT.COLOR' : getColorLabel(selectedColor()) | translate }}</span>
+          <span>{{ (selectedColor() === 'all' ? 'PRODUCT.COLOR' : getColorLabel(selectedColor())) | translate }}</span>
           <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
         </button>
 
         <button type="button" [class.is-active]="activeFilter() === 'size' || selectedSize() !== 'all'" (click)="toggleFilter('size')">
           <lucide-icon name="ruler" [img]="Ruler" aria-hidden="true"></lucide-icon>
-          <span>{{ selectedSize() === 'all' ? 'PRODUCT.SIZE' : selectedSize() }}</span>
+          <span>{{ selectedSize() === 'all' ? ('PRODUCT.SIZE' | translate) : selectedSize() }}</span>
           <lucide-icon name="chevron-down" [img]="ChevronDown" aria-hidden="true"></lucide-icon>
         </button>
       </div>
@@ -57,7 +57,7 @@
 
         <div *ngIf="activeFilter() === 'size'" class="lk-all-shapers-options-grid lk-all-shapers-options-grid--sizes">
           <button *ngFor="let size of sizeOptions" type="button" [class.is-selected]="selectedSize() === size" (click)="selectedSize.set(size); activeFilter.set(null)">
-            {{ size === 'all' ? 'STOREFRONT.AUTO_STR_352' : size }}
+            {{ size === 'all' ? ('STOREFRONT.AUTO_STR_352' | translate) : size }}
           </button>
         </div>
       </div>
@@ -84,7 +84,7 @@
         </button>
       </div>
 
-      <p><strong>{{ filteredItems().length }}</strong>{{ 'STOREFRONT.AUTO_STR_471' | translate }}</p>
+      <p><strong>{{ filteredItems().length }}</strong> {{ (filteredItems().length === 1 ? 'STOREFRONT.AUTO_STR_471' : 'STOREFRONT.AUTO_STR_448') | translate }}</p>
 
       <button *ngIf="hasActiveFilters()" type="button" class="lk-all-shapers-reset" (click)="resetFilters()">{{ 'STOREFRONT.AUTO_STR_354' | translate }}</button>
     </div>
@@ -108,11 +108,11 @@
             <div class="lk-all-shapers-card__price" [class.has-discount]="item.originalPrice && item.originalPrice > item.price && pageConfig().showOriginalPrice">
               <div class="lk-all-shapers-card__current-price">
                 <strong>{{ item.price }}</strong>
-                <span>ر.س</span>
+                <span>{{ 'COMMON.CURRENCY' | translate }}</span>
               </div>
               <del *ngIf="pageConfig().showOriginalPrice && item.originalPrice && item.originalPrice > item.price">
                 <strong>{{ item.originalPrice }}</strong>
-                <span>ر.س</span>
+                <span>{{ 'COMMON.CURRENCY' | translate }}</span>
               </del>
             </div>
 
@@ -124,7 +124,7 @@
                 <small *ngIf="pageConfig().showReviewsCount">({{ item.reviews }})</small>
               </div>
 
-              <button type="button" class="lk-all-shapers-card__cart" (click)="addCatalogItemToCart(item)" [attr.aria-label]="'إضافة ' + item.name + ' إلى السلة'">
+              <button type="button" class="lk-all-shapers-card__cart" (click)="addCatalogItemToCart(item)" [attr.aria-label]="'CART.ADD_TO_CART' | translate">
                 <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
               </button>
             </div>
@@ -144,22 +144,22 @@
     <nav *ngIf="filteredItems().length > 12" class="lk-all-shapers-pagination" aria-label='STOREFRONT.AUTO_STR_116'>
       <ng-container *ngIf="!showAllProducts()">
         <button type="button" class="lk-all-shapers-pagination__arrow" [disabled]="currentPage() === 1" (click)="currentPage.set(currentPage() > 1 ? currentPage() - 1 : 1)" aria-label='STOREFRONT.AUTO_STR_268'>
-          <lucide-icon name="chevron-right" [img]="ChevronRight" aria-hidden="true"></lucide-icon>
+          <lucide-icon class="rtl-flip" name="chevron-right" [img]="ChevronRight" aria-hidden="true"></lucide-icon>
         </button>
 
         <div class="lk-all-shapers-pagination__pages">
-          <button *ngFor="let page of pageNumbers()" type="button" [class.is-active]="currentPage() === page" (click)="currentPage.set(page)" [attr.aria-label]="'الانتقال إلى الصفحة ' + page" [attr.aria-current]="currentPage() === page ? 'page' : null">
+          <button *ngFor="let page of pageNumbers()" type="button" [class.is-active]="currentPage() === page" (click)="currentPage.set(page)" [attr.aria-label]="('STOREFRONT.PAGE' | translate) + ' ' + page" [attr.aria-current]="currentPage() === page ? 'page' : null">
             {{ page }}
           </button>
         </div>
 
         <button type="button" class="lk-all-shapers-pagination__arrow" [disabled]="currentPage() === totalPages()" (click)="currentPage.set(currentPage() < totalPages() ? currentPage() + 1 : totalPages())" aria-label='STOREFRONT.AUTO_STR_269'>
-          <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+          <lucide-icon class="rtl-flip" name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
         </button>
       </ng-container>
 
       <button type="button" class="lk-all-shapers-pagination__show-all" (click)="showAllProducts.set(!showAllProducts()); currentPage.set(1)">
-        {{ showAllProducts() ? 'STOREFRONT.AUTO_STR_142' : 'STOREFRONT.AUTO_STR_245' }}
+        {{ (showAllProducts() ? 'STOREFRONT.AUTO_STR_142' : 'STOREFRONT.AUTO_STR_245') | translate }}
       </button>
     </nav>
   </main>

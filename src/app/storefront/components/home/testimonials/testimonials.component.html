@@ -7,27 +7,27 @@
     </div>
 
     <div class="lk-testimonial-slider" dir="ltr" aria-live="polite">
-        <button type="button" class="lk-testimonial-card__arrow lk-testimonial-card__arrow--left" (click)="showPrevious()" aria-label='STOREFRONT.AUTO_STR_263'>
+        <button type="button" class="lk-testimonial-card__arrow lk-testimonial-card__arrow--left" (click)="showPrevious()" [attr.aria-label]="'STOREFRONT.AUTO_STR_263' | translate">
             <svg viewBox="0 0 28 26" fill="none" aria-hidden="true">
                 <path d="M12.5 6.5 L6 13 L12.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M21 6.5 L14.5 13 L21 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </button>
 
-        <article class="lk-testimonial-card" dir="ltr">
-            <img class="lk-testimonial-card__avatar" [src]="activeTestimonial.avatar" [alt]="activeTestimonial.name" width="272" height="272" loading="lazy" decoding="async" />
-            <div class="lk-testimonial-card__content" dir="rtl">
-                <div class="lk-testimonial-card__stars" [attr.aria-label]="'التقييم ' + activeTestimonial.rating + ' نجوم من خمس'">
+        <article class="lk-testimonial-card">
+            <img class="lk-testimonial-card__avatar" [src]="activeTestimonial.avatar" [alt]="activeTestimonial.name | translate" width="272" height="272" loading="lazy" decoding="async" />
+            <div class="lk-testimonial-card__content">
+                <div class="lk-testimonial-card__stars" [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'التقييم ' + activeTestimonial.rating + ' نجوم من خمس' : 'Rating ' + activeTestimonial.rating + ' of 5 stars')">
                     @for (i of [1,2,3,4,5]; track i) {
                         <lucide-icon name="star" [size]="14" fill="currentColor" [strokeWidth]="0" aria-hidden="true"></lucide-icon>
                     }
                 </div>
                 <p>{{ activeTestimonial.message | translate }}</p>
-                <strong>{{activeTestimonial.name}}</strong>
+                <strong>{{ activeTestimonial.name | translate }}</strong>
             </div>
         </article>
 
-        <button type="button" class="lk-testimonial-card__arrow lk-testimonial-card__arrow--right" (click)="showNext()" aria-label='STOREFRONT.AUTO_STR_264'>
+        <button type="button" class="lk-testimonial-card__arrow lk-testimonial-card__arrow--right" (click)="showNext()" [attr.aria-label]="'STOREFRONT.AUTO_STR_264' | translate">
             <svg viewBox="0 0 28 26" fill="none" aria-hidden="true">
                 <path d="M15.5 6.5 L22 13 L15.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M7 6.5 L13.5 13 L7 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -35,9 +35,9 @@
         </button>
     </div>
 
-    <div class="lk-testimonial-dots" aria-label='STOREFRONT.AUTO_STR_322'>
+    <div class="lk-testimonial-dots" [attr.aria-label]="'STOREFRONT.AUTO_STR_322' | translate">
         @for (testimonial of testimonials; track testimonial.id; let i = $index) {
-            <button type="button" [class.is-active]="i === activeIndex" (click)="setActiveIndex(i)" [attr.aria-label]="'عرض تقييم رقم ' + (i + 1)" [attr.aria-current]="i === activeIndex ? 'true' : undefined"></button>
+            <button type="button" [class.is-active]="i === activeIndex" (click)="setActiveIndex(i)" [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'عرض تقييم رقم ' : 'View review #') + (i + 1)" [attr.aria-current]="i === activeIndex ? 'true' : undefined"></button>
         }
     </div>
 </section>

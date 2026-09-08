@@ -1,9 +1,9 @@
 <app-store-layout [showFloatingChat]="false">
 
-  <main class="lk-categories-page" dir="rtl">
+  <main class="lk-categories-page">
     <nav class="lk-categories-breadcrumb" aria-label='STOREFRONT.AUTO_STR_351'>
       <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
-      <lucide-icon name="chevron-left" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
+      <lucide-icon name="chevron-left" class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
       <span aria-current="page">{{ 'CATEGORIES.TITLE' | translate }}</span>
     </nav>
 
@@ -18,11 +18,11 @@
          [routerLink]="category.path"
          class="lk-category-showcase-card"
          [ngStyle]="{'--lk-category-delay': (i * 70) + 'ms'}"
-         [attr.aria-label]="'عرض منتجات ' + category.title + ' ' + category.accent">
+         [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'عرض منتجات ' : 'View products for ') + (category.title | translate) + ' ' + (category.accent | translate)">
         
         <div class="lk-category-showcase-card__image">
           <img [src]="category.image"
-               [alt]="category.imageAlt"
+               [alt]="category.imageAlt | translate"
                [loading]="i < 2 ? 'eager' : 'lazy'"
                decoding="async"
                [ngStyle]="{'object-position': category.imagePosition}" />
@@ -43,7 +43,7 @@
           </p>
 
           <span class="lk-category-showcase-card__arrow" aria-hidden="true">
-            <lucide-icon name="arrow-right" [img]="ArrowRight"></lucide-icon>
+            <lucide-icon name="arrow-right" class="rtl-flip" [img]="ArrowRight"></lucide-icon>
           </span>
         </div>
       </a>

@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 type ProfilePageConfig = {
     headerTitle: string;
@@ -8,8 +9,8 @@ type ProfilePageConfig = {
 };
 
 const DEFAULT_CONFIG = {
-    headerTitle: 'PROFILE.TITLE',
-    headerSubtitle: 'PROFILE.SUBTITLE',
+    headerTitle: 'الملف الشخصي',
+    headerSubtitle: 'حدّث صورتك وبيانات التواصل والعنوان المستخدم في طلباتك',
     showAvatarSection: true,
     showBasicInfoSection: true,
     showAddressSection: true,
@@ -69,9 +70,6 @@ export class ProfilePageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...DEFAULT_CONFIG, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, DEFAULT_CONFIG);
   }
 }

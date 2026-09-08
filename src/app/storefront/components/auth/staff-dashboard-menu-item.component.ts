@@ -2,7 +2,7 @@ import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { LucideAngularModule, LayoutDashboard, ChevronLeft } from 'lucide-angular';
+import { LucideAngularModule, LayoutDashboard, ChevronRight } from 'lucide-angular';
 
 @Component({
   selector: 'app-staff-dashboard-menu-item',
@@ -21,12 +21,12 @@ import { LucideAngularModule, LayoutDashboard, ChevronLeft } from 'lucide-angula
 
         <span class="lk-staff-dashboard-item__copy">
           <strong>{{ 'COMMON.DASHBOARD' | translate }}</strong>
-          <small>{{ isAdmin ? 'STOREFRONT.AUTO_STR_137' : 'STOREFRONT.AUTO_STR_182' }}</small>
+          <small>{{ (isAdmin ? 'STOREFRONT.AUTO_STR_137' : 'STOREFRONT.AUTO_STR_182') | translate }}</small>
         </span>
 
         <lucide-icon
-          [img]="ChevronLeftIcon"
-          class="lk-staff-dashboard-item__arrow"
+          [img]="ChevronRightIcon"
+          class="lk-staff-dashboard-item__arrow rtl-flip"
           [size]="18"
           [strokeWidth]="1.8"
           aria-hidden="true"
@@ -42,7 +42,7 @@ export class StaffDashboardMenuItemComponent {
   @Output() onNavigate = new EventEmitter<void>();
 
   readonly LayoutDashboardIcon = LayoutDashboard;
-  readonly ChevronLeftIcon = ChevronLeft;
+  readonly ChevronRightIcon = ChevronRight;
 
   isAdmin = false;
   knownStaffDevice = false;

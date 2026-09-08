@@ -1,0 +1,14 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+[dir="ltr"] .lk-section-heading {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+[dir="rtl"] .lk-section-heading {
+    flex-direction: row;
+    justify-content: space-between;
+}

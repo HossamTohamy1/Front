@@ -1,38 +1,39 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
-
 export interface FaqItemConfig {
-    id: string;
-    question: string;
-    answer: string;
+  id: string;
+  question: string;
+  answer: string;
 }
 
 export interface FaqPageConfig {
-    title: string;
-    subtitle: string;
-    searchPlaceholder: string;
-    showSearch: boolean;
-    showSupportCard: boolean;
-    supportCardTitle: string;
-    supportCardSubtitle: string;
-    faqs: FaqItemConfig[];
+  title: string;
+  subtitle: string;
+  searchPlaceholder: string;
+  showSearch: boolean;
+  showSupportCard: boolean;
+  supportCardTitle: string;
+  supportCardSubtitle: string;
+  faqs: FaqItemConfig[];
 }
-
 
 const initialConfig: FaqPageConfig = {
-    title: 'FAQ.TITLE',
-    subtitle: 'FAQ.SUBTITLE',
-    searchPlaceholder: 'FAQ.SEARCH',
-    showSearch: true,
-    showSupportCard: true,
-    supportCardTitle: 'FAQ.NOT_FOUND',
-    supportCardSubtitle: 'FAQ.CONTACT_WHATSAPP',
-    faqs: [
-        { id: 'size', question: 'FAQ.Q1', answer: 'FAQ.A1' },
-        { id: 'exchange', question: 'FAQ.Q2', answer: 'FAQ.A2' },
-        { id: 'delivery', question: 'FAQ.Q3', answer: 'FAQ.A3' },
-    ]
-}
+  title: 'الأسئلة الشائعة',
+  subtitle: 'ابحث عن إجابات لأسئلتك الشائعة هنا',
+  searchPlaceholder: 'ابحث في الأسئلة',
+  showSearch: true,
+  showSupportCard: true,
+  supportCardTitle: 'لم تجد ما تبحث عنه؟',
+  supportCardSubtitle: 'تواصل معنا على الواتساب',
+  faqs: [
+    {
+      id: 'size',
+      question: 'كيف اعرف مقاسي؟',
+      answer: 'يمكنك معرفة مقاسك من خلال جدول المقاسات'
+    }
+  ]
+};
 
 @Injectable({
   providedIn: 'root'
@@ -82,9 +83,6 @@ export class FaqPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): FaqPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

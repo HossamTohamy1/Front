@@ -18,7 +18,7 @@ import { CategoriesPageConfigService, CategoriesPageConfig } from '../../../../c
         </div>
 
         <app-section-card 
-            title='DASHBOARD.AUTO_STR_429' 
+            title="الرأس" 
             [index]="0" 
             [enabled]="config().showTitle" 
             [isFirst]="true" 
@@ -49,7 +49,7 @@ import { CategoriesPageConfigService, CategoriesPageConfig } from '../../../../c
         </app-section-card>
 
         <app-section-card 
-            title='CATEGORIES.TITLE' 
+            title="التصنيفات" 
             [index]="1" 
             [enabled]="true" 
             [isFirst]="false" 
@@ -70,14 +70,14 @@ import { CategoriesPageConfigService, CategoriesPageConfig } from '../../../../c
                         <div class="text-xs font-bold text-gray-500">التصنيف: {{cat.id}}</div>
                         <div class="flex gap-2">
                             <input type="text" class="flex-1 text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                                   [ngModel]="cat.title" (ngModelChange)="updateCategory(idx, { title: $event })" placeholder='DASHBOARD.AUTO_STR_231' />
+                                   [ngModel]="cat.title" (ngModelChange)="updateCategory(idx, { title: $event })" placeholder="العنوان الأول" />
                             <input type="text" class="flex-1 text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-blue-600" 
-                                   [ngModel]="cat.accent" (ngModelChange)="updateCategory(idx, { accent: $event })" placeholder='DASHBOARD.AUTO_STR_202' />
+                                   [ngModel]="cat.accent" (ngModelChange)="updateCategory(idx, { accent: $event })" placeholder="الكلمة المميزة" />
                         </div>
                         <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                                  [ngModel]="cat.description" (ngModelChange)="updateCategory(idx, { description: $event })" placeholder='PRODUCT.DESCRIPTION' rows="2"></textarea>
+                                  [ngModel]="cat.description" (ngModelChange)="updateCategory(idx, { description: $event })" placeholder="الوصف" rows="2"></textarea>
                         <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                               [ngModel]="cat.path" (ngModelChange)="updateCategory(idx, { path: $event })" placeholder='DASHBOARD.AUTO_STR_413' dir="ltr" />
+                               [ngModel]="cat.path" (ngModelChange)="updateCategory(idx, { path: $event })" placeholder="الرابط" dir="ltr" />
                     </div>
                 </div>
             </div>

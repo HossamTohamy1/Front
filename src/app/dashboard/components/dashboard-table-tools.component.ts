@@ -27,17 +27,17 @@ import { ARABIC_MONTH_NAMES, DASHBOARD_WEEK_DAYS } from '../../shared/utils/date
         <input
           [ngModel]="searchQuery"
           (ngModelChange)="searchQueryChange.emit($event)"
-          placeholder='DASHBOARD.AUTO_STR_176'
-          aria-label='DASHBOARD.AUTO_STR_159'
+          [placeholder]="'DASHBOARD.AUTO_STR_176' | translate"
+          [attr.aria-label]="'DASHBOARD.AUTO_STR_159' | translate"
         />
       </div>
 
       <div class="dashboard-date-filter-wrap">
         <button type="button" class="dashboard-date-filter" (click)="toggleDatePicker.emit()">
-          <span>{{ selectedDate || 'DASHBOARD.AUTO_STR_160' }}</span>
+          <span>{{ selectedDate || ('DASHBOARD.AUTO_STR_160' | translate) }}</span>
         </button>
 
-        <div class="dashboard-date-picker" *ngIf="isDatePickerOpen" role="dialog" aria-label='DASHBOARD.AUTO_STR_197'>
+        <div class="dashboard-date-picker" *ngIf="isDatePickerOpen" role="dialog" [attr.aria-label]="'DASHBOARD.AUTO_STR_197' | translate">
           <aside class="dashboard-date-picker__preset">
             <div class="dashboard-date-picker__preset-card" (click)="clearDate.emit()">
               <lucide-icon [img]="ChevronDownIcon" [size]="25" strokeWidth="2.4"></lucide-icon>
@@ -49,10 +49,10 @@ import { ARABIC_MONTH_NAMES, DASHBOARD_WEEK_DAYS } from '../../shared/utils/date
             <div class="dashboard-date-picker__calendar-head">
               <h3><span>{{ arabicMonthNames[calendarMonth] }}</span> <b class="dashboard-number">{{ calendarYear }}</b></h3>
               <div class="dashboard-date-picker__navigation">
-                <button type="button" (click)="changeMonth.emit(-1)" aria-label='DASHBOARD.AUTO_STR_266'>
+                <button type="button" (click)="changeMonth.emit(-1)" [attr.aria-label]="'DASHBOARD.AUTO_STR_266' | translate">
                   <lucide-icon [img]="ChevronLeftIcon" [size]="25" strokeWidth="2"></lucide-icon>
                 </button>
-                <button type="button" (click)="changeMonth.emit(1)" aria-label='DASHBOARD.AUTO_STR_267'>
+                <button type="button" (click)="changeMonth.emit(1)" [attr.aria-label]="'DASHBOARD.AUTO_STR_267' | translate">
                   <lucide-icon [img]="ChevronRightIcon" [size]="25" strokeWidth="2"></lucide-icon>
                 </button>
               </div>

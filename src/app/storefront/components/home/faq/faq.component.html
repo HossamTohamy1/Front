@@ -1,12 +1,12 @@
 <section class="lk-faq-section {{className}}" aria-labelledby="lk-faq-title">
     <header class="lk-faq-section__intro">
-        <h2 id="lk-faq-title">{{ 'FAQ.TITLE' | translate }}</h2>
-        <p>{{config.subtitle | translate}}</p>
+        <h2 id="lk-faq-title">{{ config().title | translate }}</h2>
+        <p>{{ config().subtitle | translate }}</p>
     </header>
 
-    @if (config.showSearch) {
+    @if (config().showSearch) {
         <label class="lk-faq-search">
-            <input type="search" [ngModel]="query()" (ngModelChange)="query.set($event)" [placeholder]="config.searchPlaceholder" aria-label='STOREFRONT.AUTO_STR_125' />
+            <input type="search" [ngModel]="query()" (ngModelChange)="query.set($event)" [placeholder]="config().searchPlaceholder | translate" [attr.aria-label]="'FAQ.SEARCH' | translate" />
             <lucide-icon name="search" aria-hidden="true"></lucide-icon>
         </label>
     }
@@ -16,7 +16,7 @@
             @for (item of filteredItems(); track item.id) {
                 <article class="lk-faq-item" [class.is-open]="openId() === item.id">
                     <button type="button" class="lk-faq-question" (click)="toggleOpen(item.id)" [attr.aria-expanded]="openId() === item.id">
-                        <span>{{item.question}}</span>
+                        <span>{{item.question | translate}}</span>
                         <span class="lk-faq-question__toggle" aria-hidden="true">
                             @if (openId() === item.id) {
                                 <lucide-icon name="minus"></lucide-icon>
@@ -26,30 +26,30 @@
                         </span>
                     </button>
                     @if (openId() === item.id) {
-                        <p class="lk-faq-answer">{{item.answer}}</p>
+                        <p class="lk-faq-answer">{{item.answer | translate}}</p>
                     }
                 </article>
             }
         } @else {
             <div class="lk-faq-no-results">
                 <lucide-icon name="search" aria-hidden="true"></lucide-icon>
-                <strong>{{ 'STOREFRONT.AUTO_STR_171' | translate }}</strong>
-                <span>{{ 'STOREFRONT.AUTO_STR_159' | translate }}</span>
+                <strong>{{ 'SEARCH.NO_RESULTS' | translate }}</strong>
+                <span>{{ 'SEARCH.TRY_DIFFERENT' | translate }}</span>
             </div>
         }
     </div>
 
-    @if (config.showSupportCard) {
+    @if (config().showSupportCard) {
         <a routerLink="/chat" class="lk-faq-support-card">
             <span class="lk-faq-support-card__whatsapp" aria-hidden="true">
                 <lucide-icon name="message-circle"></lucide-icon>
                 <lucide-icon name="phone"></lucide-icon>
             </span>
             <span class="lk-faq-support-card__copy">
-                <strong>{{ config.supportCardTitle | translate }}</strong>
-                <small>{{ config.supportCardSubtitle | translate }}</small>
+                <strong>{{ config().supportCardTitle | translate }}</strong>
+                <small>{{ config().supportCardSubtitle | translate }}</small>
             </span>
-            <lucide-icon name="chevron-left" aria-hidden="true"></lucide-icon>
+            <lucide-icon [name]="langService.isRtl() ? 'chevron-left' : 'chevron-right'" [img]="langService.isRtl() ? ChevronLeft : ChevronRight" class="lk-faq-support-card__chevron" aria-hidden="true"></lucide-icon>
         </a>
     }
 </section>

@@ -18,7 +18,7 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
                 <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_24' | translate }}</p>
             </div>
 
-            <app-section-card title='DASHBOARD.AUTO_STR_353' [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+            <app-section-card title="رأس الصفحة" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
                 <div class="flex flex-col gap-1.5 mb-3">
                     <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
                     <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().headerTitle" (ngModelChange)="updateConfig({ headerTitle: $event })" />
@@ -29,7 +29,7 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
                 </div>
             </app-section-card>
 
-            <app-section-card title='DASHBOARD.AUTO_STR_180' [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+            <app-section-card title="الأقسام والنصوص" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
                 <div class="flex flex-col gap-1.5 mb-3">
                     <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_163' | translate }}</span>
                     <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().customerInfoTitle" (ngModelChange)="updateConfig({ customerInfoTitle: $event })" />
@@ -56,7 +56,7 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
                 </div>
             </app-section-card>
             
-            <app-section-card title='DASHBOARD.AUTO_STR_116' [index]="2" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+            <app-section-card title="حالة السلة الفارغة" [index]="2" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
                 <div class="flex flex-col gap-1.5 mb-3">
                     <span class="text-xs font-bold text-gray-700">{{ 'COMMON.ADDRESS' | translate }}</span>
                     <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateTitle" (ngModelChange)="updateConfig({ emptyStateTitle: $event })" />
@@ -71,12 +71,12 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
                 </div>
             </app-section-card>
 
-            <app-section-card title='DASHBOARD.AUTO_STR_232' [index]="3" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showTrustBadges: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'DASHBOARD.AUTO_STR_356', onClick: addTrustBadge.bind(this) }">
+            <app-section-card title="مميزات الشراء" [index]="3" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showTrustBadges: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addTrustBadge.bind(this) }">
                 <div class="flex flex-col gap-3 mt-3">
                     <div *ngFor="let badge of config().trustBadges; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                         <div class="flex flex-col gap-2 flex-1">
-                            <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.title" (ngModelChange)="updateTrustBadge(idx, { title: $event })" placeholder='COMMON.ADDRESS' />
-                            <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitle" (ngModelChange)="updateTrustBadge(idx, { subtitle: $event })" placeholder='DASHBOARD.AUTO_STR_279' />
+                            <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.title" (ngModelChange)="updateTrustBadge(idx, { title: $event })" placeholder="العنوان" />
+                            <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitle" (ngModelChange)="updateTrustBadge(idx, { subtitle: $event })" placeholder="الوصف القصير" />
                             <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.icon" (ngModelChange)="updateTrustBadge(idx, { icon: $event })">
                                 <option value="BadgeCheck">شارة صح (BadgeCheck)</option>
                                 <option value="Truck">شاحنة (Truck)</option>
@@ -104,7 +104,7 @@ export class CheckoutPageEditorComponent {
 
   addTrustBadge() {
     const badges = [...(this.config().trustBadges || [])];
-    badges.push({ id: 'tb-' + Date.now(), icon: 'BadgeCheck', title: 'DASHBOARD.AUTO_STR_350', subtitle: 'DASHBOARD.AUTO_STR_387' });
+    badges.push({ id: 'tb-' + Date.now(), icon: 'BadgeCheck', title: 'ميزة جديدة', subtitle: 'وصف قصير' });
     this.updateConfig({ trustBadges: badges });
   }
 

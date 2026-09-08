@@ -37,7 +37,7 @@ export class InvoicesPageComponent {
   });
 
   downloadInvoice() {
-    this.toastService.showToast(this.lang() === 'ar' ? 'جار التحميل...' : 'Downloading...', 'info');
+    this.toastService.showToast('جاري التحميل...', 'info');
   }
 
   getInvoiceNumber(orderNumber: string) {

@@ -34,9 +34,9 @@ const productTypeOptions: Array<{ value: ProductType | 'all'; label: string }> =
 
 const priceOptions: Array<{ value: PriceFilter; label: string }> = [
   { value: 'all', label: 'STOREFRONT.AUTO_STR_383' },
-  { value: 'under-210', label: 'أقل من 210 ر.س' },
-  { value: '210-240', label: 'من 210 إلى 240 ر.س' },
-  { value: 'over-240', label: 'أكثر من 240 ر.س' },
+  { value: 'under-210', label: 'STOREFRONT.AUTO_STR_324' },
+  { value: '210-240', label: 'STOREFRONT.AUTO_STR_223' },
+  { value: 'over-240', label: 'STOREFRONT.AUTO_STR_293' },
 ];
 
 const colorOptions: Array<{ value: ProductColor | 'all'; label: string }> = [
@@ -75,7 +75,7 @@ const initialConfig: AllShapersPageConfig = {
     showReviewsCount: true,
     showOriginalPrice: true,
     emptyTitle: 'PRODUCTS.NO_PRODUCTS',
-    emptyText: 'جرّبي تغيير اللون أو المقاس أو نطاق السعر.',
+    emptyText: 'PRODUCTS.TRY_CHANGING',
     emptyCta: 'PRODUCTS.VIEW_ALL'
 };
 

@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -53,46 +54,46 @@ export interface AboutPageConfig {
 
 const initialConfig: AboutPageConfig = {
     showTitle: true,
-    headerTitle: 'ABOUT.TITLE',
-    headerSubtitle: 'ABOUT.SLOGAN',
+    headerTitle: 'من نحن',
+    headerSubtitle: 'لوكس كينج... ثقتك، راحتك، جمالك',
     
     showIntroSection: true,
-    introText: 'ABOUT.DESC',
+    introText: 'لوكس كينج هو متجرك الموثوق لمشدات الجسم ومنتجات العناية بالجمال عالية الجودة.\n\nنحن نؤمن أن الثقة تبدأ من الراحة، ونختار لك الأفضل لتشعري بأجمل إطلالة كل يوم.',
     
     showReasonsSection: true,
-    reasonsTitle: 'ABOUT.WHY_US',
+    reasonsTitle: 'لماذا نحن؟',
     reasons: [
-        { id: '1', icon: 'ShieldCheck', title: 'ABOUT.QUALITY', text: 'ABOUT.QUALITY_DESC' },
-        { id: '2', icon: 'Heart', title: 'ABOUT.COMFORT', text: 'ABOUT.COMFORT_DESC' },
-        { id: '3', icon: 'Star', title: 'ABOUT.RESULTS', text: 'ABOUT.RESULTS_DESC' }
+        { id: '1', icon: 'ShieldCheck', title: 'جودة استثنائية', text: 'نختار منتجاتنا بعناية فائقة لضمان أفضل النتائج.' },
+        { id: '2', icon: 'Heart', title: 'راحة تامة', text: 'تصاميم تناسب الاستخدام اليومي دون إزعاج.' },
+        { id: '3', icon: 'Star', title: 'نتائج ملحوظة', text: 'منتجات تساعدك على إبراز جمالك الطبيعي.' }
     ],
     
     showVisionSection: true,
-    visionTitle: 'ABOUT.VISION_TITLE',
-    visionText: 'ABOUT.VISION_TEXT',
+    visionTitle: 'رؤيتنا',
+    visionText: 'أن نكون الخيار الأول في مجال مشدات الجسم ومنتجات الجمال في الوطن العربي من خلال الجودة، المصداقية وخدمة العملاء المتميزة.',
     
     showMissionSection: true,
-    missionTitle: 'ABOUT.MISSION_TITLE',
-    missionText: 'ABOUT.MISSION_TEXT',
+    missionTitle: 'رسالتنا',
+    missionText: 'تقديم منتجات موثوقة وآمنة تساعدك على إبراز جمالك وثقتك بنفسك، مع تجربة تسوق سهلة، سريعة وآمنة.',
     
     showValuesSection: true,
-    valuesTitle: 'ABOUT.VALUES_TITLE',
+    valuesTitle: 'قيمنا',
     values: [
-        { id: '1', icon: 'ShieldCheck', label: 'ABOUT.VALUE_1' },
-        { id: '2', icon: 'Heart', label: 'ABOUT.VALUE_2' },
-        { id: '3', icon: 'Star', label: 'ABOUT.VALUE_3' },
-        { id: '4', icon: 'Target', label: 'ABOUT.VALUE_4' },
-        { id: '5', icon: 'Check', label: 'ABOUT.VALUE_5' }
+        { id: '1', icon: 'ShieldCheck', label: 'المصداقية' },
+        { id: '2', icon: 'Heart', label: 'العناية بالعميل' },
+        { id: '3', icon: 'Star', label: 'الجودة العالية' },
+        { id: '4', icon: 'Target', label: 'الابتكار المستمر' },
+        { id: '5', icon: 'Check', label: 'الشفافية' }
     ],
     
     showContactSection: true,
-    contactTitle: 'CONTACT.TITLE',
+    contactTitle: 'تواصل معنا',
     contacts: [
-        { id: '1', icon: 'facebook', label: 'SOCIAL.FACEBOOK', link: 'https://facebook.com' },
-        { id: '2', icon: 'instagram', label: 'SOCIAL.INSTAGRAM', link: 'https://instagram.com' },
-        { id: '3', icon: 'mail', label: 'SOCIAL.EMAIL', link: 'mailto:support@loxxking.com' },
-        { id: '4', icon: 'phone', label: 'SOCIAL.CALL', link: 'tel:+201000000000' },
-        { id: '5', icon: 'whatsapp', label: 'CONTACT.WHATSAPP', link: 'https://wa.me/201000000000' }
+        { id: '1', icon: 'facebook', label: 'فيسبوك', link: 'https://facebook.com' },
+        { id: '2', icon: 'instagram', label: 'إنستغرام', link: 'https://instagram.com' },
+        { id: '3', icon: 'mail', label: 'بريد إلكتروني', link: 'mailto:support@loxxking.com' },
+        { id: '4', icon: 'phone', label: 'اتصال', link: 'tel:+201000000000' },
+        { id: '5', icon: 'whatsapp', label: 'واتساب', link: 'https://wa.me/201000000000' }
     ]
 }
 
@@ -143,10 +144,7 @@ export class AboutPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): AboutPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

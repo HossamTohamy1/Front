@@ -24,14 +24,14 @@ import { AdminLayoutComponent } from '../../../shared/components/layout/admin-la
           <div class="flex flex-col items-center gap-4">
             <h1 class="text-xl font-black text-gray-900 tracking-tight">{{ 'DASHBOARD.AUTO_STR_270' | translate }}</h1>
             <span class="text-sm text-gray-500 hidden md:inline">
-              Ù‚Ù… Ø¨ØªØ®ØµÙŠØµ ÙˆØªØ¹Ø¯ÙŠÙ„ ÙˆØ§Ø¬Ù‡Ø§Øª Ø§Ù„Ù…ØªØ¬Ø± Ø§Ù„Ù…Ø®ØªÙ„ÙØ©. Ø³ØªØ¸Ù‡Ø± Ø§Ù„ØªØºÙŠÙŠØ±Ø§Øª Ø¨Ø´ÙƒÙ„ Ù…Ø¨Ø§Ø´Ø±.
+              قم بتخصيص وتعديل واجهات المتجر المختلفة. ستظهر التغييرات بشكل مباشر.
             </span>
           </div>
 
           <div class="flex flex-row-reverse items-center gap-4">
             <!-- Quick Navigation Dropdown (placeholder) -->
             <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700">
-                <span class="text-gray-500 font-medium">Ø§Ù„ØµÙØ­Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©:</span>
+                <span class="text-gray-500 font-medium">الصفحة الحالية:</span>
                 <span class="font-bold font-mono text-xs">{{ currentRoute }}</span>
             </div>
 
@@ -56,13 +56,13 @@ import { AdminLayoutComponent } from '../../../shared/components/layout/admin-la
             </button>
             <button
               class="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              title='DASHBOARD.AUTO_STR_424'
+              [attr.title]="'DASHBOARD.AUTO_STR_424' | translate"
             >
               <lucide-icon name="undo-2" [size]="20"></lucide-icon>
             </button>
             <button
               class="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              title='DASHBOARD.AUTO_STR_425'
+              [attr.title]="'DASHBOARD.AUTO_STR_425' | translate"
             >
               <lucide-icon name="redo-2" [size]="20"></lucide-icon>
             </button>

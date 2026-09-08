@@ -50,7 +50,7 @@ export class ProductCardComponent {
   }
 
   get isNewText() {
-    return this.lang() === 'ar' ? 'DASHBOARD.NEW_NOTIFICATIONS' : 'New';
+    return this.lang() === 'ar' ? 'جديد' : 'New';
   }
 
   get categoryFormatted() {
@@ -62,7 +62,7 @@ export class ProductCardComponent {
     e.stopPropagation();
     const defaultSize = this.product.sizes[Math.floor(this.product.sizes.length / 2)];
     this.cartService.addToCart(this.product, defaultSize);
-    this.toastService.showToast(this.lang() === 'ar' ? 'تمت الإضافة للسلة ✓' : 'Added to cart ✓');
+    this.toastService.showToast('STOREFRONT.AUTO_STR_114');
   }
 
   handleFavorite(e: Event) {
@@ -70,9 +70,7 @@ export class ProductCardComponent {
     e.stopPropagation();
     this.favoritesService.toggleFavorite(this.product.id);
     this.toastService.showToast(
-      this.favorite()
-        ? this.lang() === 'ar' ? 'STOREFRONT.AUTO_STR_127' : 'Removed from favorites'
-        : this.lang() === 'ar' ? 'STOREFRONT.AUTO_STR_100' : 'Added to favorites',
+      this.favorite() ? 'STOREFRONT.AUTO_STR_127' : 'STOREFRONT.AUTO_STR_100',
       'info'
     );
   }

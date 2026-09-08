@@ -73,7 +73,7 @@ export class DashboardFacade {
       name: 'Nadeen',
       email: 'admin@loxxking.com',
       role: 'admin',
-      roleLabel: 'DASHBOARD.AUTO_STR_314',
+      roleLabel: 'مدير النظام',
     };
   });
 
@@ -130,7 +130,7 @@ export class DashboardFacade {
       } else if (key === 'area') {
         list = list.filter(o => o.area === val);
       } else if (key === 'gender') {
-        list = list.filter(o => (o.gender || 'COMMON.WOMENS') === val);
+        list = list.filter(o => (o.gender || 'نسائي') === val);
       } else if (key === 'deliveryCompany') {
         list = list.filter(o => o.deliveryCompany === val);
       } else if (key === 'paymentMethod') {
@@ -171,7 +171,7 @@ export class DashboardFacade {
       country: buildOptions(orders.map(o => o.country)),
       city: buildOptions(orders.map(o => o.city)),
       area: buildOptions(orders.map(o => o.area)),
-      gender: buildOptions(orders.map(o => o.gender || 'COMMON.WOMENS')),
+      gender: buildOptions(orders.map(o => o.gender || 'نسائي')),
       deliveryCompany: buildOptions(orders.map(o => o.deliveryCompany)),
       paymentMethod: buildOptions(orders.map(o => o.paymentMethod)),
       product: buildOptions(productNames),
@@ -248,7 +248,7 @@ export class DashboardFacade {
 
   exportOrdersCsv(): void {
     const rows = [
-      ['ORDERS.ORDER_NUMBER', 'CHECKOUT.CUSTOMER_NAME', 'CHECKOUT.PHONE', 'ORDERS.ORDER_DATE', 'CHECKOUT.COUNTRY', 'CHECKOUT.CITY', 'DASHBOARD.AUTO_STR_393', 'DASHBOARD.AUTO_STR_422', 'COMMON.ADDRESS', 'DASHBOARD.AUTO_STR_263', 'CHECKOUT.PAYMENT_METHOD', 'ORDERS.STATUS', 'CART.TOTAL'],
+      ['رقم الطلب', 'اسم العميل', 'رقم الهاتف', 'تاريخ الطلب', 'الدولة', 'المدينة', 'المنطقة', 'الجنس', 'العنوان', 'شركة التوصيل', 'طريقة الدفع', 'الحالة', 'الإجمالي'],
       ...this.filteredOrders().map(o => [
         o.orderNumber,
         o.customerName,
@@ -257,7 +257,7 @@ export class DashboardFacade {
         o.country,
         o.city,
         o.area,
-        o.gender || 'COMMON.WOMENS',
+        o.gender || 'نسائي',
         o.address,
         o.deliveryCompany,
         o.paymentMethod,
@@ -266,7 +266,7 @@ export class DashboardFacade {
       ]),
     ];
     exportToCsv(`loxx-orders-${new Date().toISOString().slice(0, 10)}`, rows);
-    this.showNotice('DASHBOARD.AUTO_STR_29');
+    this.showNotice('تم تنزيل ملف الطلبات بنجاح');
   }
 
   sendChatMessage(conversationId: string, text: string): void {

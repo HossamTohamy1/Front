@@ -18,7 +18,7 @@ export class LanguageService {
     const defaultLang = savedLang || 'ar'; // Default to Arabic
     
     this.translate.addLangs(['ar', 'en']);
-    this.translate.setDefaultLang(defaultLang);
+    this.translate.setFallbackLang(defaultLang);
     this.setLanguage(defaultLang);
   }
 

@@ -16,7 +16,6 @@ import { StoreLayoutComponent } from '../../../shared/components/layout/store-la
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
 import { OrderRepositoryImpl } from '../../../data/repositories/order.repository.impl';
 
-
 type TrackedOrderGender = 'COMMON.MENS' | 'COMMON.WOMENS' | 'COMMON.UNISEX';
 type BankTransferReceipt = { name: string; type: string; dataUrl: string };
 type WalletProvider = 'stc' | 'mada' | 'apple' | 'google';
@@ -75,6 +74,7 @@ export class CheckoutPageComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
   route = inject(ActivatedRoute);
+  private orderRepo = inject(OrderRepositoryImpl);
 
   CHECKOUT_CITY_OPTIONS = CHECKOUT_CITY_OPTIONS;
   CHECKOUT_AREA_OPTIONS = CHECKOUT_AREA_OPTIONS;
@@ -84,7 +84,7 @@ export class CheckoutPageComponent implements OnInit {
     headerTitle: 'CART.CHECKOUT',
     headerSubtitle: 'STOREFRONT.AUTO_STR_118',
     emptyStateTitle: 'CART.EMPTY',
-    emptyStateText: 'Ù„ÙŠØ³ Ù„Ø¯ÙŠÙƒ Ø£ÙŠ Ù…Ù†ØªØ¬Ø§Øª ÙÙŠ Ø§Ù„Ø³Ù„Ø© Ø­Ø§Ù„ÙŠØ§Ù‹.',
+    emptyStateText: 'COMMON.CARTEMPTYDESC',
     emptyStateCta: 'STOREFRONT.AUTO_STR_415',
     customerInfoTitle: 'CHECKOUT.CUSTOMER_DETAILS',
     paymentInfoTitle: 'CHECKOUT.PAYMENT_METHOD',
@@ -94,7 +94,7 @@ export class CheckoutPageComponent implements OnInit {
     safeShoppingText: 'STOREFRONT.AUTO_STR_47',
     showTrustBadges: true,
     trustBadges: [
-      { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'Ù…Ø¶Ù…ÙˆÙ†Ø© 100%' },
+      { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
       { id: '2', icon: 'Truck', title: 'COMMON.FASTDELIVERY', subtitle: 'STOREFRONT.AUTO_STR_151' },
       { id: '3', icon: 'RotateCcw', title: 'STOREFRONT.AUTO_STR_274', subtitle: 'STOREFRONT.AUTO_STR_360' },
       { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'STOREFRONT.AUTO_STR_275' }
@@ -160,7 +160,7 @@ export class CheckoutPageComponent implements OnInit {
       return;
     }
     if (!BANK_RECEIPT_TYPES.includes(file.type)) {
-      this.toastService.showToast('ØµÙŠØºØ© Ø§Ù„Ù…Ù„Ù ØºÙŠØ± Ù…Ø¯Ø¹ÙˆÙ…Ø©. Ø§Ø³ØªØ®Ø¯Ù…ÙŠ JPG Ø£Ùˆ PNG Ø£Ùˆ PDF', 'error');
+      this.toastService.showToast('STOREFRONT.AUTO_STR_163', 'error');
       return;
     }
     if (file.size > BANK_RECEIPT_MAX_SIZE) {
@@ -202,8 +202,6 @@ export class CheckoutPageComponent implements OnInit {
     this.router.navigate([], { queryParams: { payment: 'wallet', provider: this.walletProvider() } });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
-  private orderRepo = inject(OrderRepositoryImpl);
 
   async handleSubmit() {
     if (this.paymentMethod() === 'wallet') {

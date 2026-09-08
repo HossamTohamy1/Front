@@ -1,14 +1,14 @@
 <app-admin-layout>
   <div class="max-w-6xl mx-auto space-y-5">
     <div class="flex items-center justify-between">
-      <h1 class="font-display font-bold text-2xl">{{ lang() === 'ar' ? 'COMMON.ORDERSMANAGEMENT' : 'Orders' }}</h1>
+      <h1 class="font-display font-bold text-2xl">{{ 'COMMON.ORDERSMANAGEMENT' | translate }}</h1>
       @if (selected().length > 0) {
         <div class="flex items-center gap-2">
-          <span class="text-sm text-muted-foreground">{{ selected().length }} {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_459' : 'selected' }}</span>
+          <span class="text-sm text-muted-foreground">{{ selected().length }} {{ 'DASHBOARD.AUTO_STR_459' | translate }}</span>
           <select class="h-9 px-3 rounded-xl bg-muted border border-border text-sm outline-none">
-            <option>{{ lang() === 'ar' ? 'COMMON.BULKACTION' : 'Bulk Action' }}</option>
-            <option>{{ lang() === 'ar' ? 'COMMON.CONFIRM' : 'Confirm' }}</option>
-            <option>{{ lang() === 'ar' ? 'COMMON.CANCEL' : 'Cancel' }}</option>
+            <option>{{ 'COMMON.BULKACTION' | translate }}</option>
+            <option>{{ 'COMMON.CONFIRM' | translate }}</option>
+            <option>{{ 'COMMON.CANCEL' | translate }}</option>
           </select>
         </div>
       }
@@ -55,13 +55,13 @@
                   (change)="toggleAll($any($event.target).checked)"
                 />
               </th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.ORDER_NUMBER' : 'Order #' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_408' : 'Customer' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground hidden sm:table-cell">{{ lang() === 'ar' ? 'CHECKOUT.COUNTRY' : 'Country' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_409' : 'Total' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'ORDERS.STATUS' : 'Status' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground hidden md:table-cell">{{ lang() === 'ar' ? 'COMMON.STEP2' : 'Payment' }}</th>
-              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_407' : 'Date' }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'ORDERS.ORDER_NUMBER' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_408' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground hidden sm:table-cell">{{ 'CHECKOUT.COUNTRY' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_409' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'ORDERS.STATUS' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground hidden md:table-cell">{{ 'COMMON.STEP2' | translate }}</th>
+              <th class="px-4 py-3 text-start font-semibold text-muted-foreground">{{ 'DASHBOARD.AUTO_STR_407' | translate }}</th>
               <th class="w-10"></th>
             </tr>
           </thead>
@@ -87,7 +87,7 @@
                 </td>
                 <td class="px-4 py-3 hidden md:table-cell">
                   <span class="text-xs font-medium" [ngClass]="order.paymentStatus === 'paid' ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'">
-                    {{ order.paymentStatus === 'paid' ? (lang() === 'ar' ? 'DASHBOARD.AUTO_STR_436' : 'Paid') : (lang() === 'ar' ? 'DASHBOARD.AUTO_STR_458' : 'Pending') }}
+                    {{ order.paymentStatus === 'paid' ? (lang() === 'ar' ? 'مدفوع' : 'Paid') : (lang() === 'ar' ? 'معلق' : 'Pending') }}
                   </span>
                 </td>
                 <td class="px-4 py-3 text-muted-foreground text-xs">
@@ -105,7 +105,7 @@
       </div>
       @if (filtered().length === 0) {
         <div class="text-center py-12 text-muted-foreground">
-          <p>{{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_244' : 'No orders found' }}</p>
+          <p>{{ 'DASHBOARD.AUTO_STR_244' | translate }}</p>
         </div>
       }
     </div>

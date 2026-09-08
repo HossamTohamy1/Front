@@ -1,6 +1,6 @@
 <app-store-layout [showFloatingChat]="false">
 
-  <div class="lk-home-page" dir="rtl">
+  <div class="lk-home-page">
     @for (section of pageConfig().sections; track section.id) {
       @if (section.enabled) {
         @switch (section.type) {

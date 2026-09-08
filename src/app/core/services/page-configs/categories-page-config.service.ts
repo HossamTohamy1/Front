@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -19,15 +20,15 @@ export interface CategoriesPageConfig {
 
 const initialConfig: CategoriesPageConfig = {
     showTitle: true,
-    headerTitle: 'CATEGORIES.TITLE',
-    headerSubtitle: 'CATEGORIES.SUBTITLE',
+    headerTitle: 'التصنيفات',
+    headerSubtitle: 'تصفح جميع المنتجات حسب الفئة',
     categories: [
-        { id: 'men', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.MENS', description: 'CATEGORIES.MENS_DESC', path: '/all-shapers?type=men' },
-        { id: 'women', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.WOMENS', description: 'CATEGORIES.WOMENS_DESC', path: '/all-shapers?type=women' },
-        { id: 'postpartum', title: 'CATEGORIES.POST', accent: 'CATEGORIES.MATERNITY', description: 'CATEGORIES.MATERNITY_DESC', path: '/all-shapers?type=postpartum' },
-        { id: 'sport', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.SPORTS', description: 'CATEGORIES.SPORTS_DESC', path: '/all-shapers?type=sport' },
-        { id: 'full-body', title: 'CATEGORIES.FULL_BODY', accent: 'CATEGORIES.BODY', description: 'CATEGORIES.FULL_BODY_DESC', path: '/all-shapers?type=full-body' },
-        { id: 'waist', title: 'CATEGORIES.SHAPERS', accent: 'CATEGORIES.WAIST', description: 'CATEGORIES.WAIST_DESC', path: '/all-shapers?type=waist' }
+        { id: 'men', title: 'مشدات', accent: 'رجالية', description: 'دعم مثالي وثقة\nطوال اليوم', path: '/all-shapers?type=men' },
+        { id: 'women', title: 'مشدات', accent: 'نسائية', description: 'تصاميم أنثوية\nلإطلالة مثالية', path: '/all-shapers?type=women' },
+        { id: 'postpartum', title: 'مشدات بعد', accent: 'الولادة', description: 'راحة ودعم بعد\nفترة الحمل', path: '/all-shapers?type=postpartum' },
+        { id: 'sport', title: 'مشدات', accent: 'رياضية', description: 'حرية الحركة\nوأداء أفضل', path: '/all-shapers?type=sport' },
+        { id: 'full-body', title: 'مشد كامل', accent: 'الجسم', description: 'تنسيق شامل\nلجسم مثالي', path: '/all-shapers?type=full-body' },
+        { id: 'waist', title: 'مشدات', accent: 'الخصر', description: 'خصر أنحف\nوإطلالة جذابة', path: '/all-shapers?type=waist' }
     ]
 }
 
@@ -78,10 +79,7 @@ export class CategoriesPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): CategoriesPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

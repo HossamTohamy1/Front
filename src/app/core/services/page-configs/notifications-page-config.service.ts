@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 type NotificationsPageConfig = {
     pageTitle: string;
@@ -5,8 +6,8 @@ type NotificationsPageConfig = {
 };
 
 const DEFAULT_CONFIG = {
-    pageTitle: 'NOTIFICATIONS.TITLE',
-    emptyStateTitle: 'NOTIFICATIONS.EMPTY',
+    pageTitle: 'الإشعارات',
+    emptyStateTitle: 'لا توجد إشعارات حالياً',
 };
 
 
@@ -63,9 +64,6 @@ export class NotificationsPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): any {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...DEFAULT_CONFIG, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, DEFAULT_CONFIG);
   }
 }

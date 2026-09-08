@@ -10,7 +10,7 @@ import { FilterSelectionKey, FilterShortcut, FilterOption, FilterSelections } fr
   standalone: true,
   imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule],
   template: `
-    <section class="dashboard-filters" aria-label='DASHBOARD.AUTO_STR_217'>
+    <section class="dashboard-filters" aria-label="فلاتر الطلبات">
       <div class="dashboard-filter-control" *ngFor="let item of filterShortcuts">
         <button
           type="button"
@@ -21,7 +21,7 @@ import { FilterSelectionKey, FilterShortcut, FilterOption, FilterSelections } fr
           <span class="dashboard-filter-card__icon">
             <lucide-icon [img]="item.icon" [size]="15" strokeWidth="2"></lucide-icon>
           </span>
-          <span class="dashboard-filter-card__label">{{ getFilterCardLabel(item.key, item.label) }}</span>
+          <span class="dashboard-filter-card__label">{{ getFilterCardLabel(item.key, item.label) | translate }}</span>
         </button>
 
         <div

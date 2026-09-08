@@ -6,6 +6,7 @@ import {
   LucideAngularModule, 
   BadgeCheck, 
   ChevronLeft, 
+  ChevronRight,
   Heart, 
   LockKeyhole, 
   RotateCcw, 
@@ -22,6 +23,7 @@ import { CartService, CartItem } from '../../../core/services/cart/cart.service'
 import { FavoritesService } from '../../../core/services/favorites/favorites.service';
 import { ToastService } from '../../../core/services/toast/toast.service';
 import { CartPageConfigService } from '../../../core/services/config/cart-page-config.service';
+import { LangService } from '../../../core/services/lang/lang.service';
 import { products } from '../../../shared/data/mockData';
 
 type CartDisplayItem = {
@@ -74,6 +76,10 @@ export class CartPageComponent {
   private toastService = inject(ToastService);
   private configService = inject(CartPageConfigService);
   private router = inject(Router);
+  public langService = inject(LangService);
+
+  readonly ChevronLeft = ChevronLeft;
+  readonly ChevronRight = ChevronRight;
 
   config = this.configService.config;
   cart = this.cartService.cart;

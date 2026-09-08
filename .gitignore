@@ -37,6 +37,7 @@ pnpm-debug.log*
 
 # Angular & build cache
 /.angular
+/.angular/cache
 .sass-cache/
 /connect.lock
 /coverage
@@ -49,4 +50,3 @@ testem.log
 Thumbs.db
 *.swp
 *.swo
-

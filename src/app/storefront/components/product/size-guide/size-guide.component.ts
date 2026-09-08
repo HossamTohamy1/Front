@@ -67,14 +67,14 @@ export class SizeGuideModalComponent {
 @Component({
   selector: 'app-size-guide',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, SizeGuideModalComponent],
+  imports: [TranslatePipe, CommonModule, LucideAngularModule, SizeGuideModalComponent],
   template: `
     <button
       (click)="onClick()"
       class="inline-flex items-center gap-1.5 text-sm text-brand font-medium hover:underline tap-highlight"
     >
       <lucide-icon [img]="RulerIcon" [size]="14"></lucide-icon>
-      {{ lang === 'ar' ? 'PRODUCT.SIZE_GUIDE' : 'Size Guide' }}
+      {{ 'PRODUCT.SIZE_GUIDE' | translate }}
     </button>
     <app-size-guide-modal [open]="isModalOpen" [sizeChart]="sizeChart" [lang]="lang" (onClose)="closeModal()"></app-size-guide-modal>
   `,

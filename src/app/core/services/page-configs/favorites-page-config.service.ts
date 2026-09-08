@@ -1,4 +1,5 @@
 import { Injectable, signal, effect } from '@angular/core';
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 
 
 export interface TrustBadgeConfig {
@@ -40,11 +41,11 @@ export interface FavoritesPageConfig {
 
 const initialConfig: FavoritesPageConfig = {
     showTitle: true,
-    headerTitle: 'FAVORITES.TITLE',
-    headerSubtitle: 'FAVORITES.SUBTITLE',
+    headerTitle: 'المفضلة',
+    headerSubtitle: 'المنتجات التي قمت بحفظها لوقت لاحق',
     
     showAddAllToCart: true,
-    addAllToCartText: 'FAVORITES.ADD_ALL',
+    addAllToCartText: 'إضافة جميع المنتجات إلى السلة',
     
     showToolbar: true,
     showSort: true,
@@ -58,17 +59,17 @@ const initialConfig: FavoritesPageConfig = {
     showRemoveAction: true,
     showMoveToCartAction: true,
     
-    emptyStateTitle: 'FAVORITES.EMPTY',
-    emptyStateSubtitle: 'FAVORITES.EMPTY_DESC',
-    emptyStateButtonText: 'COMMON.START_SHOPPING',
+    emptyStateTitle: 'قائمة المفضلة فارغة',
+    emptyStateSubtitle: 'لم تقم بإضافة أي منتجات إلى قائمة المفضلة بعد',
+    emptyStateButtonText: 'ابدأ التسوق',
     showEmptyStateIllustration: true,
     
     showTrustBadges: true,
     trustBadges: [
-        { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
-        { id: '2', icon: 'Truck', title: 'CART.FAST_SHIPPING', subtitle: 'CART.DAYS_2_5' },
-        { id: '3', icon: 'RotateCcw', title: 'CART.EASY_RETURNS', subtitle: 'CART.RETURN_PERIOD' },
-        { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'CART.SECURE_100' }
+        { id: '1', icon: 'BadgeCheck', title: 'منتجات أصلية', subtitle: '100% مضمونة' },
+        { id: '2', icon: 'Truck', title: 'شحن سريع', subtitle: '2 - 5 أيام' },
+        { id: '3', icon: 'RotateCcw', title: 'إرجاع سهل', subtitle: 'خلال 14 يوم' },
+        { id: '4', icon: 'ShieldCheck', title: 'دفع آمن', subtitle: '100% آمن' }
     ]
 }
 
@@ -120,9 +121,6 @@ export class FavoritesPageConfigService {
   }
 
   private mergeWithInitial(parsed: any): FavoritesPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

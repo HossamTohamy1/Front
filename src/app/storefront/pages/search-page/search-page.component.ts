@@ -6,6 +6,12 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { LucideAngularModule, Check, ChevronLeft, Headphones, Heart, MessageCircle, Search, ShoppingCart, Trash2, X } from 'lucide-angular';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { ProductRepositoryImpl } from '../../../data/repositories/product.repository.impl';
+import { sanitizeWithInitial } from '../../../core/utils/config-sanitizer';
+import { CartService } from '../../../core/services/cart/cart.service';
+import { FavoritesService } from '../../../core/services/favorites/favorites.service';
+import { ToastService } from '../../../core/services/toast/toast.service';
+import { products as mockProducts, Product } from '../../../shared/data/mockData';
+import { LangService } from '../../../core/services/lang/lang.service';
 
 export interface SearchPageConfig {
     searchPlaceholder: string;
@@ -21,8 +27,8 @@ export interface SearchPageConfig {
 }
 
 const initialConfig: SearchPageConfig = {
-    searchPlaceholder: 'ابحث عن...',
-    quickSuggestionsTitle: 'عمليات بحث شائعة:',
+    searchPlaceholder: 'SEARCH.FIND_PLACEHOLDER',
+    quickSuggestionsTitle: 'SEARCH.POPULAR_TITLE',
     quickSuggestions: [
         'SEARCH.MENS_WAIST',
         'SEARCH.WOMENS_WAIST',
@@ -36,23 +42,7 @@ const initialConfig: SearchPageConfig = {
     showSupportCard: true,
     supportCardTitle: 'SEARCH.NOT_FOUND',
     supportCardSubtitle: 'SEARCH.WHATSAPP_HELP',
-}
-
-export interface Product {
-  id: string;
-  nameAr: string;
-  price: number;
-  originalPrice?: number;
-  images: string[];
-  rating: number;
-  reviewCount: number;
-  category: string;
-  sizes: string[];
-}
-
-const products: Product[] = [
-  // Mock data as needed
-];
+};
 
 type SearchMode = 'idle' | 'success' | 'suggestions';
 type SearchFeedbackType = 'success' | 'error';
@@ -62,7 +52,7 @@ type SearchFeedback = {
   type: SearchFeedbackType;
   title: string;
   message: string;
-}
+};
 
 @Component({
   selector: 'app-search-page',
@@ -89,7 +79,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   query = signal<string>('');
   submittedQuery = signal<string>('');
   mode = signal<SearchMode>('idle');
-  visibleProducts = signal<Product[]>([]);
+  visibleProducts = signal<any[]>([]);
   feedback = signal<SearchFeedback | null>(null);
 
   @ViewChild('inputRef') inputRef!: ElementRef<HTMLInputElement>;
@@ -110,17 +100,23 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   });
 
   private productRepo = inject(ProductRepositoryImpl);
+  readonly langService = inject(LangService);
+  private cartService = inject(CartService);
+  private favoritesService = inject(FavoritesService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   allProducts = signal<any[]>([]);
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
+  constructor() {
     // Load config from localStorage if available
     const saved = localStorage.getItem('loxxking-search-page-config');
     if (saved) {
       try {
-        this.pageConfig.set({ ...initialConfig, ...JSON.parse(saved) });
+        const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
+        this.pageConfig.set(clean);
+        localStorage.setItem('loxxking-search-page-config', JSON.stringify(clean));
       } catch (e) {}
     }
   }
@@ -321,74 +317,69 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   // Search Utils with live backend data
   findExactProductMatches(q: string): any[] {
-    const list = this.allProducts();
-    const query = q.toLowerCase();
+    const list = this.allProducts().length > 0 ? this.allProducts() : mockProducts;
+    const term = q.trim().toLowerCase();
     return list.filter(p => 
-      (p.nameAr && p.nameAr.includes(q)) || 
-      (p.nameEn && p.nameEn.toLowerCase().includes(query)) || 
-      (p.descEn && p.descEn.toLowerCase().includes(query)) ||
-      (p.descAr && p.descAr.includes(q))
+      (p.nameAr && p.nameAr.toLowerCase().includes(term)) || 
+      (p.nameEn && p.nameEn.toLowerCase().includes(term)) || 
+      (p.descEn && p.descEn.toLowerCase().includes(term)) ||
+      (p.descAr && p.descAr.toLowerCase().includes(term))
     );
   }
 
   findSimilarProductSuggestions(q: string): any[] {
-    return this.allProducts().slice(0, 4);
+    const list = this.allProducts().length > 0 ? this.allProducts() : mockProducts;
+    return list.slice(0, 4);
   }
 
-  // Mock app methods
-  addToCart(product: Product, size: string) {
-    console.log('Added to cart', product, size);
+  addToCart(product: any, size: string) {
+    this.cartService.addToCart(product as any, size, 1);
+    this.toastService.showToast('STOREFRONT.AUTO_STR_114', 'success');
   }
-  showToast(msg: string, type: string) {}
-  
-  favorites = signal<string[]>([]);
   
   isFavorite(id: string): boolean {
-    return this.favorites().includes(id);
+    return this.favoritesService.isFavorite(id);
   }
 
   toggleFavoriteProduct(id: string) {
-    if (this.isFavorite(id)) {
-      this.favorites.set(this.favorites().filter(f => f !== id));
-      this.showToast('STOREFRONT.AUTO_STR_127', 'info');
-    } else {
-      this.favorites.set([...this.favorites(), id]);
-      this.showToast('STOREFRONT.AUTO_STR_100', 'info');
-    }
+    this.favoritesService.toggleFavorite(id);
+    const isFav = this.favoritesService.isFavorite(id);
+    this.toastService.showToast(isFav ? 'STOREFRONT.AUTO_STR_127' : 'STOREFRONT.AUTO_STR_100', 'info');
   }
 
-  getSearchProductDisplay(product: Product) {
+  getSearchProductDisplay(product: any) {
+    const isAr = this.langService.storefrontLang() === 'ar';
     return {
-      name: product.nameAr,
-      image: product.images[0],
-      price: Math.round(product.price),
-      oldPrice: Math.round(product.originalPrice ?? product.price),
-      rating: product.rating,
-      reviews: product.reviewCount,
+      name: isAr ? (product.nameAr || product.nameEn || product.name) : (product.nameEn || product.nameAr || product.name),
+      image: (product.images && product.images[0]) || product.image || '/assets/home/product-1.png',
+      price: Math.round(product.price || 0),
+      oldPrice: Math.round(product.originalPrice ?? product.price ?? 0),
+      rating: product.rating ?? 5,
+      reviews: product.reviewCount ?? product.reviewsCount ?? 0,
       discount: product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0,
     };
   }
   
-  getProductColors(product: Product) {
+  getProductColors(product: any) {
+    if (product.colors && product.colors.length > 0) return product.colors;
     return product.category === 'postpartum' ? ['#f2cfb7', '#050505'] : ['#050505', '#f2cfb7'];
   }
 
-  getFirstSize(product: Product) {
+  getFirstSize(product: any) {
     return product.sizes?.[0] ?? 'M';
   }
 
-  getLastSize(product: Product) {
+  getLastSize(product: any) {
     return product.sizes?.[product.sizes.length - 1] ?? this.getFirstSize(product);
   }
 
-  addProductToCart(event: MouseEvent, product: Product) {
+  addProductToCart(event: MouseEvent, product: any) {
     event.preventDefault();
     event.stopPropagation();
     this.addToCart(product, this.getFirstSize(product));
-    this.showToast('STOREFRONT.AUTO_STR_114', 'success');
   }
 
-  toggleFavorite(event: MouseEvent, product: Product) {
+  toggleFavorite(event: MouseEvent, product: any) {
     event.preventDefault();
     event.stopPropagation();
     this.toggleFavoriteProduct(product.id);

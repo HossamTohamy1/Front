@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -38,7 +39,7 @@ export interface CartPageConfig {
 
 
 const initialConfig: CartPageConfig = {
-    headerTitle: 'CART.TITLE',
+    headerTitle: 'سلة التسوق',
     
     showProductImage: true,
     showQuantityControls: true,
@@ -46,27 +47,27 @@ const initialConfig: CartPageConfig = {
     showOldPrice: true,
 
     showCouponSection: true,
-    couponTitle: 'CART.DISCOUNT_CODE',
-    couponPlaceholder: 'CART.ENTER_DISCOUNT',
-    couponButtonText: 'COMMON.APPLY',
+    couponTitle: 'كود الخصم',
+    couponPlaceholder: 'ادخل كود الخصم',
+    couponButtonText: 'تطبيق',
 
     showSubtotal: true,
     showShipping: true,
     showDiscount: true,
     showTotal: true,
 
-    checkoutButtonText: 'CART.CHECKOUT',
+    checkoutButtonText: 'إتمام الطلب',
 
     emptyCartIllustration: true,
-    emptyCartText: 'CART.EMPTY',
+    emptyCartText: 'السلة فارغة',
     showContinueShopping: true,
 
     showTrustBadges: true,
     trustBadges: [
-        { id: 't1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
-        { id: 't2', icon: 'Truck', title: 'CART.FAST_SHIPPING', subtitle: 'CART.DELIVERY_TIME' },
-        { id: 't3', icon: 'RotateCcw', title: 'CART.EASY_RETURNS', subtitle: 'CART.RETURN_PERIOD' },
-        { id: 't4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'CART.SECURE_100' },
+        { id: 't1', icon: 'BadgeCheck', title: 'منتجات أصلية', subtitle: '100% مضمونة' },
+        { id: 't2', icon: 'Truck', title: 'شحن سريع', subtitle: 'خلال 2 - 5 أيام' },
+        { id: 't3', icon: 'RotateCcw', title: 'إرجاع سهل', subtitle: 'خلال 14 يوم' },
+        { id: 't4', icon: 'ShieldCheck', title: 'دفع آمن', subtitle: '100% آمن' },
     ]
 }
 
@@ -117,10 +118,7 @@ export class CartPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): CartPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }

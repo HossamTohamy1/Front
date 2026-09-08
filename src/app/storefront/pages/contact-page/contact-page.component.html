@@ -1,12 +1,12 @@
 <app-store-layout [showBottomNav]="false" [showFloatingChat]="false">
 
-  <main class="lk-contact-page" dir="rtl">
+  <main class="lk-contact-page">
       <img class="lk-contact-page__plant" [src]="contactPlant" alt="" aria-hidden="true" />
 
       <div class="lk-contact-page__content">
           <header class="lk-contact-page__hero">
               <h1>{{ config.pageTitle | translate }}</h1>
-              <p>نحن هنا للإجابة على استفساراتك ومساعدتك في أي وقت.</p>
+              <p>{{ 'CONTACT.SUBTITLE' | translate }}</p>
           </header>
 
           <section class="lk-contact-methods" aria-label='STOREFRONT.AUTO_STR_300'>
@@ -18,7 +18,7 @@
                     [rel]="method.external ? 'noreferrer' : null"
                 >
                     <span class="lk-contact-method__arrow" aria-hidden="true">
-                        <lucide-icon [name]="ChevronLeft"></lucide-icon>
+                        <lucide-icon class="rtl-flip" [name]="ChevronLeft"></lucide-icon>
                     </span>
 
                     <span class="lk-contact-method__details">
@@ -45,8 +45,8 @@
                           type="text"
                           [(ngModel)]="form.name"
                           name="name"
-                          placeholder='DASHBOARD.AUTO_STR_427'
-                          aria-label='DASHBOARD.AUTO_STR_427'
+                          [placeholder]="'DASHBOARD.AUTO_STR_427' | translate"
+                          [attr.aria-label]="'DASHBOARD.AUTO_STR_427' | translate"
                       />
                   </label>
 
@@ -56,8 +56,8 @@
                           type="tel"
                           [(ngModel)]="form.phone"
                           name="phone"
-                          placeholder='CHECKOUT.PHONE'
-                          aria-label='CHECKOUT.PHONE'
+                          [placeholder]="'CHECKOUT.PHONE' | translate"
+                          [attr.aria-label]="'CHECKOUT.PHONE' | translate"
                       />
                   </label>
 
@@ -67,8 +67,8 @@
                           type="email"
                           [(ngModel)]="form.email"
                           name="email"
-                          placeholder='CONTACT.EMAIL'
-                          aria-label='CONTACT.EMAIL'
+                          [placeholder]="'CONTACT.EMAIL' | translate"
+                          [attr.aria-label]="'CONTACT.EMAIL' | translate"
                       />
                   </label>
 
@@ -78,8 +78,8 @@
                           rows="4"
                           [(ngModel)]="form.message"
                           name="message"
-                          placeholder='STOREFRONT.AUTO_STR_362'
-                          aria-label='STOREFRONT.AUTO_STR_362'
+                          [placeholder]="'STOREFRONT.AUTO_STR_362' | translate"
+                          [attr.aria-label]="'STOREFRONT.AUTO_STR_362' | translate"
                       ></textarea>
                   </label>
 
@@ -105,7 +105,7 @@
                   rel="noreferrer"
                   aria-label='STOREFRONT.AUTO_STR_395'
               >
-                  <lucide-icon [name]="ArrowLeft" aria-hidden="true"></lucide-icon>
+                  <lucide-icon class="rtl-flip" [name]="ArrowLeft" aria-hidden="true"></lucide-icon>
               </a>
 
               <div class="lk-contact-whatsapp-banner__content">

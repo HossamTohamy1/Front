@@ -1,7 +1,7 @@
 <app-admin-layout>
   <div class="max-w-3xl mx-auto space-y-5">
     <h1 class="font-display font-bold text-2xl">
-      {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_172' : 'Reviews Moderation' }}
+      {{ 'DASHBOARD.AUTO_STR_172' | translate }}
     </h1>
 
     <div class="space-y-3">
@@ -34,16 +34,16 @@
             >
               <ng-container *ngIf="r.approved">
                 <lucide-icon [img]="Eye" [size]="13"></lucide-icon>
-                {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_439' : 'Approved' }}
+                {{ 'DASHBOARD.AUTO_STR_439' | translate }}
               </ng-container>
               <ng-container *ngIf="!r.approved">
                 <lucide-icon [img]="EyeOff" [size]="13"></lucide-icon>
-                {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_460' : 'Hidden' }}
+                {{ 'DASHBOARD.AUTO_STR_460' | translate }}
               </ng-container>
             </button>
             <button class="h-8 px-3 rounded-xl bg-muted text-xs font-medium flex items-center gap-1.5 hover:bg-brand/10 hover:text-brand transition-colors tap-highlight">
               <lucide-icon [img]="MessageCircle" [size]="13"></lucide-icon>
-              {{ lang() === 'ar' ? 'DASHBOARD.AUTO_STR_440' : 'Escalate' }}
+              {{ 'DASHBOARD.AUTO_STR_440' | translate }}
             </button>
           </div>
         </div>

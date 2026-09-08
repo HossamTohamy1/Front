@@ -1,3 +1,4 @@
+import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { Injectable, signal, effect } from '@angular/core';
 
 
@@ -15,15 +16,15 @@ export interface AllShapersPageConfig {
 
 
 const initialConfig: AllShapersPageConfig = {
-    headerTitle: 'PRODUCTS.ALL_SHAPERS',
+    headerTitle: 'كل المشدات',
     
     showRating: true,
     showReviewsCount: true,
     showOriginalPrice: true,
     
-    emptyTitle: 'PRODUCTS.NO_PRODUCTS',
-    emptyText: 'PRODUCTS.TRY_CHANGING',
-    emptyCta: 'PRODUCTS.VIEW_ALL'
+    emptyTitle: 'لا توجد منتجات بهذه المواصفات',
+    emptyText: 'جرّبي تغيير اللون أو المقاس أو نطاق السعر.',
+    emptyCta: 'عرض كل المشدات'
 }
 
 @Injectable({
@@ -73,10 +74,7 @@ export class AllShapersPageConfigService {
     return initialConfig;
   }
 
-  private mergeWithInitial(parsed: any): AllShapersPageConfig {
-    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-      return { ...initialConfig, ...parsed };
-    }
-    return parsed;
+  private mergeWithInitial(parsed: any): any {
+    return sanitizeWithInitial(parsed, initialConfig);
   }
 }
