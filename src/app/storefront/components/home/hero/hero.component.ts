@@ -21,18 +21,21 @@ export class HeroComponent implements OnInit, OnDestroy {
   readonly ChevronRight = ChevronRight;
   readonly langService = inject(LangService);
 
-  slides: any[] = [];
   currentIndex = 0;
   private intervalId: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
+  get slides(): any[] {
+    return this.config?.slides || (this.config?.image ? [{ id: '1', image: this.config.image }] : [{ id: '1', image: '/assets/home/hero-visual-hd.png' }]);
+  }
+
   ngOnInit() {
-    this.slides = this.config?.slides || (this.config?.image ? [{ id: '1', image: this.config.image }] : [{ id: '1', image: '/assets/home/hero-visual-hd.png' }]);
-    
-    if (this.slides.length > 1 && isPlatformBrowser(this.platformId)) {
+    if (isPlatformBrowser(this.platformId)) {
       this.intervalId = setInterval(() => {
-        this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+        if (this.slides.length > 1) {
+          this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+        }
       }, 5000);
     }
   }

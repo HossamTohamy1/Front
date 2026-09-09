@@ -12,37 +12,9 @@ import { FavoritesService } from '../../../core/services/favorites/favorites.ser
 import { ToastService } from '../../../core/services/toast/toast.service';
 import { products as mockProducts, Product } from '../../../shared/data/mockData';
 import { LangService } from '../../../core/services/lang/lang.service';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
 
-export interface SearchPageConfig {
-    searchPlaceholder: string;
-    quickSuggestionsTitle: string;
-    quickSuggestions: string[];
-    recentSearchTitle: string;
-    showRecentSearch: boolean;
-    noResultsTitle: string;
-    noResultsSubtitle: string;
-    showSupportCard: boolean;
-    supportCardTitle: string;
-    supportCardSubtitle: string;
-}
-
-const initialConfig: SearchPageConfig = {
-    searchPlaceholder: 'SEARCH.FIND_PLACEHOLDER',
-    quickSuggestionsTitle: 'SEARCH.POPULAR_TITLE',
-    quickSuggestions: [
-        'SEARCH.MENS_WAIST',
-        'SEARCH.WOMENS_WAIST',
-        'SEARCH.SLIMMING_WAIST',
-        'SEARCH.POSTPARTUM_WAIST',
-    ],
-    recentSearchTitle: 'SEARCH.RECENT',
-    showRecentSearch: true,
-    noResultsTitle: 'SEARCH.NO_RESULTS',
-    noResultsSubtitle: 'SEARCH.TRY_DIFFERENT',
-    showSupportCard: true,
-    supportCardTitle: 'SEARCH.NOT_FOUND',
-    supportCardSubtitle: 'SEARCH.WHATSAPP_HELP',
-};
+import { SearchPageConfigService } from '../../../core/services/page-configs/search-page-config.service';
 
 type SearchMode = 'idle' | 'success' | 'suggestions';
 type SearchFeedbackType = 'success' | 'error';
@@ -57,7 +29,7 @@ type SearchFeedback = {
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterModule, LucideAngularModule, StoreLayoutComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterModule, LucideAngularModule, StoreLayoutComponent, LocalizeFieldPipe],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css'
 })
@@ -73,7 +45,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   Trash2 = Trash2;
   X = X;
 
-  pageConfig = signal<SearchPageConfig>(initialConfig);
+  private configService = inject(SearchPageConfigService);
+  pageConfig = this.configService.pageConfig;
   logoHeader = '/assets/home/logo-header.png';
 
   query = signal<string>('');
@@ -110,15 +83,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   allProducts = signal<any[]>([]);
 
   constructor() {
-    // Load config from localStorage if available
-    const saved = localStorage.getItem('loxxking-search-page-config');
-    if (saved) {
-      try {
-        const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
-        this.pageConfig.set(clean);
-        localStorage.setItem('loxxking-search-page-config', JSON.stringify(clean));
-      } catch (e) {}
-    }
   }
 
   ngOnInit() {
@@ -350,7 +314,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   getSearchProductDisplay(product: any) {
     const isAr = this.langService.storefrontLang() === 'ar';
     return {
-      name: isAr ? (product.nameAr || product.nameEn || product.name) : (product.nameEn || product.nameAr || product.name),
+      nameAr: product.nameAr || product.nameEn || product.name,
+      nameEn: product.nameEn || product.nameAr || product.name,
       image: (product.images && product.images[0]) || product.image || '/assets/home/product-1.png',
       price: Math.round(product.price || 0),
       oldPrice: Math.round(product.originalPrice ?? product.price ?? 0),

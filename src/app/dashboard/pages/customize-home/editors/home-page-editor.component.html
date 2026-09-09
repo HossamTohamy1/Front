@@ -24,7 +24,10 @@
         </div>
 
         <div class="flex gap-2 overflow-x-auto pb-2">
-          <div *ngFor="let slide of (section.slides || (section.image ? [{id: 'old-1', image: section.image}] : [])); let sIdx = index; trackBy: trackBySlideId" class="relative w-32 flex-shrink-0 group">
+          <div *ngFor="let slide of (section.slides || (section.image ? [{id: 'old-1', image: section.image}] : [])); let sIdx = index; trackBy: trackBySlideId"
+               class="relative w-32 flex-shrink-0 group"
+               (dragover)="$event.preventDefault()"
+               (drop)="onDirectDropSlide($event, section, sIdx)">
             <div class="w-full h-24 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-blue-500 transition-colors">
               <img [src]="slide.image" alt="" class="w-full h-full object-cover" />
             </div>
@@ -70,13 +73,30 @@
                 <lucide-icon *ngIf="bIdx === 1" name="truck" [size]="18"></lucide-icon>
                 <lucide-icon *ngIf="bIdx > 1" name="package" [size]="18"></lucide-icon>
               </div>
-              <input
-                type="text"
-                class="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800"
-                [ngModel]="benefit.text ? benefit.text.replace('\n', ' - ') : ''"
-                (ngModelChange)="updateBenefitText(section, bIdx, $event)"
-                placeholder="نص الميزة"
-              />
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
+                <div class="flex flex-col gap-1">
+                  <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                  <input
+                    type="text"
+                    dir="rtl"
+                    class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800"
+                    [(ngModel)]="benefit.textAr"
+                    (ngModelChange)="benefit.text = benefit.textEn || benefit.textAr; updateSection(section.id, { benefits: section.benefits })"
+                    placeholder="نص الميزة"
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                  <input
+                    type="text"
+                    dir="ltr"
+                    class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800"
+                    [(ngModel)]="benefit.textEn"
+                    (ngModelChange)="benefit.text = benefit.textEn || benefit.textAr; updateSection(section.id, { benefits: section.benefits })"
+                    placeholder="Benefit Text"
+                  />
+                </div>
+              </div>
             </div>
             <button (click)="removeBenefit(section, bIdx)" class="text-red-400 hover:text-red-600 p-1" title="حذف">
               <lucide-icon name="trash-2" [size]="16"></lucide-icon>
@@ -105,7 +125,10 @@
         </div>
 
         <div class="flex flex-row items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
-          <div class="w-24 h-16 rounded-md overflow-hidden flex items-center justify-center bg-gray-200">
+          <div class="w-24 h-16 rounded-md overflow-hidden flex items-center justify-center bg-gray-200 cursor-pointer border-2 border-dashed border-transparent hover:border-blue-400 transition-colors"
+               title="اسحب صورة هنا لتغييرها"
+               (dragover)="$event.preventDefault()"
+               (drop)="onDirectDropPromo($event, section)">
             <img *ngIf="section.image" [src]="section.image" alt="Banner" class="w-full h-full object-cover" />
             <lucide-icon *ngIf="!section.image" name="image" class="text-gray-400"></lucide-icon>
           </div>
@@ -131,13 +154,23 @@
         </div>
 
         <div class="flex flex-col mb-2 gap-2">
-          <div class="flex items-center gap-3 w-full">
-            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0" title="إظهار / إخفاء العنوان">
+          <div class="flex items-start gap-3 w-full">
+            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-2" title="إظهار / إخفاء العنوان">
               <input type="checkbox" class="sr-only peer" [checked]="section.showTitle !== false" (change)="updateSection(section.id, { showTitle: $any($event.target).checked })" />
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
             </label>
-            <input type="text" class="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium" 
-              [ngModel]="section.title || ''" (ngModelChange)="updateSection(section.id, { title: $event })" placeholder="عنوان القسم" />
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                <input type="text" dir="rtl" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium" 
+                  [ngModel]="section.titleAr || ''" (ngModelChange)="section.title = section.titleEn || $event; updateSection(section.id, { titleAr: $event, title: section.title })" placeholder="عنوان القسم (عربي)" />
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                <input type="text" dir="ltr" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium text-left" 
+                  [ngModel]="section.titleEn || ''" (ngModelChange)="section.title = $event || section.titleAr; updateSection(section.id, { titleEn: $event, title: section.title })" placeholder="Section Title (EN)" />
+              </div>
+            </div>
           </div>
         </div>
         <div class="mb-2 mt-4">
@@ -167,7 +200,7 @@
 
   <!-- Content Editor Modal / Drawer Shell -->
   <div *ngIf="editingSection" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 max-h-[85vh] flex flex-col">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-gray-200 max-h-[85vh] flex flex-col">
       <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
         <div>
           <h3 class="text-lg font-bold text-gray-900">إدارة محتوى القسم</h3>
@@ -187,27 +220,91 @@
         </div>
 
         <div *ngIf="editingSection.type === 'categories'" class="space-y-2">
-          <div *ngFor="let cat of editingSection.categories; let cIdx = index; trackBy: trackByItemId" class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
-            <div class="flex items-center gap-3">
-              <img [src]="cat.image" class="w-10 h-10 rounded-md object-cover" />
-              <input type="text" [(ngModel)]="cat.name" (ngModelChange)="updateSection(editingSection.id, { categories: editingSection.categories })" class="text-sm font-semibold bg-white border border-gray-200 rounded px-2 py-1 outline-none" />
+          <div *ngFor="let cat of editingSection.categories; let cIdx = index; trackBy: trackByItemId" class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-200 hover:border-blue-200 transition-all">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <!-- Click to upload or Drag & Drop Image -->
+              <div class="relative w-12 h-12 rounded-lg border-2 border-dashed overflow-hidden cursor-pointer group bg-white flex items-center justify-center flex-shrink-0 transition-all shadow-sm"
+                   [ngClass]="activeDragItemIndex === cIdx ? 'border-blue-500 bg-blue-50 scale-105 ring-2 ring-blue-200' : 'border-gray-300 hover:border-blue-400'"
+                   (click)="catFileInput.click()"
+                   (dragover)="onItemDragOver($event, cIdx)"
+                   (dragleave)="onItemDragLeave($event, cIdx)"
+                   (drop)="onItemDrop($event, 'category', cIdx)"
+                   title="انقر لرفع صورة أو اسحب الصورة هنا">
+                <img [src]="cat.image || '/assets/home/category-full.png'" class="w-full h-full object-cover group-hover:opacity-75 transition-opacity" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity">
+                  <lucide-icon name="camera" [size]="15"></lucide-icon>
+                </div>
+                <input #catFileInput type="file" accept="image/*" class="hidden" (change)="onItemFileSelected($event, 'category', cIdx)" />
+              </div>
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
+                <div class="flex flex-col gap-1">
+                  <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                  <input type="text"
+                         [(ngModel)]="cat.nameAr"
+                         (ngModelChange)="cat.name = cat.nameEn || cat.nameAr; updateSection(editingSection.id, { categories: editingSection.categories })"
+                         dir="rtl"
+                         class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                         placeholder="الاسم (بالعربي)" />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                  <input type="text"
+                         [(ngModel)]="cat.nameEn"
+                         (ngModelChange)="cat.name = cat.nameEn || cat.nameAr; updateSection(editingSection.id, { categories: editingSection.categories })"
+                         dir="ltr"
+                         class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                         placeholder="Name (English)" />
+                </div>
+              </div>
             </div>
-            <button (click)="removeItemFromActiveSection(cIdx)" class="p-1 text-red-500 hover:bg-red-50 rounded">
+            <button (click)="removeItemFromActiveSection(cIdx)" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg mr-2 transition-colors" title="حذف">
               <lucide-icon name="trash-2" [size]="16"></lucide-icon>
             </button>
           </div>
         </div>
 
         <div *ngIf="editingSection.type === 'bestsellers'" class="space-y-2">
-          <div *ngFor="let prod of editingSection.products; let pIdx = index; trackBy: trackByItemId" class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
-            <div class="flex items-center gap-3">
-              <img [src]="prod.image" class="w-10 h-10 rounded-md object-contain bg-white" />
-              <div class="flex flex-col">
-                <input type="text" [(ngModel)]="prod.name" (ngModelChange)="updateSection(editingSection.id, { products: editingSection.products })" class="text-sm font-semibold bg-white border border-gray-200 rounded px-2 py-1 outline-none" />
-                <span class="text-xs text-gray-500">{{ prod.price }} ر.س</span>
+          <div *ngFor="let prod of editingSection.products; let pIdx = index; trackBy: trackByItemId" class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-200 hover:border-blue-200 transition-all">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <!-- Click to upload or Drag & Drop Image -->
+              <div class="relative w-12 h-12 rounded-lg border-2 border-dashed overflow-hidden cursor-pointer group bg-white flex items-center justify-center flex-shrink-0 transition-all shadow-sm"
+                   [ngClass]="activeDragItemIndex === pIdx ? 'border-blue-500 bg-blue-50 scale-105 ring-2 ring-blue-200' : 'border-gray-300 hover:border-blue-400'"
+                   (click)="prodFileInput.click()"
+                   (dragover)="onItemDragOver($event, pIdx)"
+                   (dragleave)="onItemDragLeave($event, pIdx)"
+                   (drop)="onItemDrop($event, 'product', pIdx)"
+                   title="انقر لرفع صورة أو اسحب الصورة هنا">
+                <img [src]="prod.image || '/assets/home/product-1.png'" class="w-full h-full object-contain p-0.5 group-hover:opacity-75 transition-opacity" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity">
+                  <lucide-icon name="camera" [size]="15"></lucide-icon>
+                </div>
+                <input #prodFileInput type="file" accept="image/*" class="hidden" (change)="onItemFileSelected($event, 'product', pIdx)" />
+              </div>
+              <div class="flex flex-col flex-1 min-w-0 gap-1.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                    <input type="text"
+                           [(ngModel)]="prod.nameAr"
+                           (ngModelChange)="prod.name = prod.nameEn || prod.nameAr; updateSection(editingSection.id, { products: editingSection.products })"
+                           dir="rtl"
+                           class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                           placeholder="اسم المنتج (بالعربي)" />
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                    <input type="text"
+                           [(ngModel)]="prod.nameEn"
+                           (ngModelChange)="prod.name = prod.nameEn || prod.nameAr; updateSection(editingSection.id, { products: editingSection.products })"
+                           dir="ltr"
+                           class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                           placeholder="Product Name (English)" />
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500 font-medium">{{ prod.price }} ر.س</span>
               </div>
             </div>
-            <button (click)="removeItemFromActiveSection(pIdx)" class="p-1 text-red-500 hover:bg-red-50 rounded">
+            <button (click)="removeItemFromActiveSection(pIdx)" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg mr-2 transition-colors" title="حذف">
               <lucide-icon name="trash-2" [size]="16"></lucide-icon>
             </button>
           </div>
@@ -234,4 +331,71 @@
       <button (click)="addSection('promo')" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-right"><lucide-icon name="image" class="text-gray-400" [size]="18"></lucide-icon><span class="font-medium text-gray-900">بانر العروض الترويجية</span></button>
     </div>
   </div>
+
+  <!-- Modern Drag & Drop Image Upload Modal -->
+  <div *ngIf="imageUploadDialog?.isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 flex flex-col animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+        <h3 class="text-base font-bold text-gray-900">{{ imageUploadDialog?.title }}</h3>
+        <button (click)="closeImageUploadModal()" class="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+          <lucide-icon name="x" [size]="18"></lucide-icon>
+        </button>
+      </div>
+
+      <!-- Drag & Drop Zone -->
+      <div class="relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2.5"
+           [ngClass]="imageUploadDialog?.isDragging ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-100' : 'border-gray-300 hover:border-blue-400 bg-gray-50/50 hover:bg-blue-50/30'"
+           (click)="dialogFileInput.click()"
+           (dragover)="onDialogDragOver($event)"
+           (dragleave)="onDialogDragLeave($event)"
+           (drop)="onDialogDrop($event)">
+        
+        <input #dialogFileInput type="file" accept="image/*" class="hidden" (change)="onDialogFileSelected($event)" />
+
+        <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+          <lucide-icon name="cloud-upload" [size]="24"></lucide-icon>
+        </div>
+
+        <div class="flex flex-col gap-0.5">
+          <span class="text-sm font-bold text-gray-800">اسحب الصورة وأفلتها هنا</span>
+          <span class="text-xs text-gray-500">أو <span class="text-blue-600 font-semibold underline">اضغط لاختيار صورة</span> من جهازك</span>
+          <span class="text-[11px] text-gray-400 mt-1">يدعم صيغ PNG, JPG, WEBP</span>
+        </div>
+
+        <!-- Uploading Indicator -->
+        <div *ngIf="imageUploadDialog?.isUploading" class="absolute inset-0 bg-white/80 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center gap-2">
+          <lucide-icon name="loader-2" class="animate-spin text-blue-600" [size]="28"></lucide-icon>
+          <span class="text-xs font-semibold text-blue-700">جاري رفع الصورة...</span>
+        </div>
+      </div>
+
+      <!-- Image Preview if available -->
+      <div *ngIf="imageUploadDialog?.previewUrl" class="mt-4 p-2 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+        <div class="w-16 h-12 rounded-lg overflow-hidden bg-white border border-gray-200 flex-shrink-0">
+          <img [src]="imageUploadDialog?.previewUrl" alt="Preview" class="w-full h-full object-cover" />
+        </div>
+        <div class="flex-1 min-w-0">
+          <span class="text-xs font-bold text-gray-800 block">معاينة الصورة</span>
+          <span class="text-[11px] text-gray-400 truncate block">{{ imageUploadDialog?.previewUrl }}</span>
+        </div>
+      </div>
+
+      <!-- Optional URL input -->
+      <div class="mt-3">
+        <label class="text-xs font-medium text-gray-600 mb-1 block">أو أدخل رابط الصورة (URL) مباشرة:</label>
+        <input type="text" [(ngModel)]="imageUploadDialog!.previewUrl" class="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-blue-400" placeholder="https://example.com/image.png" dir="ltr" />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100 mt-4">
+        <button (click)="closeImageUploadModal()" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          إلغاء
+        </button>
+        <button (click)="applyImageUploadModal()" [disabled]="!imageUploadDialog?.previewUrl || imageUploadDialog?.isUploading" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg shadow-sm transition-colors flex items-center gap-1.5">
+          <span>تطبيق الصورة</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+

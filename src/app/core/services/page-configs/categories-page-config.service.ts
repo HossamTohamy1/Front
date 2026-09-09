@@ -1,19 +1,33 @@
 import { sanitizeWithInitial } from '../../utils/config-sanitizer';
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, effect, inject, NgZone } from '@angular/core';
 
+
+const INSTANCE_ID = typeof crypto !== 'undefined' && crypto.randomUUID 
+  ? crypto.randomUUID() 
+  : Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 export interface CategoryCardConfig {
     id: string;
     title: string;
+    titleAr?: string;
+    titleEn?: string;
     accent: string;
+    accentAr?: string;
+    accentEn?: string;
     description: string;
+    descriptionAr?: string;
+    descriptionEn?: string;
     path: string;
 }
 
 export interface CategoriesPageConfig {
     showTitle: boolean;
     headerTitle: string;
+    headerTitleAr?: string;
+    headerTitleEn?: string;
     headerSubtitle: string;
+    headerSubtitleAr?: string;
+    headerSubtitleEn?: string;
     categories: CategoryCardConfig[];
 }
 
@@ -39,13 +53,18 @@ export class CategoriesPageConfigService {
   private readonly storageKey = 'loxxking-categories-page-config';
 
   readonly pageConfig = signal<CategoriesPageConfig>(this.loadInitialConfig());
+  private zone = inject(NgZone);
 
   constructor() {
     window.addEventListener('storage', (e: StorageEvent) => {
+      if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
+
       if (e.key === this.storageKey && e.newValue) {
         try {
           const updated = JSON.parse(e.newValue);
-          this.pageConfig.set(this.mergeWithInitial(updated));
+          this.zone.run(() => {
+            this.pageConfig.set(this.mergeWithInitial(updated));
+          });
         } catch (_) {}
       }
     });
@@ -55,11 +74,13 @@ export class CategoriesPageConfigService {
       localStorage.setItem(this.storageKey, JSON.stringify(config));
       
       try {
-        window.dispatchEvent(new StorageEvent('storage', {
+        const event = new StorageEvent('storage', {
           key: this.storageKey,
           newValue: JSON.stringify(config),
           storageArea: localStorage,
-        }));
+        });
+        (event as any).__sourceInstanceId = INSTANCE_ID;
+        window.dispatchEvent(event);
       } catch (_) {}
     });
   }

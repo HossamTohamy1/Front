@@ -11,75 +11,7 @@ import { LangService } from '../../../core/services/lang/lang.service';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { ToastService } from '../../../core/services/toast/toast.service';
 
-export interface TrustBadgeConfig {
-    id: string;
-    icon: string;
-    title: string;
-    subtitle: string;
-}
-
-export interface FavoritesPageConfig {
-    showTitle: boolean;
-    headerTitle: string;
-    headerSubtitle: string;
-    
-    showAddAllToCart: boolean;
-    addAllToCartText: string;
-    
-    showToolbar: boolean;
-    showSort: boolean;
-    showCount: boolean;
-    
-    showProductColor: boolean;
-    showProductSize: boolean;
-    showProductPrice: boolean;
-    showProductOldPrice: boolean;
-    showProductStock: boolean;
-    showRemoveAction: boolean;
-    showMoveToCartAction: boolean;
-    
-    emptyStateTitle: string;
-    emptyStateSubtitle: string;
-    emptyStateButtonText: string;
-    showEmptyStateIllustration: boolean;
-    
-    showTrustBadges: boolean;
-    trustBadges: TrustBadgeConfig[];
-}
-
-const initialConfig: FavoritesPageConfig = {
-    showTitle: true,
-    headerTitle: 'FAVORITES.TITLE',
-    headerSubtitle: 'FAVORITES.SUBTITLE',
-    
-    showAddAllToCart: true,
-    addAllToCartText: 'FAVORITES.ADD_ALL',
-    
-    showToolbar: true,
-    showSort: true,
-    showCount: true,
-    
-    showProductColor: true,
-    showProductSize: true,
-    showProductPrice: true,
-    showProductOldPrice: true,
-    showProductStock: true,
-    showRemoveAction: true,
-    showMoveToCartAction: true,
-    
-    emptyStateTitle: 'FAVORITES.EMPTY',
-    emptyStateSubtitle: 'FAVORITES.EMPTY_DESC',
-    emptyStateButtonText: 'COMMON.START_SHOPPING',
-    showEmptyStateIllustration: true,
-    
-    showTrustBadges: true,
-    trustBadges: [
-        { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
-        { id: '2', icon: 'Truck', title: 'CART.FAST_SHIPPING', subtitle: 'CART.DAYS_2_5' },
-        { id: '3', icon: 'RotateCcw', title: 'CART.EASY_RETURNS', subtitle: 'CART.RETURN_PERIOD' },
-        { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'CART.SECURE_100' }
-    ]
-};
+import { FavoritesPageConfigService } from '../../../core/services/page-configs/favorites-page-config.service';
 
 export interface Product {
   id: string;
@@ -96,7 +28,8 @@ export type SortMode = 'latest' | 'price-low' | 'price-high';
 
 export type FavoriteProductDisplay = {
   product: Product;
-  name: string;
+  nameAr: string;
+  nameEn: string;
   image: string;
   price: number;
   oldPrice?: number;
@@ -110,11 +43,12 @@ const dummyProducts: Product[] = [
 ];
 const homeProducts: any[] = [];
 const homeProductById = new Map(homeProducts.map(item => [item.productId, item]));
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
 
 @Component({
   selector: 'app-favorites-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, FormsModule, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, FormsModule, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, LocalizeFieldPipe],
   templateUrl: './favorites-page.component.html',
   styleUrl: './favorites-page.component.css'
 })
@@ -131,7 +65,8 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
   readonly Truck = Truck;
 
   public langService = inject(LangService);
-  pageConfig = signal<FavoritesPageConfig>(initialConfig);
+  private configService = inject(FavoritesPageConfigService);
+  pageConfig = this.configService.pageConfig;
 
   favoriteProductIds = signal<string[]>(['prod-1', 'prod-2']); // Initial dummy data
   sortMode = signal<SortMode>('latest');
@@ -150,29 +85,10 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
     });
   });
 
-  private storageListener = (e: StorageEvent) => {
-    if (e.key === 'loxxking-favorites-page-config' && e.newValue) {
-      try {
-        const clean = sanitizeWithInitial(JSON.parse(e.newValue), initialConfig);
-        this.pageConfig.set(clean);
-      } catch (_) {}
-    }
-  };
-
   ngOnInit() {
-    const saved = localStorage.getItem('loxxking-favorites-page-config');
-    if (saved) {
-      try {
-        const clean = sanitizeWithInitial(JSON.parse(saved), initialConfig);
-        this.pageConfig.set(clean);
-        localStorage.setItem('loxxking-favorites-page-config', JSON.stringify(clean));
-      } catch (e) {}
-    }
-    window.addEventListener('storage', this.storageListener);
   }
 
   ngOnDestroy() {
-    window.removeEventListener('storage', this.storageListener);
   }
 
   private cartService = inject(CartService);
@@ -214,12 +130,13 @@ export class FavoritesPageComponent implements OnInit, OnDestroy {
     return {
       product: {
         ...product,
-        nameAr: homeProduct?.name ?? product.nameAr,
+        nameAr: homeProduct?.nameAr ?? product.nameAr,
         price: homeProduct?.price ?? Math.round(product.price),
         originalPrice: homeProduct?.oldPrice ?? product.originalPrice,
         images: homeProduct?.image ? [homeProduct.image] : product.images,
       },
-      name: homeProduct?.name ?? product.nameAr,
+      nameAr: homeProduct?.nameAr ?? product.nameAr,
+      nameEn: homeProduct?.nameEn ?? product.nameAr, // product mock doesn't have nameEn
       image: homeProduct?.image ?? product.images[0],
       price: homeProduct?.price ?? Math.round(product.price),
       oldPrice: homeProduct?.oldPrice ?? (product.originalPrice ? Math.round(product.originalPrice) : undefined),

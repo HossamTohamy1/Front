@@ -37,10 +37,24 @@ export class AuthService {
     try {
       const url = `${environment.apiBaseUrl || '/api'}/users/me`;
       const res = await firstValueFrom(this.http.get<any>(url, { withCredentials: true }));
+      const data = res?.data || res;
 
-      if (res && res.isSuccess && this.isUser(res.data)) {
-        this.user.set(res.data);
-        return res.data;
+      if (data && data.id && data.email) {
+        // Fallback: extract role from JWT if backend omits it
+        if (!data.role) {
+          const token = this.getToken();
+          if (token) {
+            try {
+              const payload = JSON.parse(atob(token.split('.')[1]));
+              data.role = (payload.role || payload.Role || 'customer').toLowerCase();
+            } catch (e) {}
+          }
+        }
+
+        if (this.isUser(data)) {
+          this.user.set(data);
+          return data;
+        }
       }
       this.user.set(null);
       return null;
@@ -57,7 +71,7 @@ export class AuthService {
       value.name &&
       value.email &&
       value.role &&
-      ['customer', 'admin', 'manager', 'sales'].includes(value.role)
+      ['customer', 'admin', 'manager', 'sales'].includes(value.role.toLowerCase())
     );
   }
 

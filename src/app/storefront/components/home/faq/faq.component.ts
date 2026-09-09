@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, ChevronLeft, ChevronRight, MessageCircle, Minus, Phone, Plus, Search } from 'lucide-angular';
 import { FaqPageConfigService } from '../../../../core/services/page-configs/faq-page-config.service';
 import { LangService } from '../../../../core/services/lang/lang.service';
+import { LocalizeFieldPipe } from '../../../../shared/pipes/localize-field.pipe';
 
 export interface FaqItem {
   id: string;
@@ -16,7 +17,7 @@ export interface FaqItem {
 @Component({
   selector: 'app-faq',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterModule, FormsModule, LucideAngularModule],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterModule, FormsModule, LucideAngularModule, LocalizeFieldPipe],
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.css'
 })

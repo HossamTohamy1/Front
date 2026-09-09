@@ -5,14 +5,14 @@
 
       <div class="lk-contact-page__content">
           <header class="lk-contact-page__hero">
-              <h1>{{ config.pageTitle | translate }}</h1>
-              <p>{{ 'CONTACT.SUBTITLE' | translate }}</p>
+              <h1>{{ config.pageTitle | localize: config.pageTitleAr : config.pageTitleEn }}</h1>
+              <p>{{ config.pageSubtitle | localize: config.pageSubtitleAr : config.pageSubtitleEn }}</p>
           </header>
 
           <section class="lk-contact-methods" aria-label='STOREFRONT.AUTO_STR_300'>
               @for (method of contactMethods; track method.id) {
                 <a
-                    [href]="method.href"
+                    [href]="method.link"
                     class="lk-contact-method"
                     [target]="method.external ? '_blank' : null"
                     [rel]="method.external ? 'noreferrer' : null"
@@ -27,16 +27,17 @@
                         </span>
 
                         <span class="lk-contact-method__content">
-                            <strong>{{ method.title | translate}}</strong>
-                            <small [class.is-ltr]="method.ltr">{{ method.subtitle | translate}}</small>
+                            <strong>{{ method.title | localize: method.titleAr : method.titleEn }}</strong>
+                            <small [class.is-ltr]="method.ltr">{{ method.value | localize: method.valueAr : method.valueEn }}</small>
                         </span>
                     </span>
                 </a>
               }
           </section>
 
-          <section class="lk-contact-form-card" id="contact-form" aria-label='STOREFRONT.AUTO_STR_361'>
-              <h2>{{ 'CONTACT.FORM_TITLE' | translate }}</h2>
+          <section class="lk-contact-form-card" id="contact-form" aria-label='STOREFRONT.AUTO_STR_361' *ngIf="config.showContactForm">
+              <h2>{{ config.formTitle | localize: config.formTitleAr : config.formTitleEn }}</h2>
+              <p class="mb-4 text-center text-sm text-gray-500">{{ config.formSubtitle | localize: config.formSubtitleAr : config.formSubtitleEn }}</p>
 
               <form class="lk-contact-form" (ngSubmit)="submitContactForm(contactForm)" #contactForm="ngForm">
                   <label class="lk-contact-field">

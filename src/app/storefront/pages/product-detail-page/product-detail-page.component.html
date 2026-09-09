@@ -64,7 +64,7 @@
             <div class="lk-product-info">
                 <div *ngIf="pageConfig().showBestSellerBadge" class="lk-best-seller-badge">
                     <lucide-icon name="flame" [img]="Flame" aria-hidden="true"></lucide-icon>
-                    <span>{{ 'HOME.BEST_SELLERS_ALT' | translate }}</span>
+                    <span>{{ pageConfig().bestSellerText | localize: pageConfig().bestSellerTextAr : pageConfig().bestSellerTextEn }}</span>
                 </div>
 
                 <h1>{{display.name | translate}}</h1>
@@ -91,7 +91,7 @@
 
                 <ng-container *ngIf="pageConfig().showColorOptions">
                     <div class="lk-product-option-heading">
-                        <strong>{{ 'PRODUCT.COLOR' | translate }}:</strong>
+                        <strong>{{ pageConfig().colorLabel | localize: pageConfig().colorLabelAr : pageConfig().colorLabelEn }}:</strong>
                         <span>{{ (selectedColor() === 0 ? display.color : display.color === 'STOREFRONT.AUTO_STR_472' ? 'STOREFRONT.AUTO_STR_483' : 'STOREFRONT.AUTO_STR_472') | translate }}</span>
                     </div>
 
@@ -113,11 +113,11 @@
                 <ng-container *ngIf="pageConfig().showSizeOptions">
                     <div class="lk-size-heading">
                         <div class="lk-size-label">
-                            <strong>{{ 'PRODUCT.SIZE' | translate }}:</strong>
+                            <strong>{{ pageConfig().sizeLabel | localize: pageConfig().sizeLabelAr : pageConfig().sizeLabelEn }}:</strong>
                             <span>{{selectedSize()}}</span>
                         </div>
                         <button type="button" class="lk-size-guide-button" routerLink="/size-guide">
-                            <lucide-icon name="ruler" [img]="Ruler" aria-hidden="true"></lucide-icon>{{ 'PRODUCT.SIZE_GUIDE' | translate }}</button>
+                            <lucide-icon name="ruler" [img]="Ruler" aria-hidden="true"></lucide-icon>{{ pageConfig().sizeGuideText | localize: pageConfig().sizeGuideTextAr : pageConfig().sizeGuideTextEn }}</button>
                     </div>
 
                     <div class="lk-size-options">
@@ -149,41 +149,29 @@
 
                 <div *ngIf="pageConfig().showPurchaseActions" class="lk-product-actions">
                     <button type="button" class="lk-add-cart-button" (click)="addCurrentProduct()">
-                        <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_256' | translate }}</button>
+                        <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>{{ pageConfig().addToCartText | localize: pageConfig().addToCartTextAr : pageConfig().addToCartTextEn }}</button>
                     <button type="button" class="lk-buy-now-button" (click)="buyNow()">
-                        <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_405' | translate }}</button>
+                        <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ pageConfig().buyNowText | localize: pageConfig().buyNowTextAr : pageConfig().buyNowTextEn }}</button>
                 </div>
 
                 <div *ngIf="pageConfig().showServiceRow" class="lk-product-service-row">
-                    <span><lucide-icon name="circle-dollar-sign" [img]="CircleDollarSign" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_220' | translate }}</span>
-                    <span><lucide-icon name="truck" [img]="Truck" aria-hidden="true"></lucide-icon>{{ 'CART.FAST_SHIPPING' | translate }}</span>
-                    <span><lucide-icon name="package-check" [img]="PackageCheck" aria-hidden="true"></lucide-icon>{{ 'CART.EASY_RETURNS' | translate }}</span>
+                    <span *ngFor="let svc of pageConfig().services">
+                        <lucide-icon [name]="svc.icon" aria-hidden="true"></lucide-icon>
+                        {{ svc.text | localize: svc.textAr : svc.textEn }}
+                    </span>
                 </div>
             </div>
         </section>
 
         <section *ngIf="pageConfig().showFeaturesSection" id="lk-features" class="lk-product-features-section">
-            <h2>{{ 'PRODUCT.FEATURES' | translate }}</h2>
+            <h2>{{ pageConfig().tabFeaturesText | localize: pageConfig().tabFeaturesTextAr : pageConfig().tabFeaturesTextEn }}</h2>
             <div class="lk-product-features-grid">
-                <article>
-                    <app-product-feature-icon name="shield"></app-product-feature-icon>
-                    <span>{{ 'STOREFRONT.AUTO_STR_200' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_375' | translate }}</span>
-                </article>
-                <article>
-                    <app-product-feature-icon name="feather"></app-product-feature-icon>
-                    <span>{{ 'STOREFRONT.AUTO_STR_478' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_257' | translate }}</span>
-                </article>
-                <article>
-                    <app-product-feature-icon name="posture"></app-product-feature-icon>
-                    <span>{{ 'STOREFRONT.AUTO_STR_341' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_466' | translate }}</span>
-                </article>
-                <article>
-                    <app-product-feature-icon name="fabric"></app-product-feature-icon>
-                    <span>{{ 'STOREFRONT.AUTO_STR_440' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_467' | translate }}</span>
-                </article>
-                <article>
-                    <app-product-feature-icon name="waist"></app-product-feature-icon>
-                    <span>{{ 'STOREFRONT.AUTO_STR_376' | translate }}<br />{{ 'STOREFRONT.AUTO_STR_428' | translate }}</span>
+                <article *ngFor="let feat of pageConfig().features">
+                    <app-product-feature-icon [name]="feat.icon"></app-product-feature-icon>
+                    <span>
+                        {{ feat.title | localize: feat.titleAr : feat.titleEn }}<br />
+                        {{ feat.subtitle | localize: feat.subtitleAr : feat.subtitleEn }}
+                    </span>
                 </article>
             </div>
         </section>
@@ -193,10 +181,10 @@
         <section *ngIf="pageConfig().showPurchaseActions" id="lk-purchase" class="lk-product-purchase-section" aria-label='STOREFRONT.AUTO_STR_191'>
             <div class="lk-product-purchase-actions">
                 <button type="button" class="lk-purchase-buy" (click)="buyNow()">
-                    <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_405' | translate }}</button>
+                    <lucide-icon name="zap" [img]="Zap" aria-hidden="true"></lucide-icon>{{ pageConfig().buyNowText | localize: pageConfig().buyNowTextAr : pageConfig().buyNowTextEn }}</button>
 
                 <button type="button" class="lk-purchase-cart" (click)="addCurrentProduct()">
-                    <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_256' | translate }}</button>
+                    <lucide-icon name="shopping-cart" [img]="ShoppingCart" aria-hidden="true"></lucide-icon>{{ pageConfig().addToCartText | localize: pageConfig().addToCartTextAr : pageConfig().addToCartTextEn }}</button>
 
                 <button
                     type="button"

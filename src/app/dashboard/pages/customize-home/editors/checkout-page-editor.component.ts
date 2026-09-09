@@ -1,6 +1,7 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { Component, inject} from '@angular/core';
+import { BilingualInputComponent } from '../components/bilingual-input/bilingual-input.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Trash2 } from 'lucide-angular';
@@ -9,7 +10,7 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
 @Component({
   selector: 'app-checkout-page-editor',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent, BilingualInputComponent],
   
   template: `
         <div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
@@ -19,77 +20,99 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
             </div>
 
             <app-section-card title="رأس الصفحة" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().headerTitle" (ngModelChange)="updateConfig({ headerTitle: $event })" />
-                </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_316' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().headerSubtitle" (ngModelChange)="updateConfig({ headerSubtitle: $event })" />
-                </div>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_178" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerTitleAr'] || ''" 
+                [valueEn]="$any(config())['headerTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerTitle', $event.lang, $event.value)"></app-bilingual-input>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_316" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerSubtitleAr'] || ''" 
+                [valueEn]="$any(config())['headerSubtitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerSubtitle', $event.lang, $event.value)"></app-bilingual-input>
             </app-section-card>
 
             <app-section-card title="الأقسام والنصوص" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_163' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().customerInfoTitle" (ngModelChange)="updateConfig({ customerInfoTitle: $event })" />
-                </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_181' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().paymentInfoTitle" (ngModelChange)="updateConfig({ paymentInfoTitle: $event })" />
-                </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_278' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().summaryTitle" (ngModelChange)="updateConfig({ summaryTitle: $event })" />
-                </div>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_163" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['customerInfoTitleAr'] || ''" 
+                [valueEn]="$any(config())['customerInfoTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('customerInfoTitle', $event.lang, $event.value)"></app-bilingual-input>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_181" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['paymentInfoTitleAr'] || ''" 
+                [valueEn]="$any(config())['paymentInfoTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('paymentInfoTitle', $event.lang, $event.value)"></app-bilingual-input>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_278" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['summaryTitleAr'] || ''" 
+                [valueEn]="$any(config())['summaryTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('summaryTitle', $event.lang, $event.value)"></app-bilingual-input>
+                
                 <div class="flex items-center gap-2 mb-2 mt-4">
                     <input type="checkbox" [ngModel]="config().showSafeShopping" (ngModelChange)="updateConfig({showSafeShopping: $event})" class="rounded text-blue-600 focus:ring-blue-500" />
                     <span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_57' | translate }}</span>
                 </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_115' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().safeShoppingTitle" (ngModelChange)="updateConfig({ safeShoppingTitle: $event })" />
-                </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_182' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().safeShoppingText" (ngModelChange)="updateConfig({ safeShoppingText: $event })" />
-                </div>
+                
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_115" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['safeShoppingTitleAr'] || ''" 
+                [valueEn]="$any(config())['safeShoppingTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('safeShoppingTitle', $event.lang, $event.value)"></app-bilingual-input>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_182" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['safeShoppingTextAr'] || ''" 
+                [valueEn]="$any(config())['safeShoppingTextEn'] || ''" 
+                (valueChange)="updateBilingualField('safeShoppingText', $event.lang, $event.value)"></app-bilingual-input>
             </app-section-card>
             
             <app-section-card title="حالة السلة الفارغة" [index]="2" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'COMMON.ADDRESS' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateTitle" (ngModelChange)="updateConfig({ emptyStateTitle: $event })" />
-                </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_449' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateText" (ngModelChange)="updateConfig({ emptyStateText: $event })" />
-                </div>
-                <div class="flex flex-col gap-1.5 mb-3">
-                    <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_275' | translate }}</span>
-                    <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateCta" (ngModelChange)="updateConfig({ emptyStateCta: $event })" />
-                </div>
+                <app-bilingual-input title="COMMON.ADDRESS" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyStateTitleAr'] || ''" 
+                [valueEn]="$any(config())['emptyStateTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyStateTitle', $event.lang, $event.value)"></app-bilingual-input>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_449" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyStateTextAr'] || ''" 
+                [valueEn]="$any(config())['emptyStateTextEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyStateText', $event.lang, $event.value)"></app-bilingual-input>
+                <app-bilingual-input title="DASHBOARD.AUTO_STR_275" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyStateCtaAr'] || ''" 
+                [valueEn]="$any(config())['emptyStateCtaEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyStateCta', $event.lang, $event.value)"></app-bilingual-input>
             </app-section-card>
 
             <app-section-card title="مميزات الشراء" [index]="3" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showTrustBadges: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addTrustBadge.bind(this) }">
                 <div class="flex flex-col gap-3 mt-3">
-                    <div *ngFor="let badge of config().trustBadges; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                         <div class="flex flex-col gap-2 flex-1">
-                            <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.title" (ngModelChange)="updateTrustBadge(idx, { title: $event })" placeholder="العنوان" />
-                            <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitle" (ngModelChange)="updateTrustBadge(idx, { subtitle: $event })" placeholder="الوصف القصير" />
-                            <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.icon" (ngModelChange)="updateTrustBadge(idx, { icon: $event })">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
+                                    <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.titleAr" (ngModelChange)="updateTrustBadge(idx, { titleAr: $event })" />
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
+                                    <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.titleEn" (ngModelChange)="updateTrustBadge(idx, { titleEn: $event })" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف القصير (عربي)</span>
+                                    <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitleAr" (ngModelChange)="updateTrustBadge(idx, { subtitleAr: $event })" />
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
+                                    <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitleEn" (ngModelChange)="updateTrustBadge(idx, { subtitleEn: $event })" />
+                                </div>
+                            </div>
+                            <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 mt-1" [ngModel]="badge.icon" (ngModelChange)="updateTrustBadge(idx, { icon: $event })">
                                 <option value="BadgeCheck">شارة صح (BadgeCheck)</option>
                                 <option value="Truck">شاحنة (Truck)</option>
                                 <option value="RotateCcw">إرجاع (RotateCcw)</option>
                                 <option value="ShieldCheck">درع صح (ShieldCheck)</option>
                             </select>
                         </div>
-                        <button (click)="removeTrustBadge(idx)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md h-fit">
+                        <button (click)="removeTrustBadge(idx)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md h-fit mt-5">
                             <lucide-icon name="trash-2" [img]="Trash2" size="16"></lucide-icon>
                         </button>
                     </div>
                 </div>
             </app-section-card>
+
+            
         </div>
   `
 })
@@ -98,8 +121,59 @@ export class CheckoutPageEditorComponent {
   config = this.configService.pageConfig;
   Trash2 = Trash2;
 
+  constructor() {
+    this.backfillLocalizedStrings();
+  }
+
+  backfillLocalizedStrings() {
+    const c: any = { ...this.config() };
+    let changed = false;
+    const fields = [
+      'headerTitle', 'headerSubtitle', 'customerInfoTitle', 'paymentInfoTitle',
+      'summaryTitle', 'safeShoppingTitle', 'safeShoppingText', 'emptyStateTitle',
+      'emptyStateText', 'emptyStateCta'
+    ];
+    for (const f of fields) {
+      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+        c[f + 'Ar'] = c[f];
+        c[f + 'En'] = c[f];
+        changed = true;
+      }
+    }
+    
+    if (c.trustBadges && c.trustBadges.length > 0) {
+      const newBadges = c.trustBadges.map((b: any) => {
+        let bChanged = false;
+        if (b.title && !b.titleAr && !b.titleEn) {
+          b.titleAr = b.title;
+          b.titleEn = b.title;
+          bChanged = true;
+        }
+        if (b.subtitle && !b.subtitleAr && !b.subtitleEn) {
+          b.subtitleAr = b.subtitle;
+          b.subtitleEn = b.subtitle;
+          bChanged = true;
+        }
+        if (bChanged) changed = true;
+        return b;
+      });
+      c.trustBadges = newBadges;
+    }
+
+    if (changed) {
+      this.configService.updateConfig(c);
+    }
+  }
+
   updateConfig(updates: Partial<CheckoutPageConfig>) {
     this.configService.updateConfig({ ...this.config(), ...updates });
+  }
+
+  updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
+    const current = { ...this.config() } as any;
+    current[field + lang] = value;
+    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    this.updateConfig(current);
   }
 
   addTrustBadge() {
@@ -121,4 +195,8 @@ export class CheckoutPageEditorComponent {
   }
 
   noop() {}
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
 }

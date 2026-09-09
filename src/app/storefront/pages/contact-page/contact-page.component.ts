@@ -5,7 +5,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
-import { ContactPageConfigService } from '../../../core/services/config/contact-page-config.service';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
+import { ContactPageConfigService } from '../../../core/services/page-configs/contact-page-config.service';
 import { ToastService } from '../../../core/services/toast/toast.service';
 import {
   LucideAngularModule,
@@ -50,7 +51,8 @@ type ContactFormState = {
     RouterLinkActive,
     StoreLayoutComponent,
     HomeHeaderComponent,
-    LucideAngularModule
+    LucideAngularModule,
+    LocalizeFieldPipe
   ],
   templateUrl: './contact-page.component.html',
   styleUrls: ['./contact-page.component.css']
@@ -74,47 +76,24 @@ export class ContactPageComponent {
   readonly UserRound = UserRound;
 
   get config() {
-    return this.configService.config();
+    return this.configService.pageConfig();
   }
 
   contactPlant = 'assets/contact/contact-plant.png';
   contactChatBubble = 'assets/contact/contact-chat-bubble.png';
   contactWhatsappBanner = 'assets/contact/contact-whatsapp-banner.png';
 
-  contactMethods: ContactMethodDef[] = [
-    {
-        id: 'whatsapp',
-        title: 'CONTACT.WHATSAPP',
-        subtitle: '+966 50 123 4567',
-        href: 'https://wa.me/966501234567',
-        icon: 'assets/contact/contact-whatsapp.png',
-        external: true,
-        ltr: true,
-    },
-    {
-        id: 'phone',
-        title: 'CHECKOUT.PHONE',
-        subtitle: '+966 50 123 4567',
-        href: 'tel:+966501234567',
-        icon: 'assets/contact/contact-phone.png',
-        ltr: true,
-    },
-    {
-        id: 'email',
-        title: 'CONTACT.EMAIL',
-        subtitle: 'support@loxxking.com',
-        href: 'mailto:support@loxxking.com',
-        icon: 'assets/contact/contact-mail.png',
-        ltr: true,
-    },
-    {
-        id: 'hours',
-        title: 'STOREFRONT.AUTO_STR_363',
-        subtitle: 'STOREFRONT.AUTO_STR_364',
-        href: '#contact-form',
-        icon: 'assets/contact/contact-clock.png',
-    },
-  ];
+  get contactMethods() {
+    return this.config().contactMethods.map((m: any) => ({
+      ...m,
+      icon: m.type === 'phone' ? 'assets/contact/contact-phone.png' 
+        : m.type === 'whatsapp' ? 'assets/contact/contact-whatsapp.png' 
+        : m.type === 'email' ? 'assets/contact/contact-mail.png' 
+        : 'assets/contact/contact-clock.png',
+      external: m.type === 'whatsapp' || m.type === 'email',
+      ltr: true
+    }));
+  }
 
   mobileNavigation = [
     { to: '/profile', label: 'STOREFRONT.AUTO_STR_457', icon: this.UserRound },

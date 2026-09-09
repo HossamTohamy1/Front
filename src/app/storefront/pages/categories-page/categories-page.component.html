@@ -8,8 +8,8 @@
     </nav>
 
     <header class="lk-categories-intro" *ngIf="pageConfig().showTitle">
-      <h1>{{pageConfig().headerTitle | translate}}</h1>
-      <p>{{pageConfig().headerSubtitle | translate}}</p>
+      <h1>{{pageConfig().headerTitle | localize: pageConfig().headerTitleAr : pageConfig().headerTitleEn}}</h1>
+      <p>{{pageConfig().headerSubtitle | localize: pageConfig().headerSubtitleAr : pageConfig().headerSubtitleEn}}</p>
       <span aria-hidden="true"></span>
     </header>
 
@@ -18,7 +18,7 @@
          [routerLink]="category.path"
          class="lk-category-showcase-card"
          [ngStyle]="{'--lk-category-delay': (i * 70) + 'ms'}"
-         [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'عرض منتجات ' : 'View products for ') + (category.title | translate) + ' ' + (category.accent | translate)">
+         [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'عرض منتجات ' : 'View products for ') + (category.title | localize: category.titleAr : category.titleEn) + ' ' + (category.accent | localize: category.accentAr : category.accentEn)">
         
         <div class="lk-category-showcase-card__image">
           <img [src]="category.image"
@@ -30,16 +30,14 @@
 
         <div class="lk-category-showcase-card__content">
           <h2>
-            <span>{{category.title | translate}}</span>
-            <strong>{{category.accent | translate}}</strong>
+            <span>{{category.title | localize: category.titleAr : category.titleEn}}</span>
+            <strong>{{category.accent | localize: category.accentAr : category.accentEn}}</strong>
           </h2>
 
           <i aria-hidden="true"></i>
 
           <p>
-            <span *ngFor="let line of splitDescription(category.description)">
-              {{line}}
-            </span>
+            <span>{{category.description | localize: category.descriptionAr : category.descriptionEn}}</span>
           </p>
 
           <span class="lk-category-showcase-card__arrow" aria-hidden="true">

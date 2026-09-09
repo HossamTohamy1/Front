@@ -7,8 +7,8 @@
         <div class="lk-favorites-heading__title">
           <lucide-icon [img]="Heart" aria-hidden="true"></lucide-icon>
           <div>
-            <h1>{{ pageConfig().headerTitle | translate}}</h1>
-            <p>{{ pageConfig().headerSubtitle | translate}}</p>
+            <h1>{{ pageConfig().headerTitle | localize: pageConfig().headerTitleAr : pageConfig().headerTitleEn }}</h1>
+            <p>{{ pageConfig().headerSubtitle | localize: pageConfig().headerSubtitleAr : pageConfig().headerSubtitleEn }}</p>
           </div>
         </div>
 
@@ -17,7 +17,7 @@
             (click)="addAllFavoritesToCart()"
             [disabled]="favoriteProducts().length === 0"
           >
-            {{ pageConfig().addAllToCartText | translate }} <lucide-icon [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
+            {{ pageConfig().addAllToCartText | localize: pageConfig().addAllToCartTextAr : pageConfig().addAllToCartTextEn }} <lucide-icon [img]="ShoppingCart" aria-hidden="true"></lucide-icon>
           </button>
         }
       </section>
@@ -52,13 +52,13 @@
         @for (item of favoriteProducts(); track item.product.id) {
           <article class="lk-favorite-item">
             <a [routerLink]="['/product', item.product.id]" class="lk-favorite-item__image">
-              <img [src]="item.image" [alt]="item.name" loading="lazy" decoding="async" />
+              <img [src]="item.image" [alt]="item.nameAr" loading="lazy" decoding="async" />
               <span aria-hidden="true"><lucide-icon [img]="Heart" fill="currentColor"></lucide-icon></span>
             </a>
 
             <div class="lk-favorite-item__details">
               <a [routerLink]="['/product', item.product.id]">
-                <h2>{{ item.name | translate}}</h2>
+                <h2>{{ item.nameAr | localize: item.nameAr : item.nameEn }}</h2>
               </a>
               <p>
                 @if (pageConfig().showProductColor) {
@@ -118,10 +118,10 @@
         }
 
         <div class="lk-favorites-empty__copy">
-          <h2>{{ pageConfig().emptyStateTitle | translate }}</h2>
-          <p>{{ pageConfig().emptyStateSubtitle | translate }}</p>
+          <h2>{{ pageConfig().emptyStateTitle | localize: pageConfig().emptyStateTitleAr : pageConfig().emptyStateTitleEn }}</h2>
+          <p>{{ pageConfig().emptyStateSubtitle | localize: pageConfig().emptyStateSubtitleAr : pageConfig().emptyStateSubtitleEn }}</p>
           <a routerLink="/all-shapers">
-            <span>{{ pageConfig().emptyStateButtonText | translate }}</span>
+            <span>{{ pageConfig().emptyStateButtonText | localize: pageConfig().emptyStateButtonTextAr : pageConfig().emptyStateButtonTextEn }}</span>
             <lucide-icon [img]="ChevronRight" class="rtl-flip" aria-hidden="true"></lucide-icon>
           </a>
         </div>
@@ -136,7 +136,7 @@
             @if (badge.icon === 'Truck') { <lucide-icon [img]="Truck" aria-hidden="true"></lucide-icon> }
             @if (badge.icon === 'RotateCcw') { <lucide-icon [img]="RotateCcw" aria-hidden="true"></lucide-icon> }
             @if (badge.icon === 'ShieldCheck') { <lucide-icon [img]="ShieldCheck" aria-hidden="true"></lucide-icon> }
-            <span><strong>{{ badge.title | translate}}</strong><small>{{ badge.subtitle | translate}}</small></span>
+            <span><strong>{{ badge.title | localize: badge.titleAr : badge.titleEn }}</strong><small>{{ badge.subtitle | localize: badge.subtitleAr : badge.subtitleEn }}</small></span>
           </div>
         }
       </section>
