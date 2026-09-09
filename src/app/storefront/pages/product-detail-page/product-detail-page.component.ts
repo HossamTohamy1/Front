@@ -13,6 +13,7 @@ import { products, Product } from '../../../shared/data/mockData';
 import { ProductRepositoryImpl } from '../../../data/repositories/product.repository.impl';
 import { ProductFeatureIconComponent } from '../../../shared/components/ui/feature-icon/product-feature-icon.component';
 import { LangService } from '../../../core/services/lang/lang.service';
+import { ProductReviewsComponent } from '../../components/product/product-reviews/product-reviews.component';
 
 export interface ProductPageConfig {
     showBreadcrumb: boolean;
@@ -76,7 +77,7 @@ const initialConfig: ProductPageConfig = {
 @Component({
   selector: 'app-product-detail-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, ProductFeatureIconComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, ProductFeatureIconComponent, ProductReviewsComponent],
   templateUrl: './product-detail-page.component.html',
   styleUrl: './product-detail-page.component.css'
 })
@@ -107,11 +108,6 @@ export class ProductDetailPageComponent {
   readonly EditIcon = Edit3;
   readonly XIcon = X;
 
-  readonly showReviewModal = signal(false);
-  readonly newReviewRating = signal(5);
-  readonly newReviewName = signal('');
-  readonly newReviewComment = signal('');
-
   product?: Product;
   display: any;
   
@@ -129,19 +125,6 @@ export class ProductDetailPageComponent {
       { value: 3, count: 12, width: 8 },
       { value: 2, count: 5, width: 3 },
       { value: 1, count: 3, width: 2 },
-  ];
-
-  customerReviews = [
-      {
-          name: 'STOREFRONT.AUTO_STR_407',
-          meta: 'تم الشراء: مقاس L - بيج',
-          comment: 'يعطي شكل جميل تحت الملابس ❤️',
-      },
-      {
-          name: 'DASHBOARD.AUTO_STR_368',
-          meta: 'تم الشراء: مقاس M - أسود',
-          comment: 'STOREFRONT.AUTO_STR_44',
-      },
   ];
 
   constructor() {
@@ -236,38 +219,5 @@ export class ProductDetailPageComponent {
 
   getFiveStars() {
       return Array(5).fill(0);
-  }
-
-  toggleReviewModal(open: boolean) {
-      this.showReviewModal.set(open);
-  }
-
-  submitReview(e: Event) {
-      e.preventDefault();
-      const comment = this.newReviewComment().trim();
-      if (!comment) {
-          this.toastService.warning(this.langService.storefrontLang() === 'ar' ? 'يرجى كتابة تعليقك أولاً' : 'Please write your review comment');
-          return;
-      }
-
-      const name = this.newReviewName().trim() || (this.langService.storefrontLang() === 'ar' ? 'عميل موثوق' : 'Verified Customer');
-      this.customerReviews.unshift({
-          name,
-          meta: this.langService.storefrontLang() === 'ar' ? 'الآن • تجربة مؤكدة' : 'Just now • Verified Purchase',
-          comment
-      });
-
-      this.display.reviewCount = (this.display.reviewCount || 0) + 1;
-      this.toggleReviewModal(false);
-      this.newReviewComment.set('');
-      this.newReviewName.set('');
-      this.newReviewRating.set(5);
-
-      this.toastService.success(
-          this.langService.storefrontLang() === 'ar'
-              ? 'تم إرسال تقييمك بنجاح وسيتم نشره قريباً!'
-              : 'Your review has been submitted successfully!',
-          4500
-      );
   }
 }

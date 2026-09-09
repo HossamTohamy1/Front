@@ -3,6 +3,7 @@ export const environment = {
   apiBaseUrl: '/api',
   apiUrl: '/api',
   useMockData: false,
+  useMockProducts: true,
   storagePrefix: 'lk-',
   enableLogging: true,
 };

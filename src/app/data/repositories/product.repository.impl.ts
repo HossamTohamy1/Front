@@ -72,42 +72,14 @@ export class ProductRepositoryImpl implements IProductRepository {
   }
 
   getProducts(): Observable<Product[]> {
-    if (!environment.useMockData) {
-      return this.http.get<any>(`${environment.apiBaseUrl}/products`).pipe(
-        map(res => {
-          const items = res?.data ?? res ?? [];
-          if (!Array.isArray(items) || items.length === 0) return products;
-          return items.map(p => this.mapProduct(p));
-        }),
-        catchError(() => of(products))
-      );
-    }
     return of(products);
   }
 
   getProductById(id: string): Observable<Product | undefined> {
-    if (!environment.useMockData) {
-      return this.http.get<any>(`${environment.apiBaseUrl}/products/${id}`).pipe(
-        map(res => {
-          const p = res?.data ?? res;
-          return p ? this.mapProduct(p) : products.find(prod => prod.id === id);
-        }),
-        catchError(() => of(products.find(p => p.id === id)))
-      );
-    }
     return of(products.find(p => p.id === id));
   }
 
   getProductBySlug(slug: string): Observable<Product | undefined> {
-    if (!environment.useMockData) {
-      return this.http.get<any>(`${environment.apiBaseUrl}/products/slug/${slug}`).pipe(
-        map(res => {
-          const p = res?.data ?? res;
-          return p ? this.mapProduct(p) : products.find(prod => prod.slug === slug);
-        }),
-        catchError(() => of(products.find(p => p.slug === slug)))
-      );
-    }
     return of(products.find(p => p.slug === slug));
   }
 
@@ -154,5 +126,16 @@ export class ProductRepositoryImpl implements IProductRepository {
       return of(reviews.filter(r => r.productId === productId));
     }
     return of(reviews);
+  }
+
+  getRealProductId(mockId: string): string {
+    const guidMap: Record<string, string> = {
+      'prod-1': '3D5D8C97-25BC-4457-A721-9EF43297FD54',
+      'prod-2': 'B5C81145-3CB4-4309-B98C-C42360B503B4',
+      'prod-3': '853AEF5F-E41E-4235-B4AE-7B053C9CB122'
+    };
+    
+    // Fallback to the first GUID for any unmapped mock product
+    return guidMap[mockId] || '3D5D8C97-25BC-4457-A721-9EF43297FD54';
   }
 }

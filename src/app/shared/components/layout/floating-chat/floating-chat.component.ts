@@ -1,9 +1,12 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, ElementRef, ViewChild, HostListener, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, Inject, PLATFORM_ID, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { ChatService } from '../../../../data/services/chat.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-floating-chat',
@@ -319,7 +322,10 @@ import { LucideAngularModule } from 'lucide-angular';
     </div>
   `
 })
-export class FloatingChatComponent {
+export class FloatingChatComponent implements OnInit, OnDestroy {
+  chatService = inject(ChatService);
+  authService = inject(AuthService);
+
   isAdmin = false;
   isOpen = false;
   isSupportActive = true;
@@ -337,7 +343,83 @@ export class FloatingChatComponent {
   unreadCount = 0;
 
   REACTION_OPTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
-  messages: any[] = []; // Mock messages
+  messages: any[] = [];
+  conversationId?: string;
+  private messageSub?: Subscription;
+
+  private refreshSub?: Subscription;
+
+  ngOnInit() {
+    if (this.authService.isAuthenticated()) {
+      this.loadConversation();
+    }
+    
+    this.refreshSub = this.chatService.refreshConversation$.subscribe(() => {
+      if (this.authService.isAuthenticated()) {
+        this.loadConversation();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.messageSub?.unsubscribe();
+    this.refreshSub?.unsubscribe();
+    this.chatService.stopConnection();
+  }
+
+  loadConversation() {
+    this.chatService.getMyConversation().subscribe({
+      next: (res) => {
+        if (res) {
+          this.conversationId = res.id;
+          const oldLen = this.messages.length;
+          
+          this.messages = res.messages.map(m => ({
+            id: m.id,
+            sender: m.senderRole === 'Staff' ? 'staff' : 'customer',
+            text: m.message,
+            sentAt: new Date(m.createdAt!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }));
+
+          const newLen = this.messages.length;
+          if (!this.isOpen && newLen > oldLen && oldLen > 0) {
+            this.unreadCount += (newLen - oldLen);
+          } else if (!this.isOpen && oldLen === 0 && newLen > 0) {
+            // Check if any messages are from staff that are recent, but for now just show unread if there are messages and we just loaded them while closed
+             // In a real app we'd track lastReadAt, but for simplicity:
+             if (this.messages[newLen - 1].sender === 'staff') {
+                this.unreadCount++;
+             }
+          }
+
+          this.chatService.startConnection(this.conversationId);
+          
+          if (!this.messageSub) {
+            this.messageSub = this.chatService.messageReceived$.subscribe((msg) => {
+              this.messages.push({
+                id: Date.now().toString(),
+                sender: msg.senderRole === 'Staff' ? 'staff' : 'customer',
+                text: msg.message,
+                sentAt: new Date(msg.createdAt!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              });
+              if (!this.isOpen) {
+                this.unreadCount++;
+              }
+              setTimeout(() => this.scrollToBottom(), 100);
+            });
+          }
+          
+          setTimeout(() => this.scrollToBottom(), 100);
+        }
+      }
+    });
+  }
+
+  scrollToBottom() {
+    if (this.messagesRef && this.messagesRef.nativeElement) {
+      this.messagesRef.nativeElement.scrollTop = this.messagesRef.nativeElement.scrollHeight;
+    }
+  }
 
   @ViewChild('messagesRef') messagesRef!: ElementRef<HTMLDivElement>;
   @ViewChild('inputRef') inputRef!: ElementRef<HTMLTextAreaElement>;
@@ -361,6 +443,15 @@ export class FloatingChatComponent {
 
   toggleChat() {
     this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      this.unreadCount = 0;
+      setTimeout(() => this.scrollToBottom(), 100);
+      
+      // Attempt to load if not already loaded and authenticated
+      if (!this.conversationId && this.authService.isAuthenticated()) {
+        this.loadConversation();
+      }
+    }
   }
 
   messageKind(message: any): string {
@@ -441,6 +532,17 @@ export class FloatingChatComponent {
 
   sendTextMessage(event: Event) {
     event.preventDefault();
+    if (!this.messageValue.trim() || !this.conversationId) return;
+    
+    const text = this.messageValue.trim();
+    this.messageValue = '';
+
+    this.chatService.sendMessage(this.conversationId, text).subscribe({
+      next: () => {
+        // Message will come through SignalR, or we can optimistically append
+        this.loadConversation(); // Refresh to be safe, though SignalR should handle it
+      }
+    });
   }
 
   handleImageSelected(event: any) {}

@@ -39,6 +39,7 @@ const initialConfig: PageConfig = {
       title: 'HOME.BEST_SELLERS',
       products: homeProducts.map(p => ({
         id: p.id,
+        productId: p.productId,
         name: p.name,
         price: p.price,
         originalPrice: p.oldPrice,

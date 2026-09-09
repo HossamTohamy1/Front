@@ -8,4 +8,5 @@ export interface IProductRepository {
   getCategories(): Observable<Category[]>;
   getCategoryBySlug(slug: string): Observable<Category | undefined>;
   getReviews(productId?: string): Observable<Review[]>;
+  getRealProductId(mockId: string): string;
 }

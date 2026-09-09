@@ -22,6 +22,17 @@ export class AuthService {
     }
   }
 
+  isAuthenticated(): boolean {
+    return this.user() !== null;
+  }
+
+  getToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return window.localStorage.getItem('lk-auth-token');
+    }
+    return null;
+  }
+
   async fetchUser(): Promise<User | null> {
     try {
       const url = `${environment.apiBaseUrl || 'http://localhost:5050/api'}/users/me`;
