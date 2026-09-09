@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateDirective, TranslateService } from '@ngx-translate/core';
@@ -531,7 +531,7 @@ import { ChatService } from '../../../../data/services/chat.service';
     }
   `]
 })
-export class ProductReviewsComponent implements OnInit {
+export class ProductReviewsComponent implements OnInit, OnChanges {
   @Input() productId!: string;
   
   readonly langService = inject(TranslateService);
@@ -581,10 +581,22 @@ export class ProductReviewsComponent implements OnInit {
     this.loadReviews();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['productId'] && !changes['productId'].isFirstChange()) {
+      this.loadReviews();
+    }
+  }
+
   loadReviews() {
     this.loading.set(true);
     const realGuid = this.productRepo.getRealProductId(this.productId);
     
+    if (!realGuid) {
+      this.reviews.set([]);
+      this.loading.set(false);
+      return;
+    }
+
     this.reviewService.getReviews(realGuid).subscribe({
       next: (data) => {
         this.reviews.set(Array.isArray(data) ? data : []);
@@ -636,13 +648,17 @@ export class ProductReviewsComponent implements OnInit {
 
   submitReview(e: Event) {
     e.preventDefault();
-    
     if (!this.isFormValid()) return;
 
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
     const realGuid = this.productRepo.getRealProductId(this.productId);
+    if (!realGuid) {
+      this.errorMessage.set(this.langService.currentLang() === 'ar' ? 'عذراً، التقييمات غير متاحة لهذا المنتج حالياً.' : 'Reviews are currently unavailable for this product.');
+      this.isSubmitting.set(false);
+      return;
+    }
 
     if (this.isAuthenticated()) {
       const dto: SubmitReviewDto = {
@@ -651,7 +667,7 @@ export class ProductReviewsComponent implements OnInit {
       };
       this.reviewService.submitReview(realGuid, dto).subscribe({
         next: () => {
-          this.handleOptimisticAdd(dto.rating, dto.comment, null, this.authService.user()?.name || null);
+          this.loadReviews();
           this.chatService.triggerRefresh();
           this.isSubmitting.set(false);
           this.toggleReviewModal(false);
@@ -666,7 +682,8 @@ export class ProductReviewsComponent implements OnInit {
       };
       this.reviewService.createReview(realGuid, dto).subscribe({
         next: () => {
-          this.handleOptimisticAdd(dto.rating, dto.comment, dto.guestName || null, null);
+          this.loadReviews();
+          this.chatService.triggerRefresh();
           this.isSubmitting.set(false);
           this.toggleReviewModal(false);
         },

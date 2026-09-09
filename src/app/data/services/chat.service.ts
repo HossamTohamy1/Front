@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth/auth.service';
 import * as signalR from '@microsoft/signalr';
@@ -14,6 +14,8 @@ export interface ChatMessage {
   createdAt?: string;
   isRead?: boolean;
   senderRole?: string;
+  senderType?: string;
+  senderName?: string;
   guestName?: string;
 }
 
@@ -41,16 +43,33 @@ export class ChatService {
     this.refreshConversationSource.next();
   }
 
-  getMyConversation(): Observable<ConversationResponse> {
-    return this.http.get<ConversationResponse>(`${this.baseUrl}/chat/conversations/my`);
+  getMyConversation(): Observable<ConversationResponse | null> {
+    return this.http.get<any>(`${this.baseUrl}/chat/conversations/my`).pipe(
+      map(res => {
+        const data = res?.data !== undefined ? res.data : res;
+        if (!data || !data.id) return null;
+        return data as ConversationResponse;
+      })
+    );
   }
 
   sendMessage(conversationId: string, text: string): Observable<any> {
+    if (!conversationId) {
+      return this.http.post<any>(`${this.baseUrl}/chat/send`, { message: text });
+    }
     return this.http.post(`${this.baseUrl}/chat/conversations/${conversationId}/messages`, { text });
+  }
+
+  markRead(conversationId: string): Observable<any> {
+    if (!conversationId) return new Observable(obs => { obs.next(null); obs.complete(); });
+    return this.http.post<any>(`${this.baseUrl}/chat/conversations/${conversationId}/read`, {});
   }
 
   startConnection(conversationId: string) {
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
+      if (conversationId) {
+        this.hubConnection.invoke('JoinConversation', conversationId).catch((err: any) => console.error(err));
+      }
       return;
     }
 
@@ -71,7 +90,9 @@ export class ChatService {
         message: message.message,
         createdAt: message.timestamp,
         senderId: message.userId,
-        senderRole: 'Staff'
+        senderRole: 'Staff',
+        senderType: 'Staff',
+        senderName: message.userName || 'Support'
       });
     });
 
@@ -79,7 +100,9 @@ export class ChatService {
       .then(() => {
         console.log('SignalR connected');
         // Join the group for this conversation
-        this.hubConnection?.invoke('JoinConversation', conversationId).catch((err: any) => console.error(err));
+        if (conversationId) {
+          this.hubConnection?.invoke('JoinConversation', conversationId).catch((err: any) => console.error(err));
+        }
       })
       .catch((err: any) => console.error('Error while starting connection: ' + err));
   }
