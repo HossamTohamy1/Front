@@ -1,7 +1,7 @@
 <app-store-layout [showFloatingChat]="false">
   <main class="lk-all-shapers-page">
     <header class="lk-all-shapers-title">
-      <h1>{{ pageConfig().headerTitle | translate }}{{ selectedType() !== 'all' ? ' - ' + (getTypeLabel(selectedType()) | translate) : '' }}</h1>
+      <h1>{{ pageConfig().headerTitle | localize: pageConfig().headerTitleAr : pageConfig().headerTitleEn }}{{ selectedType() !== 'all' ? ' - ' + (getTypeLabel(selectedType()) | translate) : '' }}</h1>
     </header>
 
     <section class="lk-all-shapers-filters" aria-label='STOREFRONT.AUTO_STR_266'>
@@ -135,9 +135,9 @@
 
     <ng-template #emptyState>
       <section class="lk-all-shapers-empty">
-        <h2>{{ pageConfig().emptyTitle | translate }}</h2>
-        <p>{{ pageConfig().emptyText | translate }}</p>
-        <button type="button" (click)="resetFilters()">{{ pageConfig().emptyCta | translate }}</button>
+        <h2>{{ pageConfig().emptyTitle | localize: pageConfig().emptyTitleAr : pageConfig().emptyTitleEn }}</h2>
+        <p>{{ pageConfig().emptyText | localize: pageConfig().emptyTextAr : pageConfig().emptyTextEn }}</p>
+        <button type="button" (click)="resetFilters()">{{ pageConfig().emptyCta | localize: pageConfig().emptyCtaAr : pageConfig().emptyCtaEn }}</button>
       </section>
     </ng-template>
 

@@ -1,6 +1,10 @@
 import { sanitizeWithInitial } from '../../utils/config-sanitizer';
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, effect , NgZone, inject} from '@angular/core';
 
+
+const INSTANCE_ID = typeof crypto !== 'undefined' && crypto.randomUUID 
+  ? crypto.randomUUID() 
+  : Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 export interface CategoryPageConfig {
     showTitle: boolean
@@ -19,12 +23,16 @@ export class CategoryPageConfigService {
 
   readonly pageConfig = signal<CategoryPageConfig>(this.loadInitialConfig());
 
+  private zone = inject(NgZone);
+
   constructor() {
     window.addEventListener('storage', (e: StorageEvent) => {
+      if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
+
       if (e.key === this.storageKey && e.newValue) {
         try {
           const updated = JSON.parse(e.newValue);
-          this.pageConfig.set(this.mergeWithInitial(updated));
+          this.zone.run(() => { this.pageConfig.set(this.mergeWithInitial(updated)); });
         } catch (_) {}
       }
     });
@@ -34,17 +42,19 @@ export class CategoryPageConfigService {
       localStorage.setItem(this.storageKey, JSON.stringify(config));
       
       try {
-        window.dispatchEvent(new StorageEvent('storage', {
+        const event = new StorageEvent('storage', {
           key: this.storageKey,
           newValue: JSON.stringify(config),
           storageArea: localStorage,
-        }));
+        });
+        (event as any).__sourceInstanceId = INSTANCE_ID;
+        window.dispatchEvent(event);
       } catch (_) {}
     });
   }
 
   updateConfig(newConfig: CategoryPageConfig) {
-    this.pageConfig.set(newConfig);
+    this.zone.run(() => { this.pageConfig.set(newConfig); });
   }
 
   private loadInitialConfig(): CategoryPageConfig {

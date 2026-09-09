@@ -1,5 +1,7 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { WalletPaymentFlowComponent } from '../../components/checkout/wallet-payment-flow/wallet-payment-flow.component';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
+import { CheckoutPageConfigService } from '../../../core/services/page-configs/checkout-page-config.service';
 import { Component, computed, inject, signal, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -64,7 +66,7 @@ function createTrackedOrderId() {
 @Component({
   selector: 'app-checkout-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, WalletPaymentFlowComponent, CommonModule, RouterLink, FormsModule, LucideAngularModule, StoreLayoutComponent, HomeHeaderComponent, ],
+  imports: [TranslatePipe, TranslateDirective, WalletPaymentFlowComponent, CommonModule, RouterLink, FormsModule, LucideAngularModule, StoreLayoutComponent, HomeHeaderComponent, LocalizeFieldPipe],
   templateUrl: './checkout-page.component.html',
   styleUrls: ['./checkout-page.component.css']
 })
@@ -80,26 +82,8 @@ export class CheckoutPageComponent implements OnInit {
   CHECKOUT_AREA_OPTIONS = CHECKOUT_AREA_OPTIONS;
   BANK_TRANSFER_DETAILS = BANK_TRANSFER_DETAILS;
 
-  config = {
-    headerTitle: 'CART.CHECKOUT',
-    headerSubtitle: 'STOREFRONT.AUTO_STR_118',
-    emptyStateTitle: 'CART.EMPTY',
-    emptyStateText: 'COMMON.CARTEMPTYDESC',
-    emptyStateCta: 'STOREFRONT.AUTO_STR_415',
-    customerInfoTitle: 'CHECKOUT.CUSTOMER_DETAILS',
-    paymentInfoTitle: 'CHECKOUT.PAYMENT_METHOD',
-    summaryTitle: 'CHECKOUT.ORDER_SUMMARY',
-    showSafeShopping: true,
-    safeShoppingTitle: 'CHECKOUT.SECURE_SHOPPING',
-    safeShoppingText: 'STOREFRONT.AUTO_STR_47',
-    showTrustBadges: true,
-    trustBadges: [
-      { id: '1', icon: 'BadgeCheck', title: 'CART.ORIGINAL_PRODUCTS', subtitle: 'CART.GUARANTEED_100' },
-      { id: '2', icon: 'Truck', title: 'COMMON.FASTDELIVERY', subtitle: 'STOREFRONT.AUTO_STR_151' },
-      { id: '3', icon: 'RotateCcw', title: 'STOREFRONT.AUTO_STR_274', subtitle: 'STOREFRONT.AUTO_STR_360' },
-      { id: '4', icon: 'ShieldCheck', title: 'CART.SECURE_PAYMENT', subtitle: 'STOREFRONT.AUTO_STR_275' }
-    ]
-  };
+  configService = inject(CheckoutPageConfigService);
+  config = this.configService.pageConfig;
 
   walletOptions = [
     { id: 'stc', label: 'STC Pay', image: '/assets/payment/stc-pay.png' },

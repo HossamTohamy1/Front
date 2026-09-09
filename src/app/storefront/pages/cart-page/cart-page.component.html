@@ -3,7 +3,7 @@
   <main class="lk-cart-page">
     <section class="lk-cart-heading">
       <div>
-        <h1>{{ config().headerTitle | translate}}</h1>
+        <h1>{{ config().headerTitle | localize: config().headerTitleAr : config().headerTitleEn }}</h1>
         <p>{{ itemCount() }} {{ (itemCount() === 1 ? 'STOREFRONT.AUTO_STR_471' : 'STOREFRONT.AUTO_STR_448') | translate }}</p>
       </div>
 
@@ -20,7 +20,7 @@
         @for (item of displayItems(); track item.cartItem.product.id + '-' + item.cartItem.size) {
           <article class="lk-cart-item">
             <a [routerLink]="['/product', item.cartItem.product.id]" class="lk-cart-item__image">
-              <img [src]="item.image" [alt]="item.name" loading="lazy" decoding="async" />
+              <img [src]="item.image" [alt]="item.nameAr" loading="lazy" decoding="async" />
             </a>
 
             <button
@@ -35,7 +35,7 @@
 
             <div class="lk-cart-item__details">
               <a [routerLink]="['/product', item.cartItem.product.id]">
-                <h2>{{ item.name | translate}}</h2>
+                <h2>{{ item.nameAr | localize: item.nameAr : item.nameEn }}</h2>
               </a>
 
               <div class="lk-cart-item__meta">
@@ -122,15 +122,15 @@
 
         @if (config().showCouponSection) {
           <div class="lk-cart-coupon">
-            <h2><lucide-icon name="tag" aria-hidden="true"></lucide-icon> {{ config().couponTitle | translate }}</h2>
+            <h2><lucide-icon name="tag" aria-hidden="true"></lucide-icon> {{ config().couponTitle | localize: config().couponTitleAr : config().couponTitleEn }}</h2>
             <div class="lk-cart-coupon__field">
               <input
                 [value]="couponCode()"
                 (input)="setCouponCode($event)"
-                [placeholder]="config().couponPlaceholder | translate"
+                [placeholder]="config().couponPlaceholder | localize: config().couponPlaceholderAr : config().couponPlaceholderEn"
                 aria-label='CART.DISCOUNT_CODE'
               />
-              <button type="button" (click)="applyCoupon()">{{ config().couponButtonText | translate }}</button>
+              <button type="button" (click)="applyCoupon()">{{ config().couponButtonText | localize: config().couponButtonTextAr : config().couponButtonTextEn }}</button>
             </div>
             <p><lucide-icon name="tag" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_58' | translate }}</p>
           </div>
@@ -148,7 +148,7 @@
           </div>
 
           <div class="lk-cart-empty__copy">
-            <h2>{{ 'STOREFRONT.AUTO_STR_59' | translate }}</h2>
+            <h2>{{ config().emptyCartText | localize: config().emptyCartTextAr : config().emptyCartTextEn }}</h2>
             <p>{{ 'STOREFRONT.AUTO_STR_36' | translate }}</p>
             <a routerLink="/all-shapers">
               <span>{{ 'COMMON.START_SHOPPING' | translate }}</span>
@@ -157,7 +157,7 @@
           </div>
         </section>
       } @else {
-        <div class="py-20 text-center">{{ config().emptyCartText | translate }}</div>
+        <div class="py-20 text-center">{{ config().emptyCartText | localize: config().emptyCartTextAr : config().emptyCartTextEn }}</div>
       }
     }
 
@@ -169,7 +169,7 @@
             @if (badge.icon === 'Truck') { <lucide-icon name="truck" aria-hidden="true"></lucide-icon> }
             @if (badge.icon === 'RotateCcw') { <lucide-icon name="rotate-ccw" aria-hidden="true"></lucide-icon> }
             @if (badge.icon === 'ShieldCheck') { <lucide-icon name="shield-check" aria-hidden="true"></lucide-icon> }
-            <span><strong>{{ badge.title | translate}}</strong><small>{{ badge.subtitle | translate}}</small></span>
+            <span><strong>{{ badge.title | localize: badge.titleAr : badge.titleEn }}</strong><small>{{ badge.subtitle | localize: badge.subtitleAr : badge.subtitleEn }}</small></span>
           </div>
         }
       </section>
@@ -178,7 +178,7 @@
     @if (displayItems().length > 0) {
       <button type="button" class="lk-cart-checkout-button" (click)="navigateToCheckout()">
         <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>
-        {{ config().checkoutButtonText | translate }}
+        {{ config().checkoutButtonText | localize: config().checkoutButtonTextAr : config().checkoutButtonTextEn }}
       </button>
     }
   </main>

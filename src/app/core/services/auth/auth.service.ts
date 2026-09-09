@@ -63,7 +63,12 @@ export class AuthService {
     try {
       const url = `${environment.apiBaseUrl || '/api'}/users/me`;
       const res = await firstValueFrom(this.http.get<any>(url, { withCredentials: true }));
-      const isOk = res?.success !== undefined ? res.success : res?.isSuccess;
+
+      // لو الـ response فيها success/isSuccess نتأكد منها، ولو مفيش wrapper خالص نعتبرها ok
+      const isOk = res?.success !== undefined
+        ? res.success
+        : (res?.isSuccess !== undefined ? res.isSuccess : true);
+
       const data = res?.data ?? res;
 
       if (isOk && data && data.id) {
@@ -71,7 +76,7 @@ export class AuthService {
           id: data.id,
           name: data.name || tokenPayload?.unique_name || 'Customer',
           email: data.email || (Array.isArray(tokenPayload?.email) ? tokenPayload.email[0] : tokenPayload?.email) || '',
-          role: (data.role || tokenPayload?.role || 'customer').toLowerCase() as UserRole
+          role: (data.role || tokenPayload?.role || tokenPayload?.Role || 'customer').toLowerCase() as UserRole
         };
         this.user.set(userObj);
         return userObj;
@@ -91,17 +96,6 @@ export class AuthService {
 
     this.user.set(null);
     return null;
-  }
-
-  private isUser(value: any): value is User {
-    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
-    return Boolean(
-      value.id &&
-      value.name &&
-      value.email &&
-      value.role &&
-      ['customer', 'admin', 'manager', 'sales'].includes(value.role)
-    );
   }
 
   setUser(nextUser: User | null) {

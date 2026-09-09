@@ -1,6 +1,8 @@
-import { Injectable, signal, effect, PLATFORM_ID, Inject, inject } from '@angular/core';
+import { Injectable, signal, effect, PLATFORM_ID, Inject, inject, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Subject, Observable, from } from 'rxjs';
+import { debounceTime, map, catchError } from 'rxjs/operators';
 import { PageConfig } from '../../models/config.model';
 import { sanitizeWithInitial } from '../../utils/config-sanitizer';
 import { homeCategories, homeProducts } from '../../../shared/data/homePageData';
@@ -78,9 +80,27 @@ export class HomePageConfigService {
   private readonly http = inject(HttpClient);
 
   readonly pageConfig = signal<PageConfig>(this.loadInitialConfig());
+  
+  private updateSubject = new Subject<PageConfig>();
+
+  private zone = inject(NgZone);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
+      // 0. Setup debounced backend sync
+      this.updateSubject.pipe(
+        debounceTime(750)
+      ).subscribe((newConfig) => {
+        const payload = {
+          sectionsJson: JSON.stringify(newConfig.sections)
+        };
+        this.http.put(`${environment.apiUrl}/home-page-config`, payload).subscribe({
+          error: (err) => {
+            console.warn('Could not persist homepage config to server, retaining local cache:', err);
+          }
+        });
+      });
+
       // 1. Fetch persistent configuration from Backend API on boot
       this.fetchFromBackend();
 
@@ -93,7 +113,7 @@ export class HomePageConfigService {
         if (e.key === this.storageKey && e.newValue) {
           try {
             const updated = JSON.parse(e.newValue);
-            this.pageConfig.set(this.mergeWithInitial(updated));
+            this.zone.run(() => { this.pageConfig.set(this.mergeWithInitial(updated)); });
           } catch (_) {}
         }
       });
@@ -119,28 +139,33 @@ export class HomePageConfigService {
   }
 
   updateConfig(newConfig: PageConfig) {
-    const previousConfig = this.pageConfig();
-
     // 1. Optimistic local update
-    this.pageConfig.set(newConfig);
+    this.zone.run(() => { this.pageConfig.set(newConfig); });
 
-    // 2. Persist to Backend via CQRS endpoint
-    const payload = {
-      sectionsJson: JSON.stringify(newConfig.sections)
-    };
-
-    this.http.put(`${environment.apiUrl}/home-page-config`, payload).subscribe({
-      next: () => {
-        // Successfully persisted to SQL Server
-      },
-      error: (err) => {
-        console.warn('Could not persist homepage config to server, retaining local cache:', err);
-      }
-    });
+    // 2. Persist to Backend via debounced subject
+    this.updateSubject.next(newConfig);
   }
 
   setPageConfig(newConfig: PageConfig) {
     this.updateConfig(newConfig);
+  }
+
+  uploadImage(file: File): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${environment.apiUrl}/home-page-config/upload-image`, formData).pipe(
+      map(res => ({ url: (res?.data?.url || res?.data || res?.url) as string })),
+      catchError(() => {
+        return from(
+          new Promise<{ url: string }>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve({ url: reader.result as string });
+            reader.onerror = (err) => reject(err);
+            reader.readAsDataURL(file);
+          })
+        );
+      })
+    );
   }
 
   private fetchFromBackend() {
@@ -152,7 +177,7 @@ export class HomePageConfigService {
             const parsedSections = JSON.parse(data.sectionsJson);
             if (Array.isArray(parsedSections) && parsedSections.length > 0) {
               const merged = this.mergeWithInitial({ sections: parsedSections });
-              this.pageConfig.set(merged);
+              this.zone.run(() => { this.pageConfig.set(merged); });
             }
           } catch (e) {
             console.error('Failed to parse sectionsJson from backend:', e);

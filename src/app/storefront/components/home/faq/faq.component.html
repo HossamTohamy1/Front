@@ -1,12 +1,12 @@
 <section class="lk-faq-section {{className}}" aria-labelledby="lk-faq-title">
     <header class="lk-faq-section__intro">
-        <h2 id="lk-faq-title">{{ config().title | translate }}</h2>
-        <p>{{ config().subtitle | translate }}</p>
+        <h2 id="lk-faq-title">{{ config().title | localize: config().titleAr : config().titleEn }}</h2>
+        <p>{{ config().subtitle | localize: config().subtitleAr : config().subtitleEn }}</p>
     </header>
 
     @if (config().showSearch) {
         <label class="lk-faq-search">
-            <input type="search" [ngModel]="query()" (ngModelChange)="query.set($event)" [placeholder]="config().searchPlaceholder | translate" [attr.aria-label]="'FAQ.SEARCH' | translate" />
+            <input type="search" [ngModel]="query()" (ngModelChange)="query.set($event)" [placeholder]="config().searchPlaceholder | localize: config().searchPlaceholderAr : config().searchPlaceholderEn" [attr.aria-label]="'FAQ.SEARCH' | translate" />
             <lucide-icon name="search" aria-hidden="true"></lucide-icon>
         </label>
     }
@@ -16,7 +16,7 @@
             @for (item of filteredItems(); track item.id) {
                 <article class="lk-faq-item" [class.is-open]="openId() === item.id">
                     <button type="button" class="lk-faq-question" (click)="toggleOpen(item.id)" [attr.aria-expanded]="openId() === item.id">
-                        <span>{{item.question | translate}}</span>
+                        <span>{{item.question | localize: item.questionAr : item.questionEn }}</span>
                         <span class="lk-faq-question__toggle" aria-hidden="true">
                             @if (openId() === item.id) {
                                 <lucide-icon name="minus"></lucide-icon>
@@ -26,7 +26,7 @@
                         </span>
                     </button>
                     @if (openId() === item.id) {
-                        <p class="lk-faq-answer">{{item.answer | translate}}</p>
+                        <p class="lk-faq-answer">{{item.answer | localize: item.answerAr : item.answerEn }}</p>
                     }
                 </article>
             }
@@ -46,8 +46,8 @@
                 <lucide-icon name="phone"></lucide-icon>
             </span>
             <span class="lk-faq-support-card__copy">
-                <strong>{{ config().supportCardTitle | translate }}</strong>
-                <small>{{ config().supportCardSubtitle | translate }}</small>
+                <strong>{{ config().supportCardTitle | localize: config().supportCardTitleAr : config().supportCardTitleEn }}</strong>
+                <small>{{ config().supportCardSubtitle | localize: config().supportCardSubtitleAr : config().supportCardSubtitleEn }}</small>
             </span>
             <lucide-icon [name]="langService.isRtl() ? 'chevron-left' : 'chevron-right'" [img]="langService.isRtl() ? ChevronLeft : ChevronRight" class="lk-faq-support-card__chevron" aria-hidden="true"></lucide-icon>
         </a>

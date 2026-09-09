@@ -2,8 +2,13 @@
   @for (benefit of displayBenefits; track benefit.title) {
     <article class="lk-benefits__item">
       <div>
-        <strong>{{ benefit.title | translate }}</strong>
-        <span>{{ benefit.subtitle | translate }}</span>
+        @if (benefit.isTranslateKey) {
+          <strong>{{ benefit.title | translate }}</strong>
+          <span>{{ benefit.subtitle | translate }}</span>
+        } @else {
+          <strong>{{ benefit.title }}</strong>
+          <span>{{ benefit.subtitle }}</span>
+        }
       </div>
       
       @switch (benefit.icon) {

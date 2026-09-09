@@ -1,5 +1,6 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
+import { BilingualInputComponent } from '../components/bilingual-input/bilingual-input.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -10,7 +11,7 @@ import { AddItemButtonComponent } from '../components/add-item-button/add-item-b
 @Component({
   selector: 'app-cart-page-editor',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent, AddItemButtonComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent, AddItemButtonComponent, BilingualInputComponent],
   template: `
     <div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
       <div class="text-center mb-4">
@@ -19,16 +20,15 @@ import { AddItemButtonComponent } from '../components/add-item-button/add-item-b
       </div>
 
       <app-section-card title="رأس الصفحة" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
-        <div class="flex flex-col gap-1.5 mb-2">
-          <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_276' | translate }}</span>
-          <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
-            [ngModel]="config().headerTitle" (ngModelChange)="updateConfig({ headerTitle: $event })" />
-        </div>
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false">
+        <app-bilingual-input title="عنوان الصفحة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerTitleAr'] || ''" 
+                [valueEn]="$any(config())['headerTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerTitle', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
       <app-section-card title="عناصر السلة" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false">
         <div class="grid grid-cols-2 gap-2">
           <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار صورة المنتج', field: 'showProductImage' }"></ng-container>
           <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'أزرار الكمية', field: 'showQuantityControls' }"></ng-container>
@@ -40,14 +40,23 @@ import { AddItemButtonComponent } from '../components/add-item-button/add-item-b
       <app-section-card title="كود الخصم" [index]="2" [enabled]="config().showCouponSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showCouponSection: $event })">
         <div class="flex flex-col gap-2">
-          <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'couponTitle' }"></ng-container>
-          <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'النص الإرشادي (Placeholder)', field: 'couponPlaceholder' }"></ng-container>
-          <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص زر التطبيق', field: 'couponButtonText' }"></ng-container>
+          <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['couponTitleAr'] || ''" 
+                [valueEn]="$any(config())['couponTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('couponTitle', $event.lang, $event.value)"></app-bilingual-input>
+          <app-bilingual-input title="النص الإرشادي (Placeholder)" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['couponPlaceholderAr'] || ''" 
+                [valueEn]="$any(config())['couponPlaceholderEn'] || ''" 
+                (valueChange)="updateBilingualField('couponPlaceholder', $event.lang, $event.value)"></app-bilingual-input>
+          <app-bilingual-input title="نص زر التطبيق" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['couponButtonTextAr'] || ''" 
+                [valueEn]="$any(config())['couponButtonTextEn'] || ''" 
+                (valueChange)="updateBilingualField('couponButtonText', $event.lang, $event.value)"></app-bilingual-input>
         </div>
       </app-section-card>
 
       <app-section-card title="ملخص الطلب" [index]="3" [enabled]="true" [isFirst]="false" [isLast]="false"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false">
         <div class="grid grid-cols-2 gap-2">
           <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'المجموع الفرعي', field: 'showSubtotal' }"></ng-container>
           <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'رسوم الشحن', field: 'showShipping' }"></ng-container>
@@ -55,30 +64,56 @@ import { AddItemButtonComponent } from '../components/add-item-button/add-item-b
           <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'الإجمالي', field: 'showTotal' }"></ng-container>
         </div>
         <div class="mt-4">
-          <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص زر إتمام الطلب', field: 'checkoutButtonText' }"></ng-container>
+          <app-bilingual-input title="نص زر إتمام الطلب" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['checkoutButtonTextAr'] || ''" 
+                [valueEn]="$any(config())['checkoutButtonTextEn'] || ''" 
+                (valueChange)="updateBilingualField('checkoutButtonText', $event.lang, $event.value)"></app-bilingual-input>
         </div>
       </app-section-card>
 
       <app-section-card title="السلة الفارغة" [index]="4" [enabled]="true" [isFirst]="false" [isLast]="false"
-        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="$event">
+        [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false">
         <div class="flex flex-col gap-2">
           <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار الرسم التوضيحي', field: 'emptyCartIllustration' }"></ng-container>
-          <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص السلة الفارغة', field: 'emptyCartText' }"></ng-container>
+          <app-bilingual-input title="نص السلة الفارغة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyCartTextAr'] || ''" 
+                [valueEn]="$any(config())['emptyCartTextEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyCartText', $event.lang, $event.value)"></app-bilingual-input>
         </div>
       </app-section-card>
 
       <app-section-card title="شارات الثقة" [index]="5" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة شارة" (onAddAction)="addTrustBadge()"
         (toggle)="updateConfig({ showTrustBadges: $event })">
-        <div class="flex flex-col gap-2">
-          <div *ngFor="let badge of config().trustBadges; let idx = index" class="flex gap-2 items-center bg-gray-50 border border-gray-200 rounded-lg p-2">
+        <div class="flex flex-col gap-3">
+          <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackByIndex" class="flex gap-2 items-start bg-gray-50 border border-gray-200 rounded-lg p-2">
             <div class="flex flex-col gap-2 flex-1">
-              <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="badge.title" (ngModelChange)="updateTrustBadge(idx, { title: $event })" placeholder="العنوان" />
-              <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
-                [ngModel]="badge.subtitle" (ngModelChange)="updateTrustBadge(idx, { subtitle: $event })" placeholder="الوصف" />
+               <div class="grid grid-cols-2 gap-2">
+                 <div>
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
+                   <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                     [ngModel]="badge.titleAr" (ngModelChange)="updateTrustBadge(idx, { titleAr: $event })" />
+                 </div>
+                 <div>
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
+                   <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                     [ngModel]="badge.titleEn" (ngModelChange)="updateTrustBadge(idx, { titleEn: $event })" />
+                 </div>
+               </div>
+               <div class="grid grid-cols-2 gap-2">
+                 <div>
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
+                   <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                     [ngModel]="badge.subtitleAr" (ngModelChange)="updateTrustBadge(idx, { subtitleAr: $event })" />
+                 </div>
+                 <div>
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
+                   <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                     [ngModel]="badge.subtitleEn" (ngModelChange)="updateTrustBadge(idx, { subtitleEn: $event })" />
+                 </div>
+               </div>
             </div>
-            <button (click)="removeTrustBadge(idx)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md"><lucide-icon name="trash-2" [size]="16"></lucide-icon></button>
+            <button (click)="removeTrustBadge(idx)" class="p-2 mt-5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md"><lucide-icon name="trash-2" [size]="16"></lucide-icon></button>
           </div>
         </div>
       </app-section-card>
@@ -93,19 +128,56 @@ import { AddItemButtonComponent } from '../components/add-item-button/add-item-b
         </label>
       </ng-template>
 
-      <ng-template #textInputTemplate let-label="label" let-field="field">
-        <div class="flex flex-col gap-1.5 mb-2">
-          <span class="text-xs font-bold text-gray-700">{{ label | translate }}</span>
-          <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
-            [ngModel]="getConfigValue(field)" (ngModelChange)="updateConfigField(field, $event)" />
-        </div>
-      </ng-template>
+      
     </div>
   `
 })
 export class CartPageEditorComponent {
   private configService = inject(CartPageConfigService);
   config = this.configService.pageConfig;
+
+  constructor() {
+    this.backfillLocalizedStrings();
+  }
+
+  backfillLocalizedStrings() {
+    const c: any = { ...this.config() };
+    let changed = false;
+    const fields = [
+      'headerTitle', 'couponTitle', 'couponPlaceholder', 'couponButtonText', 
+      'checkoutButtonText', 'emptyCartText'
+    ];
+    for (const f of fields) {
+      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+        c[f + 'Ar'] = c[f];
+        c[f + 'En'] = c[f];
+        changed = true;
+      }
+    }
+
+    if (c.trustBadges && c.trustBadges.length > 0) {
+      const newBadges = c.trustBadges.map((b: any) => {
+        let bChanged = false;
+        if (b.title && !b.titleAr && !b.titleEn) {
+          b.titleAr = b.title;
+          b.titleEn = b.title;
+          bChanged = true;
+        }
+        if (b.subtitle && !b.subtitleAr && !b.subtitleEn) {
+          b.subtitleAr = b.subtitle;
+          b.subtitleEn = b.subtitle;
+          bChanged = true;
+        }
+        if (bChanged) changed = true;
+        return b;
+      });
+      c.trustBadges = newBadges;
+    }
+
+    if (changed) {
+      this.configService.updateConfig(c);
+    }
+  }
 
   updateConfig(updates: Partial<any>) {
     this.configService.updateConfig({ ...this.config(), ...updates });
@@ -119,15 +191,29 @@ export class CartPageEditorComponent {
     this.updateConfig({ [field]: value });
   }
 
+  updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
+    const current = { ...this.config() } as any;
+    current[field + lang] = value;
+    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    this.updateConfig(current);
+  }
+
   addTrustBadge() {
     const badges = [...this.config().trustBadges];
-    badges.push({ id: 't-' + Date.now(), icon: 'BadgeCheck', title: 'ميزة جديدة', subtitle: 'تفاصيل الميزة' });
+    badges.push({ 
+      id: 't-' + Date.now(), 
+      icon: 'BadgeCheck', 
+      title: 'ميزة جديدة', titleAr: 'ميزة جديدة', titleEn: 'New Feature', 
+      subtitle: 'تفاصيل الميزة', subtitleAr: 'تفاصيل الميزة', subtitleEn: 'Feature Details' 
+    });
     this.updateConfig({ trustBadges: badges });
   }
 
   updateTrustBadge(index: number, updates: any) {
     const badges = [...this.config().trustBadges];
     badges[index] = { ...badges[index], ...updates };
+    badges[index].title = badges[index].titleEn || badges[index].titleAr || '';
+    badges[index].subtitle = badges[index].subtitleEn || badges[index].subtitleAr || '';
     this.updateConfig({ trustBadges: badges });
   }
 
@@ -135,5 +221,9 @@ export class CartPageEditorComponent {
     const badges = [...this.config().trustBadges];
     badges.splice(index, 1);
     this.updateConfig({ trustBadges: badges });
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
   }
 }

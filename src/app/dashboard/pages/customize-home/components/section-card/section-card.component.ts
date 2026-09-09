@@ -15,7 +15,11 @@ export class SectionCardComponent {
   @Input() index: number = 0;
   @Input() enabled: boolean = true;
   @Input() isFirst: boolean = false;
-  @Input() isLast: boolean = false; @Input() showReorder: boolean = true; @Input() showCopy: boolean = true; @Input() showDelete: boolean = true;
+  @Input() isLast: boolean = false;
+  @Input() showToggle: boolean = true;
+  @Input() showReorder: boolean = true;
+  @Input() showCopy: boolean = true;
+  @Input() showDelete: boolean = true;
   @Input() addAction?: { label: string; onClick: () => void };
 
   @Output() toggle = new EventEmitter<boolean>();

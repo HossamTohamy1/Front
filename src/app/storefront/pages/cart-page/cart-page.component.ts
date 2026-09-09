@@ -22,13 +22,15 @@ import { HomeHeaderComponent } from '../../../shared/components/layout/home-head
 import { CartService, CartItem } from '../../../core/services/cart/cart.service';
 import { FavoritesService } from '../../../core/services/favorites/favorites.service';
 import { ToastService } from '../../../core/services/toast/toast.service';
-import { CartPageConfigService } from '../../../core/services/config/cart-page-config.service';
+import { CartPageConfigService } from '../../../core/services/page-configs/cart-page-config.service';
 import { LangService } from '../../../core/services/lang/lang.service';
 import { products } from '../../../shared/data/mockData';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
 
 type CartDisplayItem = {
   cartItem: CartItem;
-  name: string;
+  nameAr: string;
+  nameEn: string;
   image: string;
   price: number;
   oldPrice?: number;
@@ -47,7 +49,8 @@ function resolveCartItem(cartItem: CartItem): CartDisplayItem {
 
   return {
     cartItem,
-    name: homeProduct?.nameAr ?? cartItem.product.nameAr,
+    nameAr: homeProduct?.nameAr ?? cartItem.product.nameAr ?? (cartItem.product as any).name,
+    nameEn: homeProduct?.nameEn ?? cartItem.product.nameEn ?? (cartItem.product as any).name,
     image: homeProduct?.images[0] ?? cartItem.product.images[0],
     price: homeProduct?.price ?? Math.round(cartItem.product.price),
     oldPrice:
@@ -65,7 +68,8 @@ function resolveCartItem(cartItem: CartItem): CartDisplayItem {
     RouterLink,
     LucideAngularModule,
     StoreLayoutComponent,
-    HomeHeaderComponent
+    HomeHeaderComponent,
+    LocalizeFieldPipe
   ],
   templateUrl: './cart-page.component.html',
   styleUrls: ['./cart-page.component.css']
@@ -81,7 +85,7 @@ export class CartPageComponent {
   readonly ChevronLeft = ChevronLeft;
   readonly ChevronRight = ChevronRight;
 
-  config = this.configService.config;
+  config = this.configService.pageConfig;
   cart = this.cartService.cart;
 
   couponCode = signal('');

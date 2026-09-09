@@ -47,7 +47,7 @@
           [ngModel]="query()"
           (ngModelChange)="query.set($event)"
           name="query"
-          [placeholder]="'STOREFRONT.AUTO_STR_115' | translate"
+          [placeholder]="pageConfig().searchPlaceholder | localize: pageConfig().searchPlaceholderAr : pageConfig().searchPlaceholderEn"
           aria-label='STOREFRONT.AUTO_STR_238'
           autofocus
         />
@@ -58,18 +58,18 @@
     </form>
 
     <section class="lk-search-block" aria-labelledby="quick-search-title">
-      <h2 id="quick-search-title">{{ 'STOREFRONT.AUTO_STR_285' | translate }}</h2>
+      <h2 id="quick-search-title">{{ pageConfig().quickSuggestionsTitle | localize: pageConfig().quickSuggestionsTitleAr : pageConfig().quickSuggestionsTitleEn }}</h2>
       <div class="lk-search-chips">
-        <button *ngFor="let suggestion of pageConfig().quickSuggestions" type="button" (click)="runSearch(suggestion)">
+        <button *ngFor="let suggestion of pageConfig().quickSuggestions" type="button" (click)="runSearch(suggestion.text || suggestion.textEn || suggestion.textAr || '')">
           <lucide-icon [img]="Search" aria-hidden="true"></lucide-icon>
-          <span>{{ suggestion | translate }}</span>
+          <span>{{ suggestion.text | localize: suggestion.textAr : suggestion.textEn }}</span>
         </button>
       </div>
     </section>
 
     <section class="lk-search-block" aria-labelledby="history-title">
       <div class="lk-search-block__heading">
-        <h2 id="history-title">{{ 'STOREFRONT.AUTO_STR_239' | translate }}</h2>
+        <h2 id="history-title">{{ pageConfig().recentSearchTitle | localize: pageConfig().recentSearchTitleAr : pageConfig().recentSearchTitleEn }}</h2>
         <button *ngIf="history().length > 0" type="button" class="lk-search-clear-history" (click)="clearHistory()">
           <lucide-icon [img]="Trash2" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_441' | translate }}</button>
       </div>
@@ -96,8 +96,13 @@
     <section class="lk-search-results" aria-labelledby="search-results-title">
       <div class="lk-search-results__heading">
         <h2 id="search-results-title">
-          {{ resultHeading().label | translate}}
-          <span *ngIf="resultHeading().count" class="lk-search-results__count">({{ resultHeading().count }})</span>
+          <ng-container *ngIf="mode() === 'suggestions'">
+            {{ pageConfig().suggestedProductsTitle | localize: pageConfig().suggestedProductsTitleAr : pageConfig().suggestedProductsTitleEn }}
+          </ng-container>
+          <ng-container *ngIf="mode() !== 'suggestions'">
+            {{ resultHeading().label | translate}}
+            <span *ngIf="resultHeading().count" class="lk-search-results__count">({{ resultHeading().count }})</span>
+          </ng-container>
         </h2>
         <a [routerLink]="['/category/all']" [queryParams]="submittedQuery() ? {q: submittedQuery()} : {}">{{ 'COMMON.SEEALL' | translate }}<lucide-icon class="rtl-flip" [img]="ChevronLeft" aria-hidden="true"></lucide-icon>
         </a>
@@ -120,11 +125,11 @@
               <lucide-icon [img]="Heart" [attr.fill]="isFavorite(product.id) ? 'currentColor' : 'none'" aria-hidden="true"></lucide-icon>
             </button>
 
-            <img [src]="getSearchProductDisplay(product).image" [alt]="getSearchProductDisplay(product).name" loading="lazy" decoding="async" />
+            <img [src]="getSearchProductDisplay(product).image" [alt]="getSearchProductDisplay(product).nameAr" loading="lazy" decoding="async" />
           </div>
 
           <div class="lk-search-product-card__body">
-            <h3>{{ getSearchProductDisplay(product).name | translate}}</h3>
+            <h3>{{ getSearchProductDisplay(product).nameAr | localize: getSearchProductDisplay(product).nameAr : getSearchProductDisplay(product).nameEn }}</h3>
 
             <div class="lk-search-product-card__colors" aria-label='STOREFRONT.AUTO_STR_260'>
               <span *ngFor="let color of getProductColors(product)" [style.backgroundColor]="color"></span>
@@ -177,11 +182,11 @@
         </svg>
       </div>
       <div class="lk-search-no-match__content">
-        <h2>{{ 'SHARED.AUTO_STR_22' | translate }}</h2>
+        <h2>{{ pageConfig().noResultsTitle | localize: pageConfig().noResultsTitleAr : pageConfig().noResultsTitleEn }}</h2>
         <p>
           {{ 'STOREFRONT.AUTO_STR_41' | translate }} «{{ submittedQuery() }}».
           <br />
-          {{ 'STOREFRONT.AUTO_STR_52' | translate }}.
+          {{ pageConfig().noResultsSubtitle | localize: pageConfig().noResultsSubtitleAr : pageConfig().noResultsSubtitleEn }}
         </p>
         <button type="button" (click)="searchAgain()">
           <lucide-icon [img]="Search" aria-hidden="true"></lucide-icon>{{ 'STOREFRONT.AUTO_STR_240' | translate }}</button>
@@ -192,8 +197,8 @@
       <div>
         <lucide-icon [img]="Headphones" aria-hidden="true"></lucide-icon>
         <span>
-          <strong>{{ 'SEARCH.NOT_FOUND' | translate }}</strong>
-          <small>{{ 'STOREFRONT.AUTO_STR_28' | translate }}</small>
+          <strong>{{ pageConfig().supportCardTitle | localize: pageConfig().supportCardTitleAr : pageConfig().supportCardTitleEn }}</strong>
+          <small>{{ pageConfig().supportCardSubtitle | localize: pageConfig().supportCardSubtitleAr : pageConfig().supportCardSubtitleEn }}</small>
         </span>
       </div>
       <a routerLink="/chat">

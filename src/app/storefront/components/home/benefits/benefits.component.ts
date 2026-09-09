@@ -1,6 +1,7 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LangService } from '../../../../core/services/lang/lang.service';
 
 @Component({
   selector: 'app-benefits',
@@ -10,11 +11,12 @@ import { CommonModule } from '@angular/common';
 })
 export class BenefitsComponent {
   @Input() config?: any;
+  private langService = inject(LangService);
 
   defaultBenefits = [
-    { icon: 'cash', title: 'STOREFRONT.AUTO_STR_220', subtitle: 'STOREFRONT.AUTO_STR_204' },
-    { icon: 'delivery', title: 'COMMON.FASTDELIVERY', subtitle: 'STOREFRONT.AUTO_STR_289' },
-    { icon: 'exchange', title: 'STOREFRONT.AUTO_STR_347', subtitle: 'STOREFRONT.AUTO_STR_262' },
+    { icon: 'cash', title: 'STOREFRONT.AUTO_STR_220', subtitle: 'STOREFRONT.AUTO_STR_204', isTranslateKey: true },
+    { icon: 'delivery', title: 'COMMON.FASTDELIVERY', subtitle: 'STOREFRONT.AUTO_STR_289', isTranslateKey: true },
+    { icon: 'exchange', title: 'STOREFRONT.AUTO_STR_347', subtitle: 'STOREFRONT.AUTO_STR_262', isTranslateKey: true },
   ];
 
   get displayBenefits(): any[] {
@@ -27,10 +29,16 @@ export class BenefitsComponent {
       return [];
     }
 
-    return active.map((b: any) => ({
-      icon: b.icon?.toLowerCase() === 'creditcard' ? 'cash' : b.icon?.toLowerCase() === 'refreshccw' ? 'exchange' : 'delivery',
-      title: b.text ? b.text.split('\n')[0] : '',
-      subtitle: b.text && b.text.split('\n')[1] ? b.text.split('\n')[1] : ''
-    }));
+    const lang = this.langService.effectiveLang();
+
+    return active.map((b: any) => {
+      const text = (lang === 'en' && b.textEn) ? b.textEn : (b.textAr || b.text || '');
+      return {
+        icon: b.icon?.toLowerCase() === 'creditcard' ? 'cash' : b.icon?.toLowerCase() === 'refreshccw' ? 'exchange' : 'delivery',
+        title: text ? text.split('\n')[0] : '',
+        subtitle: text && text.split('\n')[1] ? text.split('\n')[1] : '',
+        isTranslateKey: false
+      };
+    });
   }
 }
