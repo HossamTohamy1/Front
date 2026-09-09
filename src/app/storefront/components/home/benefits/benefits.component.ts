@@ -1,5 +1,5 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   imports: [TranslatePipe, TranslateDirective, CommonModule],
   templateUrl: './benefits.component.html'
 })
-export class BenefitsComponent implements OnInit {
+export class BenefitsComponent {
   @Input() config?: any;
 
   defaultBenefits = [
@@ -17,15 +17,20 @@ export class BenefitsComponent implements OnInit {
     { icon: 'exchange', title: 'STOREFRONT.AUTO_STR_347', subtitle: 'STOREFRONT.AUTO_STR_262' },
   ];
 
-  displayBenefits: any[] = [];
+  get displayBenefits(): any[] {
+    if (!this.config?.benefits || !this.config.benefits.length) {
+      return this.defaultBenefits;
+    }
 
-  ngOnInit() {
-    this.displayBenefits = this.config?.benefits?.length 
-      ? this.config.benefits.filter((b: any) => b.enabled).map((b: any) => ({
-          icon: b.icon.toLowerCase() === 'creditcard' ? 'cash' : b.icon.toLowerCase() === 'refreshccw' ? 'exchange' : 'delivery',
-          title: b.text.split('\n')[0],
-          subtitle: b.text.split('\n')[1] || ''
-        }))
-      : this.defaultBenefits;
+    const active = this.config.benefits.filter((b: any) => b.enabled !== false);
+    if (!active.length) {
+      return [];
+    }
+
+    return active.map((b: any) => ({
+      icon: b.icon?.toLowerCase() === 'creditcard' ? 'cash' : b.icon?.toLowerCase() === 'refreshccw' ? 'exchange' : 'delivery',
+      title: b.text ? b.text.split('\n')[0] : '',
+      subtitle: b.text && b.text.split('\n')[1] ? b.text.split('\n')[1] : ''
+    }));
   }
 }

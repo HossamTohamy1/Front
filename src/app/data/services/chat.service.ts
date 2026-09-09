@@ -56,8 +56,11 @@ export class ChatService {
 
     const token = this.authService.getToken();
     
+    const hubPath = (environment.apiUrl ? environment.apiUrl.replace(/\/api\/?$/, '') : '') || '';
+    const hubUrl = hubPath ? `${hubPath}/chatHub` : '/chatHub';
+
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment.apiUrl?.replace('/api', '') ?? 'http://localhost:5242'}/chatHub`, {
+      .withUrl(hubUrl, {
         accessTokenFactory: () => token || ''
       })
       .withAutomaticReconnect()
@@ -76,9 +79,9 @@ export class ChatService {
       .then(() => {
         console.log('SignalR connected');
         // Join the group for this conversation
-        this.hubConnection?.invoke('JoinConversation', conversationId).catch(err => console.error(err));
+        this.hubConnection?.invoke('JoinConversation', conversationId).catch((err: any) => console.error(err));
       })
-      .catch(err => console.error('Error while starting connection: ' + err));
+      .catch((err: any) => console.error('Error while starting connection: ' + err));
   }
 
   stopConnection() {

@@ -77,6 +77,26 @@
               ],
               "outputHashing": "all"
             },
+            "backend": {
+              "outputPath": {
+                "base": "../../Backend/Loxxking/loxxking-backend-clean.Api/wwwroot",
+                "browser": ""
+              },
+              "deleteOutputPath": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "300kB",
+                  "maximumError": "500kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,

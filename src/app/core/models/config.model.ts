@@ -37,6 +37,7 @@ export interface SectionConfig {
     enabled: boolean;
     title?: string;
     image?: string;
+    showTitle?: boolean;
     slides?: HeroSlide[];
     
     benefits?: BenefitItem[];

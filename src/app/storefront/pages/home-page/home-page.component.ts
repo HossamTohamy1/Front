@@ -1,6 +1,6 @@
 import { Component, OnInit, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HomePageConfigService } from '../../../core/services/config/home-page-config.service';
+import { HomePageConfigService } from '../../../core/services/page-configs/home-page-config.service';
 import { PageConfig } from '../../../core/models/config.model';
 
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';

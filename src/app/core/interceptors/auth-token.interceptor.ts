@@ -7,8 +7,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const isApiRequest =
     Boolean(environment.apiBaseUrl && req.url.startsWith(environment.apiBaseUrl)) ||
     Boolean(environment.apiUrl && req.url.startsWith(environment.apiUrl)) ||
-    req.url.startsWith('/api') ||
-    req.url.startsWith('http://localhost:5050/api');
+    req.url.startsWith('/api');
 
   if (isApiRequest) {
     const cloneConfig: any = {

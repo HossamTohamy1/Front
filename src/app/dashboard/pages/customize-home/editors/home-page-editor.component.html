@@ -5,7 +5,7 @@
   </div>
 
   <div class="flex flex-col">
-    <ng-container *ngFor="let section of sections; let i = index">
+    <ng-container *ngFor="let section of sections; let i = index; trackBy: trackBySectionId">
       
       <!-- HERO SECTION -->
       <app-section-card *ngIf="section.type === 'hero'"
@@ -18,8 +18,13 @@
         (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
         (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
         
+        <div *ngIf="!section.enabled" class="mb-3 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-amber-800 text-xs font-semibold">
+          <lucide-icon name="eye-off" [size]="14"></lucide-icon>
+          <span>هذا القسم مخفي حالياً من واجهة المتجر (قابل للتعديل بحرية)</span>
+        </div>
+
         <div class="flex gap-2 overflow-x-auto pb-2">
-          <div *ngFor="let slide of (section.slides || (section.image ? [{id: 'old-1', image: section.image}] : [])); let sIdx = index" class="relative w-32 flex-shrink-0 group">
+          <div *ngFor="let slide of (section.slides || (section.image ? [{id: 'old-1', image: section.image}] : [])); let sIdx = index; trackBy: trackBySlideId" class="relative w-32 flex-shrink-0 group">
             <div class="w-full h-24 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-blue-500 transition-colors">
               <img [src]="slide.image" alt="" class="w-full h-full object-cover" />
             </div>
@@ -27,9 +32,9 @@
               {{ sIdx + 1 }}
             </div>
             <div class="absolute top-1 left-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button (click)="deleteSlide(section, sIdx)" class="p-1.5 bg-white text-red-500 rounded-md shadow hover:bg-red-50"><lucide-icon name="trash-2" [size]="14"></lucide-icon></button>
-              <button (click)="duplicateSlide(section, sIdx)" class="p-1.5 bg-white text-blue-500 rounded-md shadow hover:bg-blue-50"><lucide-icon name="copy" [size]="14"></lucide-icon></button>
-              <button (click)="promptImageChange(section, sIdx, slide.image)" class="p-1.5 bg-white text-green-500 rounded-md shadow hover:bg-green-50"><lucide-icon name="edit-2" [size]="14"></lucide-icon></button>
+              <button (click)="deleteSlide(section, sIdx)" class="p-1.5 bg-white text-red-500 rounded-md shadow hover:bg-red-50" title="حذف"><lucide-icon name="trash-2" [size]="14"></lucide-icon></button>
+              <button (click)="duplicateSlide(section, sIdx)" class="p-1.5 bg-white text-blue-500 rounded-md shadow hover:bg-blue-50" title="تكرار"><lucide-icon name="copy" [size]="14"></lucide-icon></button>
+              <button (click)="promptImageChange(section, sIdx, slide.image)" class="p-1.5 bg-white text-green-500 rounded-md shadow hover:bg-green-50" title="تغيير الصورة"><lucide-icon name="edit-2" [size]="14"></lucide-icon></button>
             </div>
           </div>
           <div class="w-32 h-24 flex-shrink-0 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer" (click)="addHeroSlide(section)">
@@ -52,8 +57,13 @@
         (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
         (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
         
+        <div *ngIf="!section.enabled" class="mb-3 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-amber-800 text-xs font-semibold">
+          <lucide-icon name="eye-off" [size]="14"></lucide-icon>
+          <span>هذا القسم مخفي حالياً من واجهة المتجر (قابل للتعديل بحرية)</span>
+        </div>
+
         <div class="space-y-2 mb-2">
-          <div *ngFor="let benefit of section.benefits; let bIdx = index" class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg p-2">
+          <div *ngFor="let benefit of section.benefits; let bIdx = index; trackBy: trackByBenefitId" class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg p-2">
             <div class="flex items-center gap-2 flex-1">
               <div class="text-gray-600 bg-gray-100 p-1.5 rounded flex-shrink-0">
                 <lucide-icon *ngIf="bIdx === 0" name="banknote" [size]="18"></lucide-icon>
@@ -63,7 +73,7 @@
               <input
                 type="text"
                 class="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800"
-                [ngModel]="benefit.text.replace('\n', ' - ')"
+                [ngModel]="benefit.text ? benefit.text.replace('\n', ' - ') : ''"
                 (ngModelChange)="updateBenefitText(section, bIdx, $event)"
                 placeholder="نص الميزة"
               />
@@ -71,8 +81,8 @@
             <button (click)="removeBenefit(section, bIdx)" class="text-red-400 hover:text-red-600 p-1" title="حذف">
               <lucide-icon name="trash-2" [size]="16"></lucide-icon>
             </button>
-            <label class="relative inline-flex items-center cursor-pointer ml-1">
-              <input type="checkbox" class="sr-only peer" [checked]="benefit.enabled" (change)="updateBenefit(section, bIdx, { enabled: $any($event.target).checked })" />
+            <label class="relative inline-flex items-center cursor-pointer ml-1" title="تفعيل / تعطيل الميزة">
+              <input type="checkbox" class="sr-only peer" [checked]="benefit.enabled !== false" (change)="updateBenefit(section, bIdx, { enabled: $any($event.target).checked })" />
               <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
           </div>
@@ -89,8 +99,13 @@
         (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
         (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
         
+        <div *ngIf="!section.enabled" class="mb-3 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-amber-800 text-xs font-semibold">
+          <lucide-icon name="eye-off" [size]="14"></lucide-icon>
+          <span>هذا القسم مخفي حالياً من واجهة المتجر (قابل للتعديل بحرية)</span>
+        </div>
+
         <div class="flex flex-row items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
-          <div class="w-24 h-16 rounded-md overflow-hidden flex items-center justify-center">
+          <div class="w-24 h-16 rounded-md overflow-hidden flex items-center justify-center bg-gray-200">
             <img *ngIf="section.image" [src]="section.image" alt="Banner" class="w-full h-full object-cover" />
             <lucide-icon *ngIf="!section.image" name="image" class="text-gray-400"></lucide-icon>
           </div>
@@ -110,10 +125,15 @@
         (dragstart)="handleDragStart($event, i)" (dragend)="handleDragEnd()"
         (dragover)="handleDragOver($event)" (drop)="handleDrop($event, i)">
         
+        <div *ngIf="!section.enabled" class="mb-3 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-amber-800 text-xs font-semibold">
+          <lucide-icon name="eye-off" [size]="14"></lucide-icon>
+          <span>هذا القسم مخفي حالياً من واجهة المتجر (قابل للتعديل بحرية)</span>
+        </div>
+
         <div class="flex flex-col mb-2 gap-2">
           <div class="flex items-center gap-3 w-full">
-            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-              <input type="checkbox" class="sr-only peer" [checked]="!!section.title" (change)="updateSection(section.id, { title: $any($event.target).checked ? (section.type === 'categories' ? 'تسوق حسب الفئة' : 'الأكثر مبيعاً') : '' })" />
+            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0" title="إظهار / إخفاء العنوان">
+              <input type="checkbox" class="sr-only peer" [checked]="section.showTitle !== false" (change)="updateSection(section.id, { showTitle: $any($event.target).checked })" />
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
             </label>
             <input type="text" class="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium" 
@@ -122,26 +142,84 @@
         </div>
         <div class="mb-2 mt-4">
           <div class="text-xs font-bold text-gray-700 mb-2">
-            المنتجات ({{ section.type === 'categories' ? (section.categories?.length || 0) : (section.products?.length || 0) }})
+            العناصر المعروضة ({{ section.type === 'categories' ? (section.categories?.length || 0) : (section.products?.length || 0) }})
           </div>
           <div class="flex gap-2 overflow-x-auto pb-2">
             <ng-container *ngIf="section.type === 'categories'">
-              <div *ngFor="let c of section.categories" class="w-14 h-14 bg-gray-100 rounded-md border border-gray-200 overflow-hidden flex-shrink-0">
+              <div *ngFor="let c of section.categories; trackBy: trackByItemId" class="w-14 h-14 bg-gray-100 rounded-md border border-gray-200 overflow-hidden flex-shrink-0" [title]="c.name">
                 <img [src]="c.image" [alt]="c.name" class="w-full h-full object-cover" />
               </div>
             </ng-container>
             <ng-container *ngIf="section.type === 'bestsellers'">
-              <div *ngFor="let p of section.products" class="w-14 h-14 bg-gray-100 rounded-md border border-gray-200 overflow-hidden flex-shrink-0 p-1">
+              <div *ngFor="let p of section.products; trackBy: trackByItemId" class="w-14 h-14 bg-gray-100 rounded-md border border-gray-200 overflow-hidden flex-shrink-0 p-1" [title]="p.name">
                 <img [src]="p.image" [alt]="p.name" class="w-full h-full object-contain mix-blend-multiply" />
               </div>
             </ng-container>
           </div>
         </div>
-        <button class="w-full flex items-center justify-center gap-2 py-2 border border-blue-200 text-blue-600 bg-white rounded-lg text-sm hover:bg-blue-50 transition-colors mt-2">
-          <lucide-icon name="edit-2" [size]="16"></lucide-icon>تعديل محتوى القسم</button>
+        <button (click)="openContentEditor(section)" class="w-full flex items-center justify-center gap-2 py-2 border border-blue-200 text-blue-600 bg-white rounded-lg text-sm hover:bg-blue-50 transition-colors mt-2 font-medium">
+          <lucide-icon name="edit-2" [size]="16"></lucide-icon><span>تعديل محتوى القسم (إدارة العناصر)</span>
+        </button>
       </app-section-card>
       
     </ng-container>
+  </div>
+
+  <!-- Content Editor Modal / Drawer Shell -->
+  <div *ngIf="editingSection" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-gray-900">إدارة محتوى القسم</h3>
+          <p class="text-xs text-gray-500">{{ titles[editingSection.type] }}</p>
+        </div>
+        <button (click)="closeContentEditor()" class="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+          <lucide-icon name="x" [size]="20"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-3 custom-scrollbar">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-bold text-gray-800">قائمة العناصر ({{ (editingSection.type === 'categories' ? editingSection.categories?.length : editingSection.products?.length) || 0 }})</span>
+          <button (click)="addItemToActiveSection()" class="flex items-center gap-1 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-2.5 py-1.5 rounded-md font-bold">
+            <lucide-icon name="plus" [size]="14"></lucide-icon><span>إضافة عنصر</span>
+          </button>
+        </div>
+
+        <div *ngIf="editingSection.type === 'categories'" class="space-y-2">
+          <div *ngFor="let cat of editingSection.categories; let cIdx = index; trackBy: trackByItemId" class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
+            <div class="flex items-center gap-3">
+              <img [src]="cat.image" class="w-10 h-10 rounded-md object-cover" />
+              <input type="text" [(ngModel)]="cat.name" (ngModelChange)="updateSection(editingSection.id, { categories: editingSection.categories })" class="text-sm font-semibold bg-white border border-gray-200 rounded px-2 py-1 outline-none" />
+            </div>
+            <button (click)="removeItemFromActiveSection(cIdx)" class="p-1 text-red-500 hover:bg-red-50 rounded">
+              <lucide-icon name="trash-2" [size]="16"></lucide-icon>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="editingSection.type === 'bestsellers'" class="space-y-2">
+          <div *ngFor="let prod of editingSection.products; let pIdx = index; trackBy: trackByItemId" class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
+            <div class="flex items-center gap-3">
+              <img [src]="prod.image" class="w-10 h-10 rounded-md object-contain bg-white" />
+              <div class="flex flex-col">
+                <input type="text" [(ngModel)]="prod.name" (ngModelChange)="updateSection(editingSection.id, { products: editingSection.products })" class="text-sm font-semibold bg-white border border-gray-200 rounded px-2 py-1 outline-none" />
+                <span class="text-xs text-gray-500">{{ prod.price }} ر.س</span>
+              </div>
+            </div>
+            <button (click)="removeItemFromActiveSection(pIdx)" class="p-1 text-red-500 hover:bg-red-50 rounded">
+              <lucide-icon name="trash-2" [size]="16"></lucide-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-gray-100 flex justify-end gap-2 mt-4">
+        <button (click)="closeContentEditor()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700">
+          تم
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="relative mt-4">

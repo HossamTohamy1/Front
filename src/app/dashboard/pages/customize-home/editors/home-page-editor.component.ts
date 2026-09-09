@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { HomePageConfigService } from '../../../../core/services/page-configs/home-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
+import { homeCategories, homeProducts } from '../../../../shared/data/homePageData';
 
 type SectionType = 'hero' | 'benefits' | 'categories' | 'bestsellers' | 'promo';
 
@@ -20,6 +21,7 @@ export class HomePageEditorComponent {
   
   draggedIdx: number | null = null;
   showAddMenu = false;
+  editingSection: any = null;
 
   titles: Record<string, string> = {
     hero: "الصورة الرئيسية (البانر)",
@@ -29,11 +31,27 @@ export class HomePageEditorComponent {
     promo: "بانر العروض الترويجية",
   };
 
-  heroVisual = 'assets/home/hero-visual-hd.png'; // Fallback
-  offerBanner = 'assets/home/offer-products-banner-hd.png'; // Fallback
+  heroVisual = '/assets/home/hero-visual-hd.png';
+  offerBanner = '/assets/home/offer-products-banner-hd.png';
 
   get sections() {
     return this.config().sections || [];
+  }
+
+  trackBySectionId(index: number, section: any): string {
+    return section?.id || `sec-${index}`;
+  }
+
+  trackBySlideId(index: number, slide: any): string {
+    return slide?.id || `slide-${index}`;
+  }
+
+  trackByBenefitId(index: number, benefit: any): string {
+    return benefit?.id || `benefit-${index}`;
+  }
+
+  trackByItemId(index: number, item: any): string {
+    return item?.id || `item-${index}`;
   }
 
   updateConfig(updates: Partial<any>) {
@@ -73,10 +91,17 @@ export class HomePageEditorComponent {
   updateSection(id: string, updates: Partial<any>) {
     const newSections = this.sections.map((s: any) => s.id === id ? { ...s, ...updates } : s);
     this.updateConfig({ sections: newSections });
+    if (this.editingSection && this.editingSection.id === id) {
+      this.editingSection = { ...this.editingSection, ...updates };
+    }
   }
 
   duplicateSection(index: number) {
-    const newSection = { ...this.sections[index], id: "sec-" + Date.now() };
+    const original = this.sections[index];
+    const newSection = {
+      ...JSON.parse(JSON.stringify(original)),
+      id: "sec-" + original.type + "-" + Date.now().toString(36)
+    };
     const newSections = [...this.sections];
     newSections.splice(index + 1, 0, newSection);
     this.updateConfig({ sections: newSections });
@@ -105,22 +130,44 @@ export class HomePageEditorComponent {
   }
 
   addSection(type: SectionType) {
+    const timestamp = Date.now().toString(36);
     const newSection: any = {
-      id: "sec-" + Date.now(),
+      id: `sec-${type}-${timestamp}`,
       type,
       enabled: true
     };
+
     if (type === 'hero') {
       newSection.title = "الصورة الرئيسية (البانر)";
-      newSection.slides = [{ id: "slide-" + Date.now(), image: this.heroVisual, title: "شد أقوى\nوقوام أفضل" }];
+      newSection.slides = [
+        { id: `slide-${timestamp}`, image: this.heroVisual, title: "شد أقوى\nوقوام أفضل" }
+      ];
     } else if (type === 'benefits') {
-      newSection.benefits = [{ id: "b1-" + Date.now(), text: 'توصيل سريع ومجاني', icon: "Truck", enabled: true }];
+      newSection.benefits = [
+        { id: `b1-${timestamp}`, text: 'توصيل سريع ومجاني', icon: "Truck", enabled: true },
+        { id: `b2-${timestamp}`, text: 'دفع آمن عند الاستلام', icon: "CreditCard", enabled: true }
+      ];
     } else if (type === 'categories') {
       newSection.title = 'تسوق حسب الفئة';
-      newSection.categories = []; // Simplified
+      newSection.showTitle = true;
+      newSection.categories = homeCategories.map(c => ({
+        id: c.id,
+        name: c.label,
+        image: c.image
+      }));
     } else if (type === 'bestsellers') {
       newSection.title = 'الأكثر مبيعاً';
-      newSection.products = []; // Simplified
+      newSection.showTitle = true;
+      newSection.products = homeProducts.map(p => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        originalPrice: p.oldPrice,
+        image: p.image,
+        discount: p.discount ? `-${p.discount}%` : undefined,
+        rating: p.rating,
+        reviewsCount: p.reviews
+      }));
     } else if (type === 'promo') {
       newSection.image = this.offerBanner;
     }
@@ -131,13 +178,13 @@ export class HomePageEditorComponent {
 
   addHeroSlide(section: any) {
     const slides = section.slides || (section.image ? [{ id: 'old-1', image: section.image }] : []);
-    const newSlide = { id: 'slide-' + Date.now(), image: this.heroVisual };
+    const newSlide = { id: 'slide-' + Date.now().toString(36), image: this.heroVisual, title: 'عنوان الشريحة' };
     this.updateSection(section.id, { slides: [...slides, newSlide] });
   }
 
   duplicateSlide(section: any, slideIndex: number) {
     const slides = [...(section.slides || [])];
-    const newSlide = { ...slides[slideIndex], id: 'slide-' + Date.now() };
+    const newSlide = { ...slides[slideIndex], id: 'slide-' + Date.now().toString(36) };
     slides.splice(slideIndex + 1, 0, newSlide);
     this.updateSection(section.id, { slides });
   }
@@ -187,7 +234,55 @@ export class HomePageEditorComponent {
 
   addBenefit(section: any) {
     const benefits = [...(section.benefits || [])];
-    benefits.push({ id: "b-" + Date.now(), text: 'شحن مجاني\nلجميع الطلبات', icon: "Truck", enabled: true });
+    benefits.push({ id: "b-" + Date.now().toString(36), text: 'شحن مجاني\nلجميع الطلبات', icon: "Truck", enabled: true });
     this.updateSection(section.id, { benefits });
+  }
+
+  openContentEditor(section: any) {
+    this.editingSection = section;
+  }
+
+  closeContentEditor() {
+    this.editingSection = null;
+  }
+
+  removeItemFromActiveSection(idx: number) {
+    if (!this.editingSection) return;
+    if (this.editingSection.type === 'categories') {
+      const cats = [...(this.editingSection.categories || [])];
+      cats.splice(idx, 1);
+      this.updateSection(this.editingSection.id, { categories: cats });
+    } else if (this.editingSection.type === 'bestsellers') {
+      const prods = [...(this.editingSection.products || [])];
+      prods.splice(idx, 1);
+      this.updateSection(this.editingSection.id, { products: prods });
+    }
+  }
+
+  addItemToActiveSection() {
+    if (!this.editingSection) return;
+    if (this.editingSection.type === 'categories') {
+      const cats = [...(this.editingSection.categories || [])];
+      const sample = homeCategories[cats.length % homeCategories.length];
+      cats.push({
+        id: `cat-${Date.now().toString(36)}`,
+        name: sample.label,
+        image: sample.image
+      });
+      this.updateSection(this.editingSection.id, { categories: cats });
+    } else if (this.editingSection.type === 'bestsellers') {
+      const prods = [...(this.editingSection.products || [])];
+      const sample = homeProducts[prods.length % homeProducts.length];
+      prods.push({
+        id: `prod-${Date.now().toString(36)}`,
+        name: sample.name,
+        price: sample.price,
+        originalPrice: sample.oldPrice,
+        image: sample.image,
+        rating: sample.rating,
+        reviewsCount: sample.reviews
+      });
+      this.updateSection(this.editingSection.id, { products: prods });
+    }
   }
 }

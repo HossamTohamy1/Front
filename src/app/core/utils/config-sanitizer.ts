@@ -71,11 +71,13 @@ const fallbackSafetyMap: Record<string, string> = {
  * to its human-readable Arabic text. If the text is already custom Arabic, it is preserved.
  */
 export function resolveTranslationKey(val: any): any {
+  if (val === undefined || val === null) return val;
+
   if (typeof val !== 'string') {
     if (Array.isArray(val)) {
       return val.map(item => resolveTranslationKey(item));
     }
-    if (typeof val === 'object' && val !== null) {
+    if (typeof val === 'object') {
       const res: any = {};
       for (const k of Object.keys(val)) {
         res[k] = resolveTranslationKey(val[k]);
@@ -144,50 +146,84 @@ if (typeof window !== 'undefined' && window.localStorage) {
 }
 
 /**
- * Deep merge utility that prioritizes user values while ensuring
- * that any legacy translation keys are resolved to clean Arabic strings.
+ * Intelligent deep merge utility:
+ * - Prioritizes source (user) values 100%.
+ * - Never lets defaults overwrite user booleans, numbers, or empty strings.
+ * - Matches array elements by stable id (or type), never by arbitrary numeric index.
+ * - Never merges unknown/new items against target[0].
  */
-function deepMerge(target: any, source: any): any {
+export function deepMerge(target: any, source: any): any {
   if (source === undefined) return target;
-  if (target === undefined) return source;
+  if (target === undefined) return resolveTranslationKey(source);
 
   if (typeof source !== 'object' || source === null) {
     return resolveTranslationKey(source);
   }
 
   if (Array.isArray(source)) {
-    return source.map((item, idx) => {
-      const template = Array.isArray(target) ? (target[idx] ?? target[0]) : undefined;
-      return template ? deepMerge(template, item) : resolveTranslationKey(item);
+    return source.map((sourceItem) => {
+      if (typeof sourceItem !== 'object' || sourceItem === null) {
+        return resolveTranslationKey(sourceItem);
+      }
+
+      // Ensure stable id on section/item
+      if (!sourceItem.id) {
+        const prefix = sourceItem.type ? `sec-${sourceItem.type}-` : 'item-';
+        sourceItem.id = prefix + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 7);
+      }
+
+      // Find matching template in target array by id, then by type
+      let match = undefined;
+      if (Array.isArray(target)) {
+        if (sourceItem.id) {
+          match = target.find((t: any) => t && t.id === sourceItem.id);
+        }
+        if (!match && sourceItem.type) {
+          match = target.find((t: any) => t && t.type === sourceItem.type);
+        }
+      }
+
+      if (match) {
+        return deepMerge(match, sourceItem);
+      }
+
+      // If no matching template exists in target (new or custom section/item),
+      // do NOT merge with target[0] or any fallback. Pass through with translated values.
+      return resolveTranslationKey(sourceItem);
     });
   }
 
-  const result: any = { ...target };
-  for (const key of Object.keys(source)) {
-    const targetVal = target[key];
-    const sourceVal = source[key];
-    if (sourceVal === undefined || sourceVal === null) continue;
+  // Object merge: start with source (user data has priority)
+  const result: any = { ...source };
 
-    if (
-      typeof sourceVal === 'object' &&
-      !Array.isArray(sourceVal) &&
-      targetVal &&
-      typeof targetVal === 'object' &&
-      !Array.isArray(targetVal)
-    ) {
-      result[key] = deepMerge(targetVal, sourceVal);
-    } else {
-      result[key] = resolveTranslationKey(sourceVal);
+  // Resolve any translation keys in source
+  for (const key of Object.keys(result)) {
+    if (typeof result[key] === 'string') {
+      result[key] = resolveTranslationKey(result[key]);
     }
   }
+
+  // Only backfill missing fields from target that are genuinely undefined or null in source
+  if (typeof target === 'object' && target !== null && !Array.isArray(target)) {
+    for (const key of Object.keys(target)) {
+      if (result[key] === undefined || result[key] === null) {
+        result[key] = resolveTranslationKey(target[key]);
+      } else if (
+        typeof result[key] === 'object' && !Array.isArray(result[key]) &&
+        typeof target[key] === 'object' && !Array.isArray(target[key])
+      ) {
+        result[key] = deepMerge(target[key], result[key]);
+      }
+    }
+  }
+
   return result;
 }
 
 /**
  * Utility to sanitize persisted page configurations loaded from localStorage.
- * Converts raw translation keys (like 'HOME.SHOP_BY_CATEGORY_ALT') to human-readable
- * Arabic text so that dashboard editor inputs display clean Arabic, while preserving
- * any user-customized edits.
+ * Converts raw translation keys to human-readable Arabic text while preserving
+ * 100% of user-customized edits and section ordering.
  */
 export function sanitizeWithInitial<T>(parsed: any, initial: T): T {
   const cleanInitial = resolveTranslationKey(initial) as T;
@@ -197,10 +233,7 @@ export function sanitizeWithInitial<T>(parsed: any, initial: T): T {
 
   if (Array.isArray(cleanInitial)) {
     if (!Array.isArray(cleanParsed)) return cleanInitial;
-    return (cleanParsed.map((item, idx) => {
-      const template = (cleanInitial as any)[idx] ?? (cleanInitial as any)[0];
-      return deepMerge(template, item);
-    }) as any) as T;
+    return deepMerge(cleanInitial, cleanParsed) as T;
   }
 
   return deepMerge(cleanInitial, cleanParsed) as T;

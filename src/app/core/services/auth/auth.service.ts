@@ -35,7 +35,7 @@ export class AuthService {
 
   async fetchUser(): Promise<User | null> {
     try {
-      const url = `${environment.apiBaseUrl || 'http://localhost:5050/api'}/users/me`;
+      const url = `${environment.apiBaseUrl || '/api'}/users/me`;
       const res = await firstValueFrom(this.http.get<any>(url, { withCredentials: true }));
 
       if (res && res.isSuccess && this.isUser(res.data)) {

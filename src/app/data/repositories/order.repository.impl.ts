@@ -23,9 +23,6 @@ export class OrderRepositoryImpl implements IOrderRepository {
           return items.map((o: any) => {
             const isBank = o.paymentMethod === 'BankTransfer' || o.paymentMethod === 2 || o.paymentMethod === 'تحويل بنكي' || o.paymentMethod === 'CHECKOUT.BANK_TRANSFER';
             let receiptUrl = o.proofImageUrl || o.bankTransferReceiptUrl || (o.bankTransfers && o.bankTransfers.length > 0 ? o.bankTransfers[0].proofImageUrl : undefined);
-            if (receiptUrl && receiptUrl.startsWith('/uploads/')) {
-              receiptUrl = `http://localhost:5050${receiptUrl}`;
-            }
             return {
               id: o.id,
               orderNumber: o.orderNumber || o.id.split('-')[0].toUpperCase(),
