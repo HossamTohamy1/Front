@@ -15,7 +15,18 @@ export class LanguageService {
 
   init(): void {
     const savedLang = localStorage.getItem(this.STORAGE_KEY) as Language;
-    const defaultLang = savedLang || 'ar'; // Default to Arabic
+    
+    // Priority: Saved > Browser > Default ('ar')
+    let defaultLang: Language = 'ar';
+    
+    if (savedLang === 'ar' || savedLang === 'en') {
+      defaultLang = savedLang;
+    } else if (typeof navigator !== 'undefined' && navigator.language) {
+      const browserLang = navigator.language.toLowerCase().substring(0, 2);
+      if (browserLang === 'ar' || browserLang === 'en') {
+        defaultLang = browserLang as Language;
+      }
+    }
     
     this.translate.addLangs(['ar', 'en']);
     this.translate.setFallbackLang(defaultLang);

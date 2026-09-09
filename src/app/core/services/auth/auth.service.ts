@@ -11,14 +11,14 @@ import { firstValueFrom } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private platformId = inject(PLATFORM_ID);
-  
+
   user = signal<User | null>(null);
   isAdmin = computed(() => isStaffRole(this.user()?.role));
 
   constructor() {
     // If we want to auto-fetch on load:
     if (isPlatformBrowser(this.platformId)) {
-      this.fetchUser().catch(() => {});
+      this.fetchUser().catch(() => { });
     }
   }
 
@@ -26,7 +26,7 @@ export class AuthService {
     try {
       const url = `${environment.apiBaseUrl || 'http://localhost:5050/api'}/users/me`;
       const res = await firstValueFrom(this.http.get<any>(url, { withCredentials: true }));
-      
+
       if (res && res.isSuccess && this.isUser(res.data)) {
         this.user.set(res.data);
         return res.data;

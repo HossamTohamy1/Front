@@ -199,6 +199,6 @@ export class OrderRepositoryImpl implements IOrderRepository {
   private saveLocal(orders: TrackedOrder[]): void {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-    } catch {}
+    } catch { }
   }
 }

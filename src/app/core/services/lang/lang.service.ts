@@ -69,8 +69,23 @@ export class LangService {
 
   private getInitialLang(): Lang {
     if (!isPlatformBrowser(this.platformId)) return 'ar';
+    
+    // 1. Saved User Language Preference
     const stored = window.localStorage.getItem(this.LANG_KEY);
-    return stored === 'en' ? 'en' : 'ar';
+    if (stored === 'ar' || stored === 'en') {
+      return stored;
+    }
+
+    // 2. Browser / Device Language
+    if (typeof navigator !== 'undefined' && navigator.language) {
+      const browserLang = navigator.language.toLowerCase().substring(0, 2);
+      if (browserLang === 'ar' || browserLang === 'en') {
+        return browserLang as Lang;
+      }
+    }
+
+    // 3. Application Default Language
+    return 'ar';
   }
 
   /**

@@ -3,6 +3,7 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ThemeService } from './core/services/theme/theme.service';
 import { LangService } from './core/services/lang/lang.service';
+import { ContextService } from './core/services/context/context.service';
 import { filter, Subscription } from 'rxjs';
 
 import { ToastContainerComponent } from './shared/components/ui/toast-container/toast-container.component';
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private themeService: ThemeService,
     private langService: LangService,
+    private contextService: ContextService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: object
   ) {
@@ -29,6 +31,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return;
+
+    this.contextService.initContext();
+    this.contextService.logVisit('app_init');
 
     // Notify the dashboard whenever the storefront route changes.
     // This enables the LivePreview's "current page" indicator and editor-router sync.
