@@ -128,14 +128,14 @@ export class ProductRepositoryImpl implements IProductRepository {
     return of(reviews);
   }
 
-  getRealProductId(mockId: string): string {
+  getRealProductId(mockId: string): string | null {
     const guidMap: Record<string, string> = {
       'prod-1': '3D5D8C97-25BC-4457-A721-9EF43297FD54',
       'prod-2': 'B5C81145-3CB4-4309-B98C-C42360B503B4',
       'prod-3': '853AEF5F-E41E-4235-B4AE-7B053C9CB122'
     };
     
-    // Fallback to the first GUID for any unmapped mock product
-    return guidMap[mockId] || '3D5D8C97-25BC-4457-A721-9EF43297FD54';
+    // No fallback allowed for unmapped mock products
+    return guidMap[mockId] || null;
   }
 }
