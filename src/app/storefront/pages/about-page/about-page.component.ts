@@ -4,8 +4,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
-import { AboutPageConfigService, AboutPageConfig } from './about-page-config.service';
+import { AboutPageConfigService } from '../../../core/services/page-configs/about-page-config.service';
 import { LangService } from '../../../core/services/lang/lang.service';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
 import { LucideAngularModule, ChevronLeft, ChevronRight, ShieldCheck, Check, Star, Eye, Target, Mail, Phone } from 'lucide-angular';
 
 @Component({
@@ -16,13 +17,15 @@ import { LucideAngularModule, ChevronLeft, ChevronRight, ShieldCheck, Check, Sta
     RouterModule, 
     StoreLayoutComponent, 
     HomeHeaderComponent, 
-    LucideAngularModule
+    LucideAngularModule,
+    LocalizeFieldPipe
   ],
   templateUrl: './about-page.component.html',
   styleUrls: ['./about-page.component.css']
 })
 export class AboutPageComponent implements OnInit {
-  config!: AboutPageConfig;
+  private configService = inject(AboutPageConfigService);
+  config = this.configService.pageConfig;
   
   readonly langService = inject(LangService);
   readonly ChevronLeft = ChevronLeft;
@@ -39,12 +42,9 @@ export class AboutPageComponent implements OnInit {
   facebookIcon = 'assets/about/facebook.svg';
   whatsappIcon = 'assets/about/whatsapp.svg';
 
-  constructor(private configService: AboutPageConfigService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.configService.config$.subscribe(config => {
-      this.config = config;
-    });
   }
 
   replaceNewlines(text: string, withBr: string = '<br />'): string {

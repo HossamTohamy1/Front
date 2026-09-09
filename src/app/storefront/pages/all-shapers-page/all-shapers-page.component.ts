@@ -9,6 +9,8 @@ import { CartService } from '../../../core/services/cart/cart.service';
 import { FavoritesService } from '../../../core/services/favorites/favorites.service';
 import { ToastService } from '../../../core/services/toast/toast.service';
 import { products, Product } from '../../../shared/data/mockData';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
+import { AllShapersPageConfigService } from '../../../core/services/page-configs/all-shapers-page-config.service';
 
 import {
   ProductColor,
@@ -59,30 +61,12 @@ function matchesPrice(price: number, filter: PriceFilter) {
   return true;
 }
 
-export interface AllShapersPageConfig {
-    headerTitle: string;
-    showRating: boolean;
-    showReviewsCount: boolean;
-    showOriginalPrice: boolean;
-    emptyTitle: string;
-    emptyText: string;
-    emptyCta: string;
-}
 
-const initialConfig: AllShapersPageConfig = {
-    headerTitle: 'PRODUCTS.ALL_SHAPERS',
-    showRating: true,
-    showReviewsCount: true,
-    showOriginalPrice: true,
-    emptyTitle: 'PRODUCTS.NO_PRODUCTS',
-    emptyText: 'PRODUCTS.TRY_CHANGING',
-    emptyCta: 'PRODUCTS.VIEW_ALL'
-};
 
 @Component({
   selector: 'app-all-shapers-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, LocalizeFieldPipe],
   templateUrl: './all-shapers-page.component.html',
   styleUrl: './all-shapers-page.component.css'
 })
@@ -108,7 +92,8 @@ export class AllShapersPageComponent implements OnInit {
   readonly Tag = Tag;
   readonly X = X;
 
-  pageConfig = signal(initialConfig);
+  configService = inject(AllShapersPageConfigService);
+  pageConfig = this.configService.pageConfig;
 
   productTypeOptions = productTypeOptions;
   priceOptions = priceOptions;

@@ -2,7 +2,14 @@
     @if (title) {
         <div id="best-sellers-heading">
             <div class="lk-section-heading">
-                <h2>{{title | translate}}</h2>
+                <h2>
+                    <ng-container *ngIf="title === 'HOME.BEST_SELLERS_ALT'; else customTitle">
+                        {{ title | translate }}
+                    </ng-container>
+                    <ng-template #customTitle>
+                        {{ title | localize: titleAr : titleEn }}
+                    </ng-template>
+                </h2>
                 <a routerLink="/all-shapers">{{ 'COMMON.SEEALL' | translate }}</a>
             </div>
         </div>
@@ -15,10 +22,10 @@
                     <span class="lk-home-product-card__discount">-{{product.discount}}%</span>
                 }
                 <div class="lk-home-product-card__image">
-                    <img [src]="product.image" [alt]="product.name" width="800" height="650" loading="lazy" decoding="async" />
+                    <img [src]="product.image" [alt]="getLocalizedProductName(product)" width="800" height="650" loading="lazy" decoding="async" />
                 </div>
                 <div class="lk-home-product-card__body">
-                    <h3>{{product.name | translate}}</h3>
+                    <h3>{{getLocalizedProductName(product)}}</h3>
                     <div class="lk-home-product-card__price">
                         <strong>{{product.price}} {{ 'COMMON.CURRENCY' | translate }}</strong>
                         <del>{{product.oldPrice}} {{ 'COMMON.CURRENCY' | translate }}</del>
@@ -32,7 +39,7 @@
                         <small>({{product.reviews}})</small>
                     </div>
                 </div>
-                <button type="button" class="lk-home-product-card__cart" (click)="handleAddToCart($event, product)" [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'أضف ' + (product.name | translate) + ' إلى السلة' : 'Add ' + (product.name | translate) + ' to cart')">
+                <button type="button" class="lk-home-product-card__cart" (click)="handleAddToCart($event, product)" [attr.aria-label]="(langService.storefrontLang() === 'ar' ? 'أضف ' + getLocalizedProductName(product) + ' إلى السلة' : 'Add ' + getLocalizedProductName(product) + ' to cart')">
                     <lucide-icon name="shopping-cart" [size]="18" [strokeWidth]="1.8" aria-hidden="true"></lucide-icon>
                 </button>
             </a>

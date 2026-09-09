@@ -1,53 +1,85 @@
 import { sanitizeWithInitial } from '../../utils/config-sanitizer';
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, effect, inject, NgZone } from '@angular/core';
 
+
+const INSTANCE_ID = typeof crypto !== 'undefined' && crypto.randomUUID 
+  ? crypto.randomUUID() 
+  : Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 export interface AboutReasonConfig {
     id: string;
     icon: string;
     title: string;
+    titleAr?: string;
+    titleEn?: string;
     text: string;
+    textAr?: string;
+    textEn?: string;
 }
 
 export interface AboutValueConfig {
     id: string;
     icon: string;
     label: string;
+    labelAr?: string;
+    labelEn?: string;
 }
 
 export interface AboutContactConfig {
     id: string;
     icon: string;
     label: string;
+    labelAr?: string;
+    labelEn?: string;
     link: string;
 }
 
 export interface AboutPageConfig {
     showTitle: boolean;
     headerTitle: string;
+    headerTitleAr?: string;
+    headerTitleEn?: string;
     headerSubtitle: string;
+    headerSubtitleAr?: string;
+    headerSubtitleEn?: string;
     
     showIntroSection: boolean;
     introText: string;
+    introTextAr?: string;
+    introTextEn?: string;
     
     showReasonsSection: boolean;
     reasonsTitle: string;
+    reasonsTitleAr?: string;
+    reasonsTitleEn?: string;
     reasons: AboutReasonConfig[];
     
     showVisionSection: boolean;
     visionTitle: string;
+    visionTitleAr?: string;
+    visionTitleEn?: string;
     visionText: string;
+    visionTextAr?: string;
+    visionTextEn?: string;
     
     showMissionSection: boolean;
     missionTitle: string;
+    missionTitleAr?: string;
+    missionTitleEn?: string;
     missionText: string;
+    missionTextAr?: string;
+    missionTextEn?: string;
     
     showValuesSection: boolean;
     valuesTitle: string;
+    valuesTitleAr?: string;
+    valuesTitleEn?: string;
     values: AboutValueConfig[];
     
     showContactSection: boolean;
     contactTitle: string;
+    contactTitleAr?: string;
+    contactTitleEn?: string;
     contacts: AboutContactConfig[];
 }
 
@@ -104,13 +136,18 @@ export class AboutPageConfigService {
   private readonly storageKey = 'loxxking-about-page-config';
 
   readonly pageConfig = signal<AboutPageConfig>(this.loadInitialConfig());
+  private zone = inject(NgZone);
 
   constructor() {
     window.addEventListener('storage', (e: StorageEvent) => {
+      if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
+
       if (e.key === this.storageKey && e.newValue) {
         try {
           const updated = JSON.parse(e.newValue);
-          this.pageConfig.set(this.mergeWithInitial(updated));
+          this.zone.run(() => {
+            this.pageConfig.set(this.mergeWithInitial(updated));
+          });
         } catch (_) {}
       }
     });
@@ -120,11 +157,13 @@ export class AboutPageConfigService {
       localStorage.setItem(this.storageKey, JSON.stringify(config));
       
       try {
-        window.dispatchEvent(new StorageEvent('storage', {
+        const event = new StorageEvent('storage', {
           key: this.storageKey,
           newValue: JSON.stringify(config),
           storageArea: localStorage,
-        }));
+        });
+        (event as any).__sourceInstanceId = INSTANCE_ID;
+        window.dispatchEvent(event);
       } catch (_) {}
     });
   }

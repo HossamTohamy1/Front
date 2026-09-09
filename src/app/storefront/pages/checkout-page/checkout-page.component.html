@@ -11,8 +11,8 @@
   <main class="lk-checkout-page">
     <section class="lk-checkout-page__hero">
       <div class="lk-checkout-page__title-wrap">
-        <h1>{{ config.headerTitle | translate}}</h1>
-        <p>{{ config.headerSubtitle | translate}}</p>
+        <h1>{{ config().headerTitle | localize: config().headerTitleAr : config().headerTitleEn }}</h1>
+        <p>{{ config().headerSubtitle | localize: config().headerSubtitleAr : config().headerSubtitleEn }}</p>
       </div>
 
       <a routerLink="/cart" class="lk-checkout-page__back-link">
@@ -24,9 +24,9 @@
         <div class="lk-checkout-empty__icon" aria-hidden="true">
           <lucide-icon name="package-check"></lucide-icon>
         </div>
-        <h2>{{ config.emptyStateTitle | translate }}</h2>
-        <p>{{ config.emptyStateText | translate }}</p>
-        <a routerLink="/cart">{{ config.emptyStateCta | translate }}</a>
+        <h2>{{ config().emptyStateTitle | localize: config().emptyStateTitleAr : config().emptyStateTitleEn }}</h2>
+        <p>{{ config().emptyStateText | localize: config().emptyStateTextAr : config().emptyStateTextEn }}</p>
+        <a routerLink="/cart">{{ config().emptyStateCta | localize: config().emptyStateCtaAr : config().emptyStateCtaEn }}</a>
       </section>
     </ng-container>
 
@@ -36,7 +36,7 @@
           <section class="lk-checkout-section">
             <div class="lk-checkout-section__heading">
               <span class="lk-checkout-step">1</span>
-              <h2>{{ config.customerInfoTitle | translate }}</h2>
+              <h2>{{ config().customerInfoTitle | localize: config().customerInfoTitleAr : config().customerInfoTitleEn }}</h2>
             </div>
 
             <label class="lk-checkout-field">
@@ -128,7 +128,7 @@
           <section class="lk-checkout-section lk-checkout-payment">
             <div class="lk-checkout-section__heading">
               <span class="lk-checkout-step">2</span>
-              <h2>{{ config.paymentInfoTitle | translate }}</h2>
+              <h2>{{ config().paymentInfoTitle | localize: config().paymentInfoTitleAr : config().paymentInfoTitleEn }}</h2>
             </div>
 
             <label class="lk-payment-card" [class.is-active]="paymentMethod() === 'cod'">
@@ -286,7 +286,7 @@
             <div class="lk-checkout-summary-card__heading">
               <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>
               <div>
-                <h2>{{ config.summaryTitle | translate }}</h2>
+                <h2>{{ config().summaryTitle | localize: config().summaryTitleAr : config().summaryTitleEn }}</h2>
                 <span>({{ itemCount() }} منتجات)</span>
               </div>
             </div>
@@ -321,24 +321,24 @@
             </div>
           </section>
 
-          <section class="lk-checkout-safe-card" *ngIf="config.showSafeShopping">
+          <section class="lk-checkout-safe-card" *ngIf="config().showSafeShopping">
             <lucide-icon name="shield-check" aria-hidden="true"></lucide-icon>
             <div>
-              <h3>{{ config.safeShoppingTitle | translate }}</h3>
-              <p>{{ config.safeShoppingText | translate }}</p>
+              <h3>{{ config().safeShoppingTitle | localize: config().safeShoppingTitleAr : config().safeShoppingTitleEn }}</h3>
+              <p>{{ config().safeShoppingText | localize: config().safeShoppingTextAr : config().safeShoppingTextEn }}</p>
             </div>
           </section>
         </aside>
       </div>
     </ng-template>
 
-    <section class="lk-checkout-trust" aria-label='DASHBOARD.AUTO_STR_232' *ngIf="config.showTrustBadges">
-      <div *ngFor="let badge of config.trustBadges">
+    <section class="lk-checkout-trust" aria-label='DASHBOARD.AUTO_STR_232' *ngIf="config().showTrustBadges">
+      <div *ngFor="let badge of config().trustBadges">
         <lucide-icon *ngIf="badge.icon === 'BadgeCheck'" name="badge-check" aria-hidden="true"></lucide-icon>
         <lucide-icon *ngIf="badge.icon === 'Truck'" name="truck" aria-hidden="true"></lucide-icon>
         <lucide-icon *ngIf="badge.icon === 'RotateCcw'" name="rotate-ccw" aria-hidden="true"></lucide-icon>
         <lucide-icon *ngIf="badge.icon === 'ShieldCheck'" name="shield-check" aria-hidden="true"></lucide-icon>
-        <span><strong>{{ badge.title | translate}}</strong><small>{{ badge.subtitle | translate}}</small></span>
+        <span><strong>{{ badge.title | localize: badge.titleAr : badge.titleEn }}</strong><small>{{ badge.subtitle | localize: badge.subtitleAr : badge.subtitleEn }}</small></span>
       </div>
     </section>
   </main>

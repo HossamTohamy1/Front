@@ -1,5 +1,6 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
+import { BilingualInputComponent } from '../components/bilingual-input/bilingual-input.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -9,7 +10,7 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
 @Component({
   selector: 'app-about-page-editor',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent, BilingualInputComponent],
   template: `
     <div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
       <div class="text-center mb-4">
@@ -19,23 +20,43 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
 
       <app-section-card title="الرأس والمقدمة" [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showTitle: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'العنوان الرئيسي', field: 'headerTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'النص الفرعي', field: 'headerSubtitle' }"></ng-container>
+        <app-bilingual-input title="العنوان الرئيسي" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerTitleAr'] || ''" 
+                [valueEn]="$any(config())['headerTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerTitle', $event.lang, $event.value)"></app-bilingual-input>
+        <app-bilingual-input title="النص الفرعي" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerSubtitleAr'] || ''" 
+                [valueEn]="$any(config())['headerSubtitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerSubtitle', $event.lang, $event.value)"></app-bilingual-input>
         <hr class="my-3 border-gray-100" />
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص المقدمة', field: 'introText', isTextArea: true }"></ng-container>
+        <app-bilingual-input title="نص المقدمة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['introTextAr'] || ''" 
+                [valueEn]="$any(config())['introTextEn'] || ''" 
+                (valueChange)="updateBilingualField('introText', $event.lang, $event.value)" [isTextArea]="true"></app-bilingual-input>
       </app-section-card>
 
       <app-section-card title="قسم لماذا نحن؟" [index]="1" [enabled]="config().showReasonsSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة سبب" (onAddAction)="addReason()"
         (toggle)="updateConfig({ showReasonsSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'reasonsTitle' }"></ng-container>
+        <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['reasonsTitleAr'] || ''" 
+                [valueEn]="$any(config())['reasonsTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('reasonsTitle', $event.lang, $event.value)"></app-bilingual-input>
         <div class="flex flex-col gap-3">
-          <div *ngFor="let item of config().reasons; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <div *ngFor="let item of config().reasons; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.title" (ngModelChange)="updateReason(idx, { title: $event })" placeholder="العنوان" />
-              <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.text" (ngModelChange)="updateReason(idx, { text: $event })" placeholder="الوصف" rows="2"></textarea>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.titleAr" (ngModelChange)="updateReason(idx, { titleAr: $event })" placeholder="العنوان (عربي)" />
+                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.titleEn" (ngModelChange)="updateReason(idx, { titleEn: $event })" placeholder="Title (EN)" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <textarea dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.textAr" (ngModelChange)="updateReason(idx, { textAr: $event })" placeholder="الوصف (عربي)" rows="2"></textarea>
+                <textarea dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.textEn" (ngModelChange)="updateReason(idx, { textEn: $event })" placeholder="Description (EN)" rows="2"></textarea>
+              </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
                 [ngModel]="item.icon" (ngModelChange)="updateReason(idx, { icon: $event })">
                 <option value="ShieldCheck">درع (ShieldCheck)</option>
@@ -50,22 +71,41 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
 
       <app-section-card title="قسم الرؤية والرسالة" [index]="2" [enabled]="config().showVisionSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showVisionSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان الرؤية', field: 'visionTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص الرؤية', field: 'visionText', isTextArea: true }"></ng-container>
+        <app-bilingual-input title="عنوان الرؤية" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['visionTitleAr'] || ''" 
+                [valueEn]="$any(config())['visionTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('visionTitle', $event.lang, $event.value)"></app-bilingual-input>
+        <app-bilingual-input title="نص الرؤية" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['visionTextAr'] || ''" 
+                [valueEn]="$any(config())['visionTextEn'] || ''" 
+                (valueChange)="updateBilingualField('visionText', $event.lang, $event.value)" [isTextArea]="true"></app-bilingual-input>
         <hr class="my-3 border-gray-100" />
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان الرسالة', field: 'missionTitle' }"></ng-container>
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'نص الرسالة', field: 'missionText', isTextArea: true }"></ng-container>
+        <app-bilingual-input title="عنوان الرسالة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['missionTitleAr'] || ''" 
+                [valueEn]="$any(config())['missionTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('missionTitle', $event.lang, $event.value)"></app-bilingual-input>
+        <app-bilingual-input title="نص الرسالة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['missionTextAr'] || ''" 
+                [valueEn]="$any(config())['missionTextEn'] || ''" 
+                (valueChange)="updateBilingualField('missionText', $event.lang, $event.value)" [isTextArea]="true"></app-bilingual-input>
       </app-section-card>
 
       <app-section-card title="القيم" [index]="3" [enabled]="config().showValuesSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة قيمة" (onAddAction)="addValue()"
         (toggle)="updateConfig({ showValuesSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'valuesTitle' }"></ng-container>
+        <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['valuesTitleAr'] || ''" 
+                [valueEn]="$any(config())['valuesTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('valuesTitle', $event.lang, $event.value)"></app-bilingual-input>
         <div class="flex flex-col gap-3">
-          <div *ngFor="let item of config().values; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <div *ngFor="let item of config().values; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.label" (ngModelChange)="updateValue(idx, { label: $event })" placeholder="القيمة" />
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.labelAr" (ngModelChange)="updateValue(idx, { labelAr: $event })" placeholder="القيمة (عربي)" />
+                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.labelEn" (ngModelChange)="updateValue(idx, { labelEn: $event })" placeholder="Label (EN)" />
+              </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
                 [ngModel]="item.icon" (ngModelChange)="updateValue(idx, { icon: $event })">
                 <option value="ShieldCheck">درع (ShieldCheck)</option>
@@ -83,14 +123,21 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
       <app-section-card title="تواصل معنا" [index]="4" [enabled]="config().showContactSection" [isFirst]="false" [isLast]="true"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة وسيلة تواصل" (onAddAction)="addContact()"
         (toggle)="updateConfig({ showContactSection: $event })">
-        <ng-container *ngTemplateOutlet="textInputTemplate; context: { label: 'عنوان القسم', field: 'contactTitle' }"></ng-container>
+        <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['contactTitleAr'] || ''" 
+                [valueEn]="$any(config())['contactTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('contactTitle', $event.lang, $event.value)"></app-bilingual-input>
         <div class="flex flex-col gap-3">
-          <div *ngFor="let item of config().contacts; let idx = index" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <div *ngFor="let item of config().contacts; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.label" (ngModelChange)="updateContact(idx, { label: $event })" placeholder="الاسم" />
-              <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                [ngModel]="item.link" (ngModelChange)="updateContact(idx, { link: $event })" placeholder="الرابط" dir="ltr" />
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.labelAr" (ngModelChange)="updateContact(idx, { labelAr: $event })" placeholder="الاسم (عربي)" />
+                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                  [ngModel]="item.labelEn" (ngModelChange)="updateContact(idx, { labelEn: $event })" placeholder="Name (EN)" />
+              </div>
+              <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                [ngModel]="item.link" (ngModelChange)="updateContact(idx, { link: $event })" placeholder="الرابط" />
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
                 [ngModel]="item.icon" (ngModelChange)="updateContact(idx, { icon: $event })">
                 <option value="facebook">فيسبوك (facebook)</option>
@@ -105,15 +152,7 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         </div>
       </app-section-card>
 
-      <ng-template #textInputTemplate let-label="label" let-field="field" let-isTextArea="isTextArea">
-        <div class="flex flex-col gap-1.5 mb-3">
-          <span class="text-xs font-bold text-gray-700">{{ label | translate }}</span>
-          <textarea *ngIf="isTextArea" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
-            [ngModel]="getConfigValue(field)" (ngModelChange)="updateConfigField(field, $event)" rows="4"></textarea>
-          <input *ngIf="!isTextArea" type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" 
-            [ngModel]="getConfigValue(field)" (ngModelChange)="updateConfigField(field, $event)" />
-        </div>
-      </ng-template>
+      
     </div>
   `
 })
@@ -121,16 +160,69 @@ export class AboutPageEditorComponent {
   private configService = inject(AboutPageConfigService);
   config = this.configService.pageConfig;
 
+  constructor() {
+    this.backfillLocalizedStrings();
+  }
+
+  backfillLocalizedStrings() {
+    const c: any = { ...this.config() };
+    let changed = false;
+    const fields = [
+      'headerTitle', 'headerSubtitle', 'introText', 'reasonsTitle',
+      'visionTitle', 'visionText', 'missionTitle', 'missionText',
+      'valuesTitle', 'contactTitle'
+    ];
+    
+    for (const f of fields) {
+      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+        c[f + 'Ar'] = c[f];
+        c[f + 'En'] = c[f];
+        changed = true;
+      }
+    }
+    
+    if (c.reasons) {
+        c.reasons = c.reasons.map((r: any) => {
+            let rc = false;
+            if (r.title && !r.titleAr && !r.titleEn) { r.titleAr = r.title; r.titleEn = r.title; rc = true; }
+            if (r.text && !r.textAr && !r.textEn) { r.textAr = r.text; r.textEn = r.text; rc = true; }
+            if (rc) changed = true;
+            return r;
+        });
+    }
+    
+    if (c.values) {
+        c.values = c.values.map((v: any) => {
+            if (v.label && !v.labelAr && !v.labelEn) { v.labelAr = v.label; v.labelEn = v.label; changed = true; }
+            return v;
+        });
+    }
+
+    if (c.contacts) {
+        c.contacts = c.contacts.map((contact: any) => {
+            if (contact.label && !contact.labelAr && !contact.labelEn) { contact.labelAr = contact.label; contact.labelEn = contact.label; changed = true; }
+            return contact;
+        });
+    }
+
+    if (changed) {
+      this.configService.updateConfig(c);
+    }
+  }
+
   updateConfig(updates: Partial<any>) {
     this.configService.updateConfig({ ...this.config(), ...updates });
   }
 
-  getConfigValue(field: string): any {
-    return (this.config() as any)[field];
+  updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
+    const current = { ...this.config() } as any;
+    current[field + lang] = value;
+    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    this.updateConfig(current);
   }
 
-  updateConfigField(field: string, value: any) {
-    this.updateConfig({ [field]: value });
+  trackByIndex(index: number, item: any): number {
+    return index;
   }
 
   addReason() {
@@ -141,7 +233,14 @@ export class AboutPageEditorComponent {
 
   updateReason(index: number, updates: any) {
     const list = [...(this.config().reasons || [])];
-    list[index] = { ...list[index], ...updates };
+    const newVal = { ...list[index], ...updates };
+    if (updates.titleAr !== undefined || updates.titleEn !== undefined) {
+      newVal.title = newVal.titleEn || newVal.titleAr;
+    }
+    if (updates.textAr !== undefined || updates.textEn !== undefined) {
+      newVal.text = newVal.textEn || newVal.textAr;
+    }
+    list[index] = newVal;
     this.updateConfig({ reasons: list });
   }
 
@@ -159,7 +258,11 @@ export class AboutPageEditorComponent {
 
   updateValue(index: number, updates: any) {
     const list = [...(this.config().values || [])];
-    list[index] = { ...list[index], ...updates };
+    const newVal = { ...list[index], ...updates };
+    if (updates.labelAr !== undefined || updates.labelEn !== undefined) {
+      newVal.label = newVal.labelEn || newVal.labelAr;
+    }
+    list[index] = newVal;
     this.updateConfig({ values: list });
   }
 
@@ -177,7 +280,11 @@ export class AboutPageEditorComponent {
 
   updateContact(index: number, updates: any) {
     const list = [...(this.config().contacts || [])];
-    list[index] = { ...list[index], ...updates };
+    const newVal = { ...list[index], ...updates };
+    if (updates.labelAr !== undefined || updates.labelEn !== undefined) {
+      newVal.label = newVal.labelEn || newVal.labelAr;
+    }
+    list[index] = newVal;
     this.updateConfig({ contacts: list });
   }
 

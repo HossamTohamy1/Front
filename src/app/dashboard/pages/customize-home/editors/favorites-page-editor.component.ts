@@ -1,5 +1,6 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
+import { BilingualInputComponent } from '../components/bilingual-input/bilingual-input.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FavoritesPageConfigService } from '../../../../core/services/page-configs/favorites-page-config.service';
@@ -9,7 +10,7 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
 @Component({
   selector: 'app-favorites-page-editor',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, SectionCardComponent, LucideAngularModule],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, SectionCardComponent, LucideAngularModule, BilingualInputComponent],
   template: `
     <div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
         <div class="text-center mb-4">
@@ -18,14 +19,14 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
         </div>
 
         <app-section-card title="رأس الصفحة والأدوات" [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false" (toggle)="updateConfig({showTitle: $event})">
-            <div class="flex flex-col gap-1.5 mb-3">
-                <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_178' | translate }}</span>
-                <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().headerTitle" (ngModelChange)="updateConfig({headerTitle: $event})" />
-            </div>
-            <div class="flex flex-col gap-1.5 mb-3">
-                <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_316' | translate }}</span>
-                <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().headerSubtitle" (ngModelChange)="updateConfig({headerSubtitle: $event})" />
-            </div>
+            <app-bilingual-input title="عنوان الصفحة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerTitleAr'] || ''" 
+                [valueEn]="$any(config())['headerTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerTitle', $event.lang, $event.value)"></app-bilingual-input>
+            <app-bilingual-input title="وصف الصفحة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['headerSubtitleAr'] || ''" 
+                [valueEn]="$any(config())['headerSubtitleEn'] || ''" 
+                (valueChange)="updateBilingualField('headerSubtitle', $event.lang, $event.value)"></app-bilingual-input>
             
             <hr class="my-3 border-gray-100" />
             
@@ -60,10 +61,10 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                 </div>
             </label>
-            <div class="flex flex-col gap-1.5 mb-3">
-                <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_58' | translate }}</span>
-                <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().addAllToCartText" (ngModelChange)="updateConfig({addAllToCartText: $event})" />
-            </div>
+            <app-bilingual-input title="نص زر الإضافة للسلة" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['addAllToCartTextAr'] || ''" 
+                [valueEn]="$any(config())['addAllToCartTextEn'] || ''" 
+                (valueChange)="updateBilingualField('addAllToCartText', $event.lang, $event.value)"></app-bilingual-input>
         </app-section-card>
 
         <app-section-card title="بطاقة المنتج" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false">
@@ -127,26 +128,48 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                 </div>
             </label>
-            <div class="flex flex-col gap-1.5 mb-3">
-                <span class="text-xs font-bold text-gray-700">{{ 'COMMON.ADDRESS' | translate }}</span>
-                <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateTitle" (ngModelChange)="updateConfig({emptyStateTitle: $event})" />
-            </div>
-            <div class="flex flex-col gap-1.5 mb-3">
-                <span class="text-xs font-bold text-gray-700">{{ 'PRODUCT.DESCRIPTION' | translate }}</span>
-                <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateSubtitle" (ngModelChange)="updateConfig({emptyStateSubtitle: $event})" />
-            </div>
-            <div class="flex flex-col gap-1.5 mb-3">
-                <span class="text-xs font-bold text-gray-700">{{ 'DASHBOARD.AUTO_STR_283' | translate }}</span>
-                <input type="text" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500" [ngModel]="config().emptyStateButtonText" (ngModelChange)="updateConfig({emptyStateButtonText: $event})" />
-            </div>
+            <app-bilingual-input title="العنوان" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyStateTitleAr'] || ''" 
+                [valueEn]="$any(config())['emptyStateTitleEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyStateTitle', $event.lang, $event.value)"></app-bilingual-input>
+            <app-bilingual-input title="الوصف" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyStateSubtitleAr'] || ''" 
+                [valueEn]="$any(config())['emptyStateSubtitleEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyStateSubtitle', $event.lang, $event.value)"></app-bilingual-input>
+            <app-bilingual-input title="نص الزر" labelAr="عربي / AR" labelEn="English / EN" 
+                [valueAr]="$any(config())['emptyStateButtonTextAr'] || ''" 
+                [valueEn]="$any(config())['emptyStateButtonTextEn'] || ''" 
+                (valueChange)="updateBilingualField('emptyStateButtonText', $event.lang, $event.value)"></app-bilingual-input>
         </app-section-card>
 
         <app-section-card title="مميزات التسوق" [index]="3" [enabled]="config().showTrustBadges" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showTrustBadges: $event})" [addAction]="{ label: 'إضافة ميزة', onClick: addBadge }">
             <div class="flex flex-col gap-3">
                 <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackById" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <div class="flex flex-col gap-2 flex-1">
-                        <input type="text" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.title" (ngModelChange)="updateBadge(idx, { title: $event })" placeholder="العنوان" />
-                        <input type="text" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="badge.subtitle" (ngModelChange)="updateBadge(idx, { subtitle: $event })" placeholder="الوصف القصير" />
+                       <div class="grid grid-cols-2 gap-2">
+                         <div>
+                           <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
+                           <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                             [ngModel]="badge.titleAr" (ngModelChange)="updateBadge(idx, { titleAr: $event })" />
+                         </div>
+                         <div>
+                           <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
+                           <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                             [ngModel]="badge.titleEn" (ngModelChange)="updateBadge(idx, { titleEn: $event })" />
+                         </div>
+                       </div>
+                       <div class="grid grid-cols-2 gap-2">
+                         <div>
+                           <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
+                           <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                             [ngModel]="badge.subtitleAr" (ngModelChange)="updateBadge(idx, { subtitleAr: $event })" />
+                         </div>
+                         <div>
+                           <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
+                           <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                             [ngModel]="badge.subtitleEn" (ngModelChange)="updateBadge(idx, { subtitleEn: $event })" />
+                         </div>
+                       </div>
                         <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.icon" (ngModelChange)="updateBadge(idx, { icon: $event })">
                             <option value="BadgeCheck">شارة توثيق (BadgeCheck)</option>
                             <option value="Truck">سيارة شحن (Truck)</option>
@@ -160,6 +183,8 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
                 </div>
             </div>
         </app-section-card>
+        
+      
     </div>
   `
 })
@@ -168,11 +193,61 @@ export class FavoritesPageEditorComponent {
   config = this.favoritesService.pageConfig;
   Trash2 = Trash2;
 
+  constructor() {
+    this.backfillLocalizedStrings();
+  }
+
+  backfillLocalizedStrings() {
+    const c: any = { ...this.config() };
+    let changed = false;
+    const fields = [
+      'headerTitle', 'headerSubtitle', 'addAllToCartText', 
+      'emptyStateTitle', 'emptyStateSubtitle', 'emptyStateButtonText'
+    ];
+    for (const f of fields) {
+      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+        c[f + 'Ar'] = c[f];
+        c[f + 'En'] = c[f];
+        changed = true;
+      }
+    }
+
+    if (c.trustBadges && c.trustBadges.length > 0) {
+      const newBadges = c.trustBadges.map((b: any) => {
+        let bChanged = false;
+        if (b.title && !b.titleAr && !b.titleEn) {
+          b.titleAr = b.title;
+          b.titleEn = b.title;
+          bChanged = true;
+        }
+        if (b.subtitle && !b.subtitleAr && !b.subtitleEn) {
+          b.subtitleAr = b.subtitle;
+          b.subtitleEn = b.subtitle;
+          bChanged = true;
+        }
+        if (bChanged) changed = true;
+        return b;
+      });
+      c.trustBadges = newBadges;
+    }
+
+    if (changed) {
+      this.favoritesService.updateConfig(c);
+    }
+  }
+
   addBadge = () => {
       const badges = [...(this.config().trustBadges || [])];
-      badges.push({ id: 'b-' + Date.now(), icon: 'ShieldCheck', title: 'ميزة جديدة', subtitle: 'وصف قصير' });
+      badges.push({ id: 'b-' + Date.now(), icon: 'ShieldCheck', title: 'ميزة جديدة', titleAr: 'ميزة جديدة', titleEn: 'New Feature', subtitle: 'وصف قصير', subtitleAr: 'وصف قصير', subtitleEn: 'Feature Details' });
       this.updateConfig({ trustBadges: badges });
   };
+
+  updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
+    const current = { ...this.config() } as any;
+    current[field + lang] = value;
+    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    this.updateConfig(current);
+  }
 
   updateConfig(updates: Partial<ReturnType<typeof this.config>>) {
       this.favoritesService.updateConfig({ ...this.config(), ...updates } as any);
@@ -181,6 +256,8 @@ export class FavoritesPageEditorComponent {
   updateBadge(index: number, updates: any) {
       const badges = [...(this.config().trustBadges || [])];
       badges[index] = { ...badges[index], ...updates };
+      badges[index].title = badges[index].titleEn || badges[index].titleAr || '';
+      badges[index].subtitle = badges[index].subtitleEn || badges[index].subtitleAr || '';
       this.updateConfig({ trustBadges: badges });
   }
 

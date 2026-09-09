@@ -1,7 +1,7 @@
 <app-store-layout [showFloatingChat]="false">
 
   <div class="about-page">
-    <div class="about-page__container" *ngIf="config">
+    <div class="about-page__container" *ngIf="config()">
       <nav class="about-breadcrumb" [attr.aria-label]="'STOREFRONT.AUTO_STR_351' | translate">
         <a routerLink="/" class="about-breadcrumb__home">
           <span>{{ 'NAV.HOME' | translate }}</span>
@@ -10,76 +10,76 @@
         <span class="about-breadcrumb__current">{{ 'ABOUT.TITLE' | translate }}</span>
       </nav>
 
-      <header *ngIf="config.showTitle" class="about-title-block">
-        <h1>{{ config.headerTitle | translate}}</h1>
-        <p>{{ config.headerSubtitle | translate}}</p>
+      <header *ngIf="config().showTitle" class="about-title-block">
+        <h1>{{ config().headerTitle | localize: config().headerTitleAr : config().headerTitleEn }}</h1>
+        <p>{{ config().headerSubtitle | localize: config().headerSubtitleAr : config().headerSubtitleEn }}</p>
       </header>
 
-      <section *ngIf="config.showIntroSection" class="about-intro-card">
+      <section *ngIf="config().showIntroSection" class="about-intro-card">
         <div class="about-intro-card__logo-wrap">
           <div class="about-intro-card__logo-halo"></div>
           <img [src]="logoImg" alt="LOXX KING" class="about-intro-card__logo" />
         </div>
-        <p class="about-intro-card__text" [innerHTML]="replaceNewlines(config.introText | translate)"></p>
+        <p class="about-intro-card__text" [innerHTML]="replaceNewlines(config().introText | localize: config().introTextAr : config().introTextEn)"></p>
       </section>
 
-      <section *ngIf="config.showReasonsSection" class="about-section">
-        <h2 class="about-section__title">{{ config.reasonsTitle | translate }}</h2>
+      <section *ngIf="config().showReasonsSection" class="about-section">
+        <h2 class="about-section__title">{{ config().reasonsTitle | localize: config().reasonsTitleAr : config().reasonsTitleEn }}</h2>
         <div class="about-title-underline"></div>
         <div class="about-reasons-grid">
-          <article *ngFor="let reason of config.reasons" class="about-reason-card">
+          <article *ngFor="let reason of config().reasons" class="about-reason-card">
             <div class="about-reason-card__icon">
               <lucide-icon *ngIf="reason.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="28" [strokeWidth]="1.9"></lucide-icon>
               <lucide-icon *ngIf="reason.icon === 'Check'" [img]="Check" [size]="28" [strokeWidth]="1.9"></lucide-icon>
               <lucide-icon *ngIf="reason.icon === 'Star'" [img]="Star" [size]="28" [strokeWidth]="1.9"></lucide-icon>
             </div>
-            <h3>{{ reason.title | translate }}</h3>
-            <p>{{ reason.text | translate}}</p>
+            <h3>{{ reason.title | localize: reason.titleAr : reason.titleEn }}</h3>
+            <p>{{ reason.text | localize: reason.textAr : reason.textEn }}</p>
           </article>
         </div>
       </section>
 
-      <section *ngIf="config.showVisionSection" class="about-section about-section--compact">
-        <h2 class="about-section__title">{{ config.visionTitle | translate }}</h2>
+      <section *ngIf="config().showVisionSection" class="about-section about-section--compact">
+        <h2 class="about-section__title">{{ config().visionTitle | localize: config().visionTitleAr : config().visionTitleEn }}</h2>
         <div class="about-title-underline"></div>
         <div class="about-wide-card">
           <div class="about-wide-card__icon">
             <lucide-icon [img]="Eye" [size]="28" [strokeWidth]="1.9"></lucide-icon>
           </div>
-          <p [innerHTML]="replaceNewlines(config.visionText | translate)"></p>
+          <p [innerHTML]="replaceNewlines(config().visionText | localize: config().visionTextAr : config().visionTextEn)"></p>
         </div>
       </section>
 
-      <section *ngIf="config.showMissionSection" class="about-section about-section--compact">
-        <h2 class="about-section__title">{{ config.missionTitle | translate }}</h2>
+      <section *ngIf="config().showMissionSection" class="about-section about-section--compact">
+        <h2 class="about-section__title">{{ config().missionTitle | localize: config().missionTitleAr : config().missionTitleEn }}</h2>
         <div class="about-title-underline"></div>
         <div class="about-wide-card">
           <div class="about-wide-card__icon">
             <lucide-icon [img]="Target" [size]="28" [strokeWidth]="1.9"></lucide-icon>
           </div>
-          <p [innerHTML]="replaceNewlines(config.missionText | translate)"></p>
+          <p [innerHTML]="replaceNewlines(config().missionText | localize: config().missionTextAr : config().missionTextEn)"></p>
         </div>
       </section>
 
-      <section *ngIf="config.showValuesSection" class="about-section about-section--compact">
-        <h2 class="about-section__title">{{ config.valuesTitle | translate }}</h2>
+      <section *ngIf="config().showValuesSection" class="about-section about-section--compact">
+        <h2 class="about-section__title">{{ config().valuesTitle | localize: config().valuesTitleAr : config().valuesTitleEn }}</h2>
         <div class="about-title-underline"></div>
         <div class="about-values-card">
-          <div *ngFor="let value of config.values" class="about-value-item">
+          <div *ngFor="let value of config().values" class="about-value-item">
             <lucide-icon *ngIf="value.icon === 'ShieldCheck'" [img]="ShieldCheck" [size]="22" [strokeWidth]="1.9"></lucide-icon>
             <lucide-icon *ngIf="value.icon === 'Check'" [img]="Check" [size]="22" [strokeWidth]="1.9"></lucide-icon>
             <lucide-icon *ngIf="value.icon === 'Star'" [img]="Star" [size]="22" [strokeWidth]="1.9"></lucide-icon>
             <lucide-icon *ngIf="value.icon === 'Target'" [img]="Target" [size]="22" [strokeWidth]="1.9"></lucide-icon>
-            <span>{{ value.label | translate}}</span>
+            <span>{{ value.label | localize: value.labelAr : value.labelEn }}</span>
           </div>
         </div>
       </section>
 
-      <section *ngIf="config.showContactSection" class="about-section about-section--contact">
-        <h2 class="about-section__title">{{ config.contactTitle | translate }}</h2>
+      <section *ngIf="config().showContactSection" class="about-section about-section--contact">
+        <h2 class="about-section__title">{{ config().contactTitle | localize: config().contactTitleAr : config().contactTitleEn }}</h2>
         <div class="about-title-underline"></div>
         <div class="about-contact-card">
-          <a *ngFor="let contact of config.contacts" 
+          <a *ngFor="let contact of config().contacts" 
              [href]="contact.link" 
              [target]="contact.icon === 'phone' || contact.icon === 'mail' ? undefined : '_blank'" 
              rel="noreferrer" 
@@ -97,7 +97,7 @@
             
             <img *ngIf="contact.icon === 'whatsapp'" [src]="whatsappIcon" alt="" class="about-contact-item__brand-icon" />
             
-            <span>{{ contact.label | translate}}</span>
+            <span>{{ contact.label | localize: contact.labelAr : contact.labelEn }}</span>
           </a>
         </div>
       </section>

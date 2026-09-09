@@ -10,10 +10,12 @@ import { LangService } from '../../../../core/services/lang/lang.service';
 import { CartService } from '../../../../core/services/cart/cart.service';
 import { ToastService } from '../../../../core/services/toast/toast.service';
 
+import { LocalizeFieldPipe } from '../../../../shared/pipes/localize-field.pipe';
+
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterModule, LucideAngularModule],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, RouterModule, LucideAngularModule, LocalizeFieldPipe],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
@@ -41,19 +43,36 @@ export class ProductsComponent {
     return this.config?.title ?? 'HOME.BEST_SELLERS_ALT';
   }
 
+  get titleAr() {
+    return this.config?.titleAr ?? '';
+  }
+
+  get titleEn() {
+    return this.config?.titleEn ?? '';
+  }
+
   get displayProducts() {
     if (this.config?.products?.length) return this.config.products;
     if (this.liveProducts().length > 0) return this.liveProducts();
     return homeProducts;
   }
 
+  getLocalizedProductName(product: any): string {
+    if (!product) return '';
+    const isAr = this.langService.storefrontLang() === 'ar';
+    return isAr 
+      ? (product.nameAr || product.nameEn || product.name || '') 
+      : (product.nameEn || product.nameAr || product.name || '');
+  }
+
   getMappedProduct(product: any) {
     if ('productId' in product) return product;
-    const isAr = this.langService.storefrontLang() === 'ar';
     return {
       id: product.id,
       productId: product.id,
-      name: isAr ? (product.nameAr || product.nameEn || product.name) : (product.nameEn || product.nameAr || product.name),
+      name: this.getLocalizedProductName(product),
+      nameAr: product.nameAr,
+      nameEn: product.nameEn,
       image: (product.images && product.images[0]) || product.image || '/assets/home/product-1.png',
       price: product.price,
       oldPrice: product.originalPrice || product.price,

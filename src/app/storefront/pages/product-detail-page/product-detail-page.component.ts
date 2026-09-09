@@ -14,75 +14,20 @@ import { ProductRepositoryImpl } from '../../../data/repositories/product.reposi
 import { ProductFeatureIconComponent } from '../../../shared/components/ui/feature-icon/product-feature-icon.component';
 import { LangService } from '../../../core/services/lang/lang.service';
 import { ProductReviewsComponent } from '../../components/product/product-reviews/product-reviews.component';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
+import { ProductPageConfigService } from '../../../core/services/page-configs/product-page-config.service';
 
-export interface ProductPageConfig {
-    showBreadcrumb: boolean;
-    showBestSellerBadge: boolean;
-    bestSellerText: string;
-    showRatingLine: boolean;
-    showColorOptions: boolean;
-    colorLabel: string;
-    showSizeOptions: boolean;
-    sizeLabel: string;
-    sizeGuideText: string;
-    showPurchaseActions: boolean;
-    addToCartText: string;
-    buyNowText: string;
-    showServiceRow: boolean;
-    services: any[];
-    showTabs: boolean;
-    tabDescriptionText: string;
-    tabFeaturesText: string;
-    tabReviewsText: string;
-    showDescriptionSection: boolean;
-    showFeaturesSection: boolean;
-    features: any[];
-    showReviewsSection: boolean;
-}
-
-const initialConfig: ProductPageConfig = {
-    showBreadcrumb: true,
-    showBestSellerBadge: true,
-    bestSellerText: 'HOME.BEST_SELLERS_ALT',
-    showRatingLine: true,
-    showColorOptions: true,
-    colorLabel: 'PRODUCT.COLOR',
-    showSizeOptions: true,
-    sizeLabel: 'PRODUCT.SIZE',
-    sizeGuideText: 'PRODUCT.SIZE_GUIDE',
-    showPurchaseActions: true,
-    addToCartText: 'PRODUCT.ADD_TO_CART',
-    buyNowText: 'PRODUCT.BUY_NOW',
-    showServiceRow: true,
-    services: [
-        { id: '1', icon: 'Truck', text: 'PRODUCT.SERVICE_FREE_SHIPPING' },
-        { id: '2', icon: 'RotateCcw', text: 'PRODUCT.SERVICE_EASY_RETURNS' }
-    ],
-    showTabs: true,
-    tabDescriptionText: 'PRODUCT.DESCRIPTION',
-    tabFeaturesText: 'PRODUCT.FEATURES',
-    tabReviewsText: 'PRODUCT.REVIEWS',
-    showDescriptionSection: true,
-    showFeaturesSection: true,
-    features: [
-        { id: '1', icon: 'shield', title: 'PRODUCT.SAFE_MATERIAL', subtitle: 'PRODUCT.GENTLE' },
-        { id: '2', icon: 'feather', title: 'PRODUCT.LIGHTWEIGHT', subtitle: 'PRODUCT.COMFORTABLE' },
-        { id: '3', icon: 'posture', title: 'PRODUCT.BACK_SUPPORT', subtitle: 'PRODUCT.IMPROVES_POSTURE' },
-        { id: '4', icon: 'fabric', title: 'PRODUCT.BREATHABLE', subtitle: 'PRODUCT.AIRFLOW' },
-        { id: '5', icon: 'waist', title: 'PRODUCT.WAIST_SCULPTING', subtitle: 'PRODUCT.SHAPES_BODY' }
-    ],
-    showReviewsSection: true,
-};
 
 @Component({
   selector: 'app-product-detail-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, ProductFeatureIconComponent, ProductReviewsComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, RouterLink, StoreLayoutComponent, HomeHeaderComponent, LucideAngularModule, ProductFeatureIconComponent, ProductReviewsComponent, LocalizeFieldPipe],
   templateUrl: './product-detail-page.component.html',
   styleUrl: './product-detail-page.component.css'
 })
 export class ProductDetailPageComponent {
-  pageConfig = signal(initialConfig);
+  configService = inject(ProductPageConfigService);
+  pageConfig = this.configService.pageConfig;
   cartService = inject<any>(CartService);
   favoritesService = inject<any>(FavoritesService);
   toastService = inject<any>(ToastService);

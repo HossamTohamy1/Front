@@ -74,14 +74,14 @@ import { AdminLayoutComponent } from '../../../shared/components/layout/admin-la
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex flex-col lg:flex-row p-6 gap-8 items-start relative h-[calc(100vh-80px)] overflow-hidden">
+        <div class="flex flex-col lg:flex-row p-4 lg:p-6 gap-6 lg:gap-8 items-start relative min-h-[calc(100vh-80px)] lg:h-[calc(100vh-80px)] overflow-y-auto lg:overflow-hidden">
           <!-- Editor Area (Right side in RTL) -->
-          <div class="w-full lg:flex-1 h-full relative overflow-y-auto custom-scrollbar no-scrollbar rounded-2xl bg-white border border-gray-200 shadow-sm p-5">
+          <div class="w-full lg:flex-1 min-h-[500px] lg:h-full relative overflow-y-visible lg:overflow-y-auto custom-scrollbar no-scrollbar rounded-2xl bg-white border border-gray-200 shadow-sm p-4 lg:p-5">
              <app-editor-router [currentRoute]="currentRoute"></app-editor-router>
           </div>
 
           <!-- Live Preview Area (Left side in RTL) -->
-          <div class="w-full lg:w-[45%] flex-shrink-0 flex justify-center h-full overflow-hidden">
+          <div class="w-full lg:w-[45%] flex-shrink-0 flex justify-center h-[800px] lg:h-full overflow-hidden mt-6 lg:mt-0">
             <app-live-preview [mode]="previewMode"></app-live-preview>
           </div>
         </div>

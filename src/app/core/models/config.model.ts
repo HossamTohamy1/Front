@@ -10,6 +10,8 @@ export interface HeroSlide {
 export interface BenefitItem {
     id: string;
     text: string;
+    textAr?: string;
+    textEn?: string;
     icon: string;
     enabled: boolean;
 }
@@ -17,12 +19,16 @@ export interface BenefitItem {
 export interface CategoryItem {
     id: string;
     name: string;
+    nameAr?: string;
+    nameEn?: string;
     image: string;
 }
 
 export interface ProductItem {
     id: string;
     name: string;
+    nameAr?: string;
+    nameEn?: string;
     price: number;
     originalPrice?: number;
     image: string;

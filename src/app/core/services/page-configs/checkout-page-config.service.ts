@@ -1,37 +1,65 @@
 import { sanitizeWithInitial } from '../../utils/config-sanitizer';
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, effect, inject, NgZone } from '@angular/core';
 
+
+const INSTANCE_ID = typeof crypto !== 'undefined' && crypto.randomUUID 
+  ? crypto.randomUUID() 
+  : Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 export interface CheckoutTrustBadge {
     id: string;
     icon: string;
     title: string;
+    titleAr?: string;
+    titleEn?: string;
     subtitle: string;
+    subtitleAr?: string;
+    subtitleEn?: string;
 }
 
 export interface CheckoutPageConfig {
     headerTitle: string;
+    headerTitleAr?: string;
+    headerTitleEn?: string;
     headerSubtitle: string;
+    headerSubtitleAr?: string;
+    headerSubtitleEn?: string;
     
     showCustomerInfo: boolean;
     customerInfoTitle: string;
+    customerInfoTitleAr?: string;
+    customerInfoTitleEn?: string;
     
     showPaymentInfo: boolean;
     paymentInfoTitle: string;
+    paymentInfoTitleAr?: string;
+    paymentInfoTitleEn?: string;
     
     showOrderSummary: boolean;
     summaryTitle: string;
+    summaryTitleAr?: string;
+    summaryTitleEn?: string;
     
     showSafeShopping: boolean;
     safeShoppingTitle: string;
+    safeShoppingTitleAr?: string;
+    safeShoppingTitleEn?: string;
     safeShoppingText: string;
+    safeShoppingTextAr?: string;
+    safeShoppingTextEn?: string;
     
     showTrustBadges: boolean;
     trustBadges: CheckoutTrustBadge[];
     
     emptyStateTitle: string;
+    emptyStateTitleAr?: string;
+    emptyStateTitleEn?: string;
     emptyStateText: string;
+    emptyStateTextAr?: string;
+    emptyStateTextEn?: string;
     emptyStateCta: string;
+    emptyStateCtaAr?: string;
+    emptyStateCtaEn?: string;
 }
 
 
@@ -72,13 +100,18 @@ export class CheckoutPageConfigService {
   private readonly storageKey = 'loxxking-checkout-page-config';
 
   readonly pageConfig = signal<CheckoutPageConfig>(this.loadInitialConfig());
+  private zone = inject(NgZone);
 
   constructor() {
     window.addEventListener('storage', (e: StorageEvent) => {
+      if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
+
       if (e.key === this.storageKey && e.newValue) {
         try {
           const updated = JSON.parse(e.newValue);
-          this.pageConfig.set(this.mergeWithInitial(updated));
+          this.zone.run(() => {
+            this.pageConfig.set(this.mergeWithInitial(updated));
+          });
         } catch (_) {}
       }
     });
@@ -88,11 +121,13 @@ export class CheckoutPageConfigService {
       localStorage.setItem(this.storageKey, JSON.stringify(config));
       
       try {
-        window.dispatchEvent(new StorageEvent('storage', {
+        const event = new StorageEvent('storage', {
           key: this.storageKey,
           newValue: JSON.stringify(config),
           storageArea: localStorage,
-        }));
+        });
+        (event as any).__sourceInstanceId = INSTANCE_ID;
+        window.dispatchEvent(event);
       } catch (_) {}
     });
   }

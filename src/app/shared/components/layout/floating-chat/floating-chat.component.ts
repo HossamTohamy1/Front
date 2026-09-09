@@ -350,14 +350,10 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
   private refreshSub?: Subscription;
 
   ngOnInit() {
-    if (this.authService.isAuthenticated()) {
-      this.loadConversation();
-    }
+    this.loadConversation();
     
     this.refreshSub = this.chatService.refreshConversation$.subscribe(() => {
-      if (this.authService.isAuthenticated()) {
-        this.loadConversation();
-      }
+      this.loadConversation();
     });
   }
 
@@ -370,40 +366,53 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
   loadConversation() {
     this.chatService.getMyConversation().subscribe({
       next: (res) => {
-        if (res) {
+        if (res && res.id) {
           this.conversationId = res.id;
-          const oldLen = this.messages.length;
           
-          this.messages = res.messages.map(m => ({
+          this.messages = (res.messages || []).map((m: any) => ({
             id: m.id,
-            sender: m.senderRole === 'Staff' ? 'staff' : 'customer',
+            sender: (m.senderType || m.senderRole) === 'Staff' ? 'staff' : 'customer',
+            senderType: m.senderType || m.senderRole,
+            isRead: m.isRead,
             text: m.message,
-            sentAt: new Date(m.createdAt!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            sentAt: m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
           }));
 
-          const newLen = this.messages.length;
-          if (!this.isOpen && newLen > oldLen && oldLen > 0) {
-            this.unreadCount += (newLen - oldLen);
-          } else if (!this.isOpen && oldLen === 0 && newLen > 0) {
-            // Check if any messages are from staff that are recent, but for now just show unread if there are messages and we just loaded them while closed
-             // In a real app we'd track lastReadAt, but for simplicity:
-             if (this.messages[newLen - 1].sender === 'staff') {
-                this.unreadCount++;
-             }
+          if (this.isOpen) {
+            this.unreadCount = 0;
+            this.chatService.markRead(this.conversationId).subscribe();
+          } else {
+            const unread = this.messages.filter(m => m.sender === 'staff' && !m.isRead);
+            this.unreadCount = unread.length;
           }
 
           this.chatService.startConnection(this.conversationId);
           
           if (!this.messageSub) {
             this.messageSub = this.chatService.messageReceived$.subscribe((msg) => {
+              const isStaff = (msg.senderType || msg.senderRole) === 'Staff';
+              const targetSender = isStaff ? 'staff' : 'customer';
+              const isDuplicate = (msg.id && this.messages.some(m => m.id === msg.id)) ||
+                (this.messages.length > 0 && this.messages[this.messages.length - 1].text === msg.message && this.messages[this.messages.length - 1].sender === targetSender);
+              if (isDuplicate) return;
+
               this.messages.push({
-                id: Date.now().toString(),
-                sender: msg.senderRole === 'Staff' ? 'staff' : 'customer',
+                id: msg.id || Date.now().toString(),
+                sender: targetSender,
+                senderType: msg.senderType || (isStaff ? 'Staff' : 'Customer'),
+                isRead: this.isOpen,
                 text: msg.message,
-                sentAt: new Date(msg.createdAt!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                sentAt: msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
               });
+
               if (!this.isOpen) {
-                this.unreadCount++;
+                if (isStaff) {
+                  this.unreadCount++;
+                }
+              } else {
+                if (isStaff && this.conversationId) {
+                  this.chatService.markRead(this.conversationId).subscribe();
+                }
               }
               setTimeout(() => this.scrollToBottom(), 100);
             });
@@ -411,6 +420,9 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
           
           setTimeout(() => this.scrollToBottom(), 100);
         }
+      },
+      error: () => {
+        // Handle gracefully without crashing
       }
     });
   }
@@ -439,16 +451,28 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
 
   setIsOpen(value: boolean) {
     this.isOpen = value;
+    if (value) {
+      this.unreadCount = 0;
+      if (this.conversationId) {
+        this.chatService.markRead(this.conversationId).subscribe();
+      }
+      setTimeout(() => this.scrollToBottom(), 100);
+      if (!this.conversationId) {
+        this.loadConversation();
+      }
+    }
   }
 
   toggleChat() {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       this.unreadCount = 0;
+      if (this.conversationId) {
+        this.chatService.markRead(this.conversationId).subscribe();
+      }
       setTimeout(() => this.scrollToBottom(), 100);
       
-      // Attempt to load if not already loaded and authenticated
-      if (!this.conversationId && this.authService.isAuthenticated()) {
+      if (!this.conversationId) {
         this.loadConversation();
       }
     }
@@ -532,15 +556,18 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
 
   sendTextMessage(event: Event) {
     event.preventDefault();
-    if (!this.messageValue.trim() || !this.conversationId) return;
+    if (!this.messageValue.trim()) return;
     
     const text = this.messageValue.trim();
     this.messageValue = '';
 
-    this.chatService.sendMessage(this.conversationId, text).subscribe({
-      next: () => {
-        // Message will come through SignalR, or we can optimistically append
-        this.loadConversation(); // Refresh to be safe, though SignalR should handle it
+    this.chatService.sendMessage(this.conversationId || '', text).subscribe({
+      next: (res: any) => {
+        const data = res?.data ?? res;
+        if (data?.conversationId) {
+          this.conversationId = data.conversationId;
+        }
+        this.loadConversation();
       }
     });
   }
