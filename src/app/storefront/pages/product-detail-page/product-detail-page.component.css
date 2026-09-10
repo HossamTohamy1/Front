@@ -264,10 +264,16 @@
 .lk-product-stars {
     display: flex;
     align-items: center;
-    gap: 2px;
-    color: var(--lk-product-gold);
+    gap: 3px;
     direction: ltr;
 }
+
+    .lk-solid-star-inline {
+        width: 17px;
+        height: 17px;
+        fill: #f59e0b;
+        display: inline-block;
+    }
 
     .lk-product-stars svg {
         width: 18px;

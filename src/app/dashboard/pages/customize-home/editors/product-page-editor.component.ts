@@ -7,6 +7,8 @@ import { ProductPageConfigService } from '../../../../core/services/page-configs
 import { Trash2 } from 'lucide-angular';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { LucideAngularModule } from 'lucide-angular';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
+import { PreviewScrollService } from '../../../../core/services/page-configs/preview-scroll.service';
 
 @Component({
   selector: 'app-product-page-editor',
@@ -19,7 +21,7 @@ import { LucideAngularModule } from 'lucide-angular';
         <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_12' | translate }}</p>
       </div>
 
-      <app-section-card title="الرأس ومعلومات المنتج" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card (click)="onCardClick(0)" (focusin)="onCardClick(0)" title="الرأس ومعلومات المنتج" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار مسار التنقل (Breadcrumb)', field: 'showBreadcrumb' }"></ng-container>
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار علامة الأكثر مبيعاً', field: 'showBestSellerBadge' }"></ng-container>
         <app-bilingual-input title="نص علامة الأكثر مبيعاً" labelAr="عربي / AR" labelEn="English / EN" 
@@ -29,7 +31,7 @@ import { LucideAngularModule } from 'lucide-angular';
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار سطر التقييم', field: 'showRatingLine' }"></ng-container>
       </app-section-card>
 
-      <app-section-card title="خيارات الشراء" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card (click)="onCardClick(1)" (focusin)="onCardClick(1)" title="خيارات الشراء" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار خيارات الألوان', field: 'showColorOptions' }"></ng-container>
         <app-bilingual-input title="تسمية اللون" labelAr="عربي / AR" labelEn="English / EN" 
                 [valueAr]="$any(config())['colorLabelAr'] || ''" 
@@ -57,18 +59,18 @@ import { LucideAngularModule } from 'lucide-angular';
                 (valueChange)="updateBilingualField('buyNowText', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="مميزات الخدمة (أسفل الشراء)" [index]="2" [enabled]="config().showServiceRow" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showServiceRow: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addService.bind(this) }">
+      <app-section-card (click)="onCardClick(2)" (focusin)="onCardClick(2)" title="مميزات الخدمة (أسفل الشراء)" [index]="2" [enabled]="config().showServiceRow" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showServiceRow: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addService.bind(this) }">
         <div class="flex flex-col gap-3">
           <div *ngFor="let svc of config().services || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">نص الخدمة (عربي)</span>
-                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="svc.textAr" (ngModelChange)="updateService(idx, { textAr: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">نص الخدمة (عربي)</span>
+                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [ngModel]="svc.textAr" (ngModelChange)="updateService(idx, { textAr: $event })" />
                 </div>
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">Text (EN)</span>
-                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="svc.textEn" (ngModelChange)="updateService(idx, { textEn: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Text (EN)</span>
+                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [ngModel]="svc.textEn" (ngModelChange)="updateService(idx, { textEn: $event })" />
                 </div>
               </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 mt-1" [ngModel]="svc.icon" (ngModelChange)="updateService(idx, { icon: $event })">
@@ -85,7 +87,7 @@ import { LucideAngularModule } from 'lucide-angular';
         </div>
       </app-section-card>
 
-      <app-section-card title="محتوى التفاصيل (التبويبات)" [index]="3" [enabled]="config().showTabs" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showTabs: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card (click)="onCardClick(3)" (focusin)="onCardClick(3)" title="محتوى التفاصيل (التبويبات)" [index]="3" [enabled]="config().showTabs" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showTabs: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="عنوان تبويب الوصف" labelAr="عربي / AR" labelEn="English / EN" 
                 [valueAr]="$any(config())['tabDescriptionTextAr'] || ''" 
                 [valueEn]="$any(config())['tabDescriptionTextEn'] || ''" 
@@ -104,28 +106,28 @@ import { LucideAngularModule } from 'lucide-angular';
                 (valueChange)="updateBilingualField('tabFeaturesText', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="قائمة مميزات المنتج" [index]="4" [enabled]="config().showFeaturesSection" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showFeaturesSection: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addFeature.bind(this) }">
+      <app-section-card (click)="onCardClick(4)" (focusin)="onCardClick(4)" title="قائمة مميزات المنتج" [index]="4" [enabled]="config().showFeaturesSection" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showFeaturesSection: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addFeature.bind(this) }">
         <div class="flex flex-col gap-3">
           <div *ngFor="let feat of config().features || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
-                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="feat.titleAr" (ngModelChange)="updateFeature(idx, { titleAr: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">العنوان (عربي)</span>
+                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [ngModel]="feat.titleAr" (ngModelChange)="updateFeature(idx, { titleAr: $event })" />
                 </div>
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="feat.titleEn" (ngModelChange)="updateFeature(idx, { titleEn: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Title (EN)</span>
+                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [ngModel]="feat.titleEn" (ngModelChange)="updateFeature(idx, { titleEn: $event })" />
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
-                  <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="feat.subtitleAr" (ngModelChange)="updateFeature(idx, { subtitleAr: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">الوصف (عربي)</span>
+                  <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600 text-right" [ngModel]="feat.subtitleAr" (ngModelChange)="updateFeature(idx, { subtitleAr: $event })" />
                 </div>
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
-                  <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="feat.subtitleEn" (ngModelChange)="updateFeature(idx, { subtitleEn: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Subtitle (EN)</span>
+                  <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600 text-left" [ngModel]="feat.subtitleEn" (ngModelChange)="updateFeature(idx, { subtitleEn: $event })" />
                 </div>
               </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 mt-1" [ngModel]="feat.icon" (ngModelChange)="updateFeature(idx, { icon: $event })">
@@ -161,6 +163,19 @@ export class ProductPageEditorComponent {
   readonly configService = inject(ProductPageConfigService);
   readonly config = this.configService.pageConfig;
   readonly Trash2 = Trash2;
+  private previewScrollService = inject(PreviewScrollService);
+
+  onCardClick(index: number) {
+    const targets = [
+      { selector: '.lk-product-summary' },
+      { selector: '.lk-product-info' },
+      { selector: '.lk-product-features-grid, .lk-product-features' },
+      { selector: '.lk-product-tabs' },
+      { selector: '.lk-product-features-grid, .lk-product-features' }
+    ];
+    const target = targets[index] || { index };
+    this.previewScrollService.scrollToSection(target);
+  }
 
   constructor() {
     this.backfillLocalizedStrings();
@@ -169,14 +184,18 @@ export class ProductPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'bestSellerText', 'colorLabel', 'sizeLabel', 'sizeGuideText',
       'addToCartText', 'buyNowText', 'tabDescriptionText', 'tabReviewsText', 'tabFeaturesText'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -184,9 +203,12 @@ export class ProductPageEditorComponent {
     if (c.services && c.services.length > 0) {
       const newServices = c.services.map((s: any) => {
         let sChanged = false;
-        if (s.text && !s.textAr && !s.textEn) {
+        if (s.text && !s.textAr) {
           s.textAr = s.text;
-          s.textEn = s.text;
+          sChanged = true;
+        }
+        if (!s.textEn || ARABIC_REGEX.test(s.textEn)) {
+          s.textEn = getEnglishTranslation(s.textAr || s.text, 'Service text');
           sChanged = true;
         }
         if (sChanged) changed = true;
@@ -198,14 +220,20 @@ export class ProductPageEditorComponent {
     if (c.features && c.features.length > 0) {
       const newFeatures = c.features.map((f: any) => {
         let fChanged = false;
-        if (f.title && !f.titleAr && !f.titleEn) {
+        if (f.title && !f.titleAr) {
           f.titleAr = f.title;
-          f.titleEn = f.title;
           fChanged = true;
         }
-        if (f.subtitle && !f.subtitleAr && !f.subtitleEn) {
+        if (!f.titleEn || ARABIC_REGEX.test(f.titleEn)) {
+          f.titleEn = getEnglishTranslation(f.titleAr || f.title, 'Feature');
+          fChanged = true;
+        }
+        if (f.subtitle && !f.subtitleAr) {
           f.subtitleAr = f.subtitle;
-          f.subtitleEn = f.subtitle;
+          fChanged = true;
+        }
+        if (!f.subtitleEn || ARABIC_REGEX.test(f.subtitleEn)) {
+          f.subtitleEn = getEnglishTranslation(f.subtitleAr || f.subtitle, 'Feature Details');
           fChanged = true;
         }
         if (fChanged) changed = true;
@@ -228,7 +256,7 @@ export class ProductPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 
@@ -243,7 +271,7 @@ export class ProductPageEditorComponent {
 
   addService() {
     const services = [...(this.config().services || [])];
-    services.push({ id: 's-' + Date.now(), icon: 'Truck', text: 'شحن سريع ومجاني' });
+    services.push({ id: 's-' + Date.now(), icon: 'Truck', text: 'شحن سريع ومجاني', textAr: 'شحن سريع ومجاني', textEn: 'Fast & Free Shipping' });
     this.updateConfig({ services });
   }
 
@@ -261,7 +289,12 @@ export class ProductPageEditorComponent {
 
   addFeature() {
     const features = [...(this.config().features || [])];
-    features.push({ id: 'f-' + Date.now(), icon: 'shield', title: 'خامة فاخرة', subtitle: 'مريحة ومناسبة للاستخدام اليومي' });
+    features.push({ 
+      id: 'f-' + Date.now(), 
+      icon: 'shield', 
+      title: 'خامة فاخرة', titleAr: 'خامة فاخرة', titleEn: 'Premium Material', 
+      subtitle: 'مريحة ومناسبة للاستخدام اليومي', subtitleAr: 'مريحة ومناسبة للاستخدام اليومي', subtitleEn: 'Comfortable and suitable for daily wear' 
+    });
     this.updateConfig({ features });
   }
 

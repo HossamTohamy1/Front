@@ -38,17 +38,31 @@ export interface FaqPageConfig {
 
 const initialConfig: FaqPageConfig = {
   title: 'الأسئلة الشائعة',
+  titleAr: 'الأسئلة الشائعة',
+  titleEn: 'Frequently Asked Questions',
   subtitle: 'ابحث عن إجابات لأسئلتك الشائعة هنا',
+  subtitleAr: 'ابحث عن إجابات لأسئلتك الشائعة هنا',
+  subtitleEn: 'Find answers to common questions here',
   searchPlaceholder: 'ابحث في الأسئلة',
+  searchPlaceholderAr: 'ابحث في الأسئلة',
+  searchPlaceholderEn: 'Search questions...',
   showSearch: true,
   showSupportCard: true,
   supportCardTitle: 'لم تجد ما تبحث عنه؟',
+  supportCardTitleAr: 'لم تجد ما تبحث عنه؟',
+  supportCardTitleEn: "Didn't find what you were looking for?",
   supportCardSubtitle: 'تواصل معنا على الواتساب',
+  supportCardSubtitleAr: 'تواصل معنا على الواتساب',
+  supportCardSubtitleEn: 'Contact us via WhatsApp',
   faqs: [
     {
       id: 'size',
       question: 'كيف اعرف مقاسي؟',
-      answer: 'يمكنك معرفة مقاسك من خلال جدول المقاسات'
+      questionAr: 'كيف اعرف مقاسي؟',
+      questionEn: 'How do I know my size?',
+      answer: 'يمكنك معرفة مقاسك من خلال جدول المقاسات',
+      answerAr: 'يمكنك معرفة مقاسك من خلال جدول المقاسات',
+      answerEn: 'You can check your size using our size guide'
     }
   ]
 };
@@ -59,18 +73,34 @@ const initialConfig: FaqPageConfig = {
 export class FaqPageConfigService {
   private readonly storageKey = 'loxxking-faq-page-config';
 
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson: string = '';
+
   readonly pageConfig = signal<FaqPageConfig>(this.loadInitialConfig());
   private zone = inject(NgZone);
 
   constructor() {
+    this.lastSavedJson = JSON.stringify(this.pageConfig());
+
     window.addEventListener('storage', (e: StorageEvent) => {
       if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
 
       if (e.key === this.storageKey && e.newValue) {
+        if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
         try {
           const updated = JSON.parse(e.newValue);
+          const merged = this.mergeWithInitial(updated);
+          const mergedJson = JSON.stringify(merged);
+          if (mergedJson === this.lastSavedJson) return;
+
           this.zone.run(() => {
-            this.pageConfig.set(this.mergeWithInitial(updated));
+            this.isApplyingExternalUpdate = true;
+            this.lastSavedJson = mergedJson;
+            this.pageConfig.set(merged);
+            queueMicrotask(() => {
+              this.isApplyingExternalUpdate = false;
+            });
           });
         } catch (_) {}
       }
@@ -78,12 +108,18 @@ export class FaqPageConfigService {
 
     effect(() => {
       const config = this.pageConfig();
-      localStorage.setItem(this.storageKey, JSON.stringify(config));
+      const stringified = JSON.stringify(config);
+
+      if (this.isApplyingExternalUpdate) return;
+      if (stringified === this.lastSavedJson) return;
+
+      this.lastSavedJson = stringified;
+      localStorage.setItem(this.storageKey, stringified);
       
       try {
         const event = new StorageEvent('storage', {
           key: this.storageKey,
-          newValue: JSON.stringify(config),
+          newValue: stringified,
           storageArea: localStorage,
         });
         (event as any).__sourceInstanceId = INSTANCE_ID;

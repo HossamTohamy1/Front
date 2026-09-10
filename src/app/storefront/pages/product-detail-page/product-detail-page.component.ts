@@ -105,11 +105,11 @@ export class ProductDetailPageComponent {
           } else {
             this.productRepo.getProductBySlug(id).subscribe(p => {
               if (p) setProductData(p);
-              else setProductData(products.find((x: any) => x.id === id || x.slug === id));
+              else setProductData(this.productRepo.findLocalProduct(id));
             });
           }
         },
-        error: () => setProductData(products.find((x: any) => x.id === id || x.slug === id))
+        error: () => setProductData(this.productRepo.findLocalProduct(id))
       });
     });
   }

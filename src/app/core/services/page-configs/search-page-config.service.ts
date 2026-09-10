@@ -13,7 +13,7 @@ export interface SearchPageConfig {
     quickSuggestionsTitle: string;
     quickSuggestionsTitleAr?: string;
     quickSuggestionsTitleEn?: string;
-    quickSuggestions: { text: string; textAr?: string; textEn?: string }[];
+    quickSuggestions: { id?: string; text: string; textAr?: string; textEn?: string }[];
     recentSearchTitle: string;
     recentSearchTitleAr?: string;
     recentSearchTitleEn?: string;
@@ -44,10 +44,10 @@ const initialConfig: SearchPageConfig = {
     quickSuggestionsTitleAr: 'عمليات بحث شائعة:',
     quickSuggestionsTitleEn: 'Popular Searches:',
     quickSuggestions: [
-        { text: 'مشد خصر رجالي', textAr: 'مشد خصر رجالي', textEn: 'Men Waist Trainer' },
-        { text: 'مشد خصر نسائي', textAr: 'مشد خصر نسائي', textEn: 'Women Waist Trainer' },
-        { text: 'مشد خصر للتنحيف', textAr: 'مشد خصر للتنحيف', textEn: 'Slimming Corset' },
-        { text: 'مشد خصر بعد الولادة', textAr: 'مشد خصر بعد الولادة', textEn: 'Postpartum Corset' },
+        { id: 'qs-1', text: 'مشد خصر رجالي', textAr: 'مشد خصر رجالي', textEn: 'Men Waist Trainer' },
+        { id: 'qs-2', text: 'مشد خصر نسائي', textAr: 'مشد خصر نسائي', textEn: 'Women Waist Trainer' },
+        { id: 'qs-3', text: 'مشد خصر للتنحيف', textAr: 'مشد خصر للتنحيف', textEn: 'Slimming Corset' },
+        { id: 'qs-4', text: 'مشد خصر بعد الولادة', textAr: 'مشد خصر بعد الولادة', textEn: 'Postpartum Corset' },
     ],
     recentSearchTitle: 'عمليات البحث الأخيرة',
     recentSearchTitleAr: 'عمليات البحث الأخيرة',
@@ -76,20 +76,35 @@ const initialConfig: SearchPageConfig = {
 })
 export class SearchPageConfigService {
   private readonly storageKey = 'loxxking-search-page-config';
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson: string = '';
 
   readonly pageConfig = signal<SearchPageConfig>(this.loadInitialConfig());
 
   private zone = inject(NgZone);
 
   constructor() {
+    this.lastSavedJson = JSON.stringify(this.pageConfig());
+
     window.addEventListener('storage', (e: StorageEvent) => {
       if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
 
       if (e.key === this.storageKey && e.newValue) {
+        if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
         try {
           const updated = JSON.parse(e.newValue);
+          const merged = this.mergeWithInitial(updated);
+          const mergedJson = JSON.stringify(merged);
+          if (mergedJson === this.lastSavedJson) return;
+
           this.zone.run(() => {
-            this.pageConfig.set(this.mergeWithInitial(updated));
+            this.isApplyingExternalUpdate = true;
+            this.lastSavedJson = mergedJson;
+            this.pageConfig.set(merged);
+            queueMicrotask(() => {
+              this.isApplyingExternalUpdate = false;
+            });
           });
         } catch (_) {}
       }
@@ -97,12 +112,18 @@ export class SearchPageConfigService {
 
     effect(() => {
       const config = this.pageConfig();
-      localStorage.setItem(this.storageKey, JSON.stringify(config));
+      const stringified = JSON.stringify(config);
+
+      if (this.isApplyingExternalUpdate) return;
+      if (stringified === this.lastSavedJson) return;
+
+      this.lastSavedJson = stringified;
+      localStorage.setItem(this.storageKey, stringified);
       
       try {
         const event = new StorageEvent('storage', {
           key: this.storageKey,
-          newValue: JSON.stringify(config),
+          newValue: stringified,
           storageArea: localStorage,
         });
         (event as any).__sourceInstanceId = INSTANCE_ID;

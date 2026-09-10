@@ -14,22 +14,25 @@ type ContactMethod = {
 
 const DEFAULT_CONFIG = {
     pageTitle: 'تواصل معنا',
+    pageTitleAr: 'تواصل معنا',
+    pageTitleEn: 'Contact Us',
     pageSubtitle: 'نحن هنا لمساعدتك والإجابة على كافة استفساراتك.',
+    pageSubtitleAr: 'نحن هنا لمساعدتك والإجابة على كافة استفساراتك.',
+    pageSubtitleEn: 'We are here to help and answer all your inquiries.',
     formTitle: 'أرسل لنا رسالة',
+    formTitleAr: 'أرسل لنا رسالة',
+    formTitleEn: 'Send Us a Message',
     formSubtitle: 'سنقوم بالرد عليك في أقرب وقت ممكن.',
+    formSubtitleAr: 'سنقوم بالرد عليك في أقرب وقت ممكن.',
+    formSubtitleEn: 'We will get back to you as soon as possible.',
     showContactForm: true,
     bannerImage: '',
     contactMethods: [
-        { id: '1', type: 'phone', title: 'خدمة العملاء', value: '920000000', link: 'tel:920000000' },
-        { id: '2', type: 'whatsapp', title: 'واتساب', value: '+966500000000', link: 'https://wa.me/966500000000' },
-        { id: '3', type: 'email', title: 'البريد الإلكتروني', value: 'support@loxxking.com', link: 'mailto:support@loxxking.com' },
+        { id: '1', type: 'phone', title: 'خدمة العملاء', titleAr: 'خدمة العملاء', titleEn: 'Customer Service', value: '920000000', valueAr: '920000000', valueEn: '920000000', link: 'tel:920000000' },
+        { id: '2', type: 'whatsapp', title: 'واتساب', titleAr: 'واتساب', titleEn: 'WhatsApp', value: '+966500000000', valueAr: '+966500000000', valueEn: '+966500000000', link: 'https://wa.me/966500000000' },
+        { id: '3', type: 'email', title: 'البريد الإلكتروني', titleAr: 'البريد الإلكتروني', titleEn: 'Email', value: 'support@loxxking.com', valueAr: 'support@loxxking.com', valueEn: 'support@loxxking.com', link: 'mailto:support@loxxking.com' },
     ]
 };
-
-
-
-
-
 
 
 
@@ -43,18 +46,34 @@ const INSTANCE_ID = typeof crypto !== 'undefined' && crypto.randomUUID
 export class ContactPageConfigService {
   private readonly storageKey = 'loxx-contact-config';
 
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson: string = '';
+
   readonly pageConfig = signal<any>(this.loadInitialConfig());
   private zone = inject(NgZone);
 
   constructor() {
+    this.lastSavedJson = JSON.stringify(this.pageConfig());
+
     window.addEventListener('storage', (e: StorageEvent) => {
       if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
 
       if (e.key === this.storageKey && e.newValue) {
+        if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
         try {
           const updated = JSON.parse(e.newValue);
+          const merged = this.mergeWithInitial(updated);
+          const mergedJson = JSON.stringify(merged);
+          if (mergedJson === this.lastSavedJson) return;
+
           this.zone.run(() => {
-            this.pageConfig.set(this.mergeWithInitial(updated));
+            this.isApplyingExternalUpdate = true;
+            this.lastSavedJson = mergedJson;
+            this.pageConfig.set(merged);
+            queueMicrotask(() => {
+              this.isApplyingExternalUpdate = false;
+            });
           });
         } catch (_) {}
       }
@@ -62,12 +81,18 @@ export class ContactPageConfigService {
 
     effect(() => {
       const config = this.pageConfig();
-      localStorage.setItem(this.storageKey, JSON.stringify(config));
+      const stringified = JSON.stringify(config);
+
+      if (this.isApplyingExternalUpdate) return;
+      if (stringified === this.lastSavedJson) return;
+
+      this.lastSavedJson = stringified;
+      localStorage.setItem(this.storageKey, stringified);
       
       try {
         const event = new StorageEvent('storage', {
           key: this.storageKey,
-          newValue: JSON.stringify(config),
+          newValue: stringified,
           storageArea: localStorage,
         });
         (event as any).__sourceInstanceId = INSTANCE_ID;

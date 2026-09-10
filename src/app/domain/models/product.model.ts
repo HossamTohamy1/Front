@@ -28,6 +28,8 @@ export interface Product {
   isBestSeller?: boolean;
   badge?: string;
   colors?: string[];
+  guid?: string;
+  aliases?: string[];
 }
 
 export interface Review {

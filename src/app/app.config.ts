@@ -1,5 +1,10 @@
-import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { AuthService } from './core/services/auth/auth.service';
+
+export function initializeAuth(authService: AuthService) {
+  return () => authService.fetchUser().catch(() => {});
+}
 import {
   LucideAngularModule,
   ArrowLeft,
@@ -101,6 +106,12 @@ import { AppMissingTranslationHandler } from './core/i18n/missing-translation.ha
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [AuthService],
+      multi: true
+    },
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
     provideHttpClient(withInterceptors([authTokenInterceptor, errorInterceptor])),

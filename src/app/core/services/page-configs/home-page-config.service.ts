@@ -23,9 +23,11 @@ const initialConfig: PageConfig = {
       type: 'hero',
       enabled: true,
       title: 'مشدات فاخرة وتشكيلة مميزة',
+      titleAr: 'مشدات فاخرة وتشكيلة مميزة',
+      titleEn: 'Luxury Shapers & Premium Collection',
       image: heroVisual,
       slides: [
-        { id: 'slide-1', image: heroVisual, title: 'شد أقوى\nوقوام أفضل' }
+        { id: 'slide-1', image: heroVisual, title: 'شد أقوى\nوقوام أفضل', titleAr: 'شد أقوى\nوقوام أفضل', titleEn: 'Stronger Sculpt\n& Better Silhouette' }
       ]
     },
     {
@@ -33,9 +35,9 @@ const initialConfig: PageConfig = {
       type: 'benefits',
       enabled: true,
       benefits: [
-        { id: 'b1', text: 'دفع عند الاستلام\nادفع بعد الاستلام', icon: 'CreditCard', enabled: true },
-        { id: 'b2', text: 'شحن مجاني\nلجميع الطلبات في المملكة', icon: 'Truck', enabled: true },
-        { id: 'b3', text: 'استرجاع مجاني\nخلال 14 يوم بكل سهولة', icon: 'RefreshCcw', enabled: true }
+        { id: 'b1', text: 'دفع عند الاستلام\nادفع بعد الاستلام', textAr: 'دفع عند الاستلام\nادفع بعد الاستلام', textEn: 'Cash on Delivery\nPay upon delivery', icon: 'CreditCard', enabled: true },
+        { id: 'b2', text: 'شحن مجاني\nلجميع الطلبات في المملكة', textAr: 'شحن مجاني\nلجميع الطلبات في المملكة', textEn: 'Free Shipping\nOn all orders in KSA', icon: 'Truck', enabled: true },
+        { id: 'b3', text: 'استرجاع مجاني\nخلال 14 يوم بكل سهولة', textAr: 'استرجاع مجاني\nخلال 14 يوم بكل سهولة', textEn: 'Free Returns\nWithin 14 days easily', icon: 'RefreshCcw', enabled: true }
       ]
     },
     {
@@ -43,30 +45,37 @@ const initialConfig: PageConfig = {
       type: 'categories',
       enabled: true,
       title: 'تسوق حسب الفئة',
+      titleAr: 'تسوق حسب الفئة',
+      titleEn: 'Shop by Category',
       showTitle: true,
-      categories: homeCategories.map((c) => ({ id: c.id, name: c.label, image: c.image }))
+      categories: [
+        { id: 'women', name: 'نساء', nameAr: 'نساء', nameEn: "Women's", image: '/assets/home/category-women-hd.png' },
+        { id: 'sport', name: 'رياضي', nameAr: 'رياضي', nameEn: 'Sports', image: '/assets/home/category-sport-hd.png' },
+        { id: 'postpartum', name: 'ما بعد الولادة', nameAr: 'ما بعد الولادة', nameEn: 'Postpartum', image: '/assets/home/category-postpartum-hd.png' },
+        { id: 'men', name: 'رجالي', nameAr: 'رجالي', nameEn: "Men's", image: '/assets/home/category-men-hd.png' }
+      ]
     },
     {
       id: 'sec-bestsellers',
       type: 'bestsellers',
       enabled: true,
       title: 'الأكثر مبيعاً',
+      titleAr: 'الأكثر مبيعاً',
+      titleEn: 'Bestsellers',
       showTitle: true,
-      products: homeProducts.map((p) => ({
-        id: p.id,
-        name: p.name,
-        price: p.price,
-        originalPrice: p.oldPrice,
-        image: p.image,
-        discount: p.discount ? `-${p.discount}%` : undefined,
-        rating: p.rating,
-        reviewsCount: p.reviews
-      }))
+      products: [
+        { id: 'prod-2', productId: 'prod-2', name: 'مشد كامل للجسم', nameAr: 'مشد كامل للجسم', nameEn: 'Full Body Shaper', price: 260, originalPrice: 320, image: '/assets/home/product-full-body-hd.png', rating: 4.9, reviewsCount: 112 },
+        { id: 'prod-3', productId: 'prod-3', name: 'مشد ما بعد الولادة', nameAr: 'مشد ما بعد الولادة', nameEn: 'Postpartum Shaper', price: 210, originalPrice: 250, image: '/assets/home/product-postpartum-beige-hd.png', rating: 4.8, reviewsCount: 96 },
+        { id: 'prod-4', productId: 'prod-4', name: 'مشد رياضي', nameAr: 'مشد رياضي', nameEn: 'Sports Shaper', price: 230, originalPrice: 270, image: '/assets/home/product-sport-black-hd.png', discount: '-15%', rating: 4.7, reviewsCount: 86 },
+        { id: 'prod-6', productId: 'prod-6', name: 'مشد يومي مربع', nameAr: 'مشد يومي مربع', nameEn: 'Daily Square Shaper', price: 195, originalPrice: 250, image: '/assets/home/product-beige-square-hd.png', rating: 4.7, reviewsCount: 96 }
+      ]
     },
     {
       id: 'sec-promo',
       type: 'promo',
       enabled: true,
+      titleAr: 'عروض حصرية',
+      titleEn: 'Exclusive Offers',
       image: offerBanner
     }
   ]
@@ -204,6 +213,28 @@ export class HomePageConfigService {
   }
 
   private mergeWithInitial(parsed: any): PageConfig {
-    return sanitizeWithInitial(parsed, initialConfig);
+    const config = sanitizeWithInitial(parsed, initialConfig);
+    if (config?.sections) {
+      for (const sec of config.sections) {
+        if (sec.type === 'bestsellers' && Array.isArray(sec.products)) {
+          const aliasMap: Record<string, string> = {
+            'home-product-1': 'prod-2',
+            'home-product-2': 'prod-3',
+            'home-product-3': 'prod-4',
+            'home-product-4': 'prod-6',
+            'home-product-5': 'prod-1'
+          };
+          sec.products = sec.products.map((p: any) => {
+            const mappedId = aliasMap[p.id] || p.productId || p.id;
+            return {
+              ...p,
+              productId: p.productId || mappedId,
+              id: mappedId
+            };
+          });
+        }
+      }
+    }
+    return config;
   }
 }

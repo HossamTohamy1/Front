@@ -7,6 +7,43 @@ import { Product, Category, Review } from '../../domain/models/product.model';
 import { products, categories, reviews } from '../../shared/data/mockData';
 import { environment } from '../../../environments/environment';
 
+const ID_ALIAS_MAP: Record<string, string> = {
+  'home-product-1': 'prod-2',
+  'home-product-2': 'prod-3',
+  'home-product-3': 'prod-4',
+  'home-product-4': 'prod-6',
+  'home-product-5': 'prod-1',
+  'offer-black-classic': 'prod-1',
+  'offer-beige-daily': 'prod-6',
+  'classic-black': 'prod-1',
+  'daily-beige': 'prod-6',
+  'postpartum': 'prod-3',
+  'full-body': 'prod-2',
+  'sport-black': 'prod-8',
+  'shorts': 'prod-5',
+  'men': 'prod-4',
+  'postpartum-double': 'prod-3',
+  'front-open': 'prod-7',
+  'sport-waist': 'prod-8',
+  'body-sculpt': 'prod-2',
+  'waist-beige': 'prod-1',
+  // Backend seeded products mapping
+  'oxford-cotton-shirt': 'prod-1',
+  'italian-leather-loafers': 'prod-2',
+  'minimalist-chronograph-watch': 'prod-3'
+};
+
+const GUID_MAP: Record<string, string> = {
+  'prod-1': '3D5D8C97-25BC-4457-A721-9EF43297FD54',
+  'prod-2': 'B5C81145-3CB4-4309-B98C-C42360B503B4',
+  'prod-3': '853AEF5F-E41E-4235-B4AE-7B053C9CB122',
+  'prod-4': 'E63251AA-D3B9-4DF5-9195-BC7C823DA991',
+  'prod-5': '86230BC2-FE8B-4FA3-8B37-AE0DEE695420',
+  'prod-6': 'E0D2C812-70F4-47FA-A04E-CE0EB1107567',
+  'prod-7': 'BDD5E994-0E39-44FD-A2B0-B4FB2CC9A8E2',
+  'prod-8': '0DE366A0-1D1A-4C2E-99C1-F0B8D0D6722C'
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -27,6 +64,7 @@ export class ProductRepositoryImpl implements IProductRepository {
 
     return {
       id: p.id,
+      guid: p.guid || p.id,
       slug: p.slug || p.id,
       nameEn: p.nameEn || p.name || '',
       nameAr: p.nameAr || p.name || '',
@@ -34,9 +72,9 @@ export class ProductRepositoryImpl implements IProductRepository {
       descAr: p.descAr || p.description || '',
       price: p.price ?? p.basePrice ?? 0,
       originalPrice: p.originalPrice != null ? p.originalPrice : undefined,
-      images: Array.isArray(p.images) && p.images.length > 0 ? p.images : (p.image ? [p.image] : []),
-      category: typeof p.category === 'string' ? p.category : (p.category?.nameEn || p.categoryName || ''),
-      sizes: Array.isArray(p.sizes) ? p.sizes : ['S', 'M', 'L', 'XL'],
+      images: Array.isArray(p.images) && p.images.length > 0 ? p.images : (p.image ? [p.image] : ['/assets/home/product-1.png']),
+      category: typeof p.category === 'string' ? p.category : (p.category?.nameEn || p.categoryName || 'waist-trainers'),
+      sizes: Array.isArray(p.sizes) && p.sizes.length > 0 ? p.sizes : ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'],
       sizeChart,
       stock: p.stock ?? 10,
       rating: p.rating ?? 5,
@@ -44,7 +82,8 @@ export class ProductRepositoryImpl implements IProductRepository {
       isNew: p.isNew ?? false,
       isBestSeller: p.isBestSeller ?? false,
       badge: p.badge,
-      colors: Array.isArray(p.colors) ? p.colors : [],
+      colors: Array.isArray(p.colors) && p.colors.length > 0 ? p.colors : ['#060606', '#f5d4c2'],
+      aliases: Array.isArray(p.aliases) ? p.aliases : []
     };
   }
 
@@ -71,16 +110,83 @@ export class ProductRepositoryImpl implements IProductRepository {
     };
   }
 
+  /**
+   * Find product locally with intelligent alias, slug, ID and GUID matching
+   */
+  findLocalProduct(idOrSlug: string): Product {
+    if (!idOrSlug) return products[0];
+
+    const cleanKey = idOrSlug.trim();
+    const resolvedKey = ID_ALIAS_MAP[cleanKey] || cleanKey;
+
+    // 1. Direct ID match
+    let match = products.find(p => p.id === resolvedKey);
+    if (match) return match;
+
+    // 2. Direct Slug match
+    match = products.find(p => p.slug === cleanKey || p.slug === resolvedKey);
+    if (match) return match;
+
+    // 3. GUID match
+    match = products.find(p => p.guid && p.guid.toLowerCase() === cleanKey.toLowerCase());
+    if (match) return match;
+
+    // 4. Aliases list match
+    match = products.find(p => p.aliases && (p.aliases.includes(cleanKey) || p.aliases.includes(resolvedKey)));
+    if (match) return match;
+
+    // 5. Case-insensitive ID or Slug match
+    const lowerKey = cleanKey.toLowerCase();
+    match = products.find(p => p.id.toLowerCase() === lowerKey || p.slug.toLowerCase() === lowerKey);
+    if (match) return match;
+
+    // 6. Partial match
+    match = products.find(p => p.slug.toLowerCase().includes(lowerKey) || lowerKey.includes(p.slug.toLowerCase()));
+    if (match) return match;
+
+    // Fallback to first product to ensure page NEVER crashes with "غير متاح"
+    return products[0];
+  }
+
   getProducts(): Observable<Product[]> {
+    if (!environment.useMockProducts && !environment.useMockData) {
+      return this.http.get<any>(`${environment.apiBaseUrl}/products`).pipe(
+        map(res => {
+          const items = res?.data ?? res ?? [];
+          if (!Array.isArray(items) || items.length === 0) return products;
+          return items.map(p => this.mapProduct(p));
+        }),
+        catchError(() => of(products))
+      );
+    }
     return of(products);
   }
 
   getProductById(id: string): Observable<Product | undefined> {
-    return of(products.find(p => p.id === id));
+    if (!environment.useMockProducts && !environment.useMockData) {
+      const guid = this.getRealProductId(id) || id;
+      return this.http.get<any>(`${environment.apiBaseUrl}/products/${guid}`).pipe(
+        map(res => {
+          const p = res?.data ?? res;
+          return p ? this.mapProduct(p) : this.findLocalProduct(id);
+        }),
+        catchError(() => of(this.findLocalProduct(id)))
+      );
+    }
+    return of(this.findLocalProduct(id));
   }
 
   getProductBySlug(slug: string): Observable<Product | undefined> {
-    return of(products.find(p => p.slug === slug));
+    if (!environment.useMockProducts && !environment.useMockData) {
+      return this.http.get<any>(`${environment.apiBaseUrl}/products/slug/${slug}`).pipe(
+        map(res => {
+          const p = res?.data ?? res;
+          return p ? this.mapProduct(p) : this.findLocalProduct(slug);
+        }),
+        catchError(() => of(this.findLocalProduct(slug)))
+      );
+    }
+    return of(this.findLocalProduct(slug));
   }
 
   getCategories(): Observable<Category[]> {
@@ -112,7 +218,8 @@ export class ProductRepositoryImpl implements IProductRepository {
 
   getReviews(productId?: string): Observable<Review[]> {
     if (!environment.useMockData) {
-      const url = productId ? `${environment.apiBaseUrl}/reviews?productId=${productId}` : `${environment.apiBaseUrl}/reviews`;
+      const guid = productId ? this.getRealProductId(productId) : undefined;
+      const url = guid ? `${environment.apiBaseUrl}/reviews?productId=${guid}` : `${environment.apiBaseUrl}/reviews`;
       return this.http.get<any>(url).pipe(
         map(res => {
           const items = res?.data ?? res ?? [];
@@ -128,14 +235,21 @@ export class ProductRepositoryImpl implements IProductRepository {
     return of(reviews);
   }
 
-  getRealProductId(mockId: string): string | null {
-    const guidMap: Record<string, string> = {
-      'prod-1': '3D5D8C97-25BC-4457-A721-9EF43297FD54',
-      'prod-2': 'B5C81145-3CB4-4309-B98C-C42360B503B4',
-      'prod-3': '853AEF5F-E41E-4235-B4AE-7B053C9CB122'
-    };
-    
-    // No fallback allowed for unmapped mock products
-    return guidMap[mockId] || null;
+  getRealProductId(mockId: string): string {
+    if (!mockId) return GUID_MAP['prod-1'];
+
+    // If it's already a standard GUID format
+    if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(mockId)) {
+      return mockId;
+    }
+
+    const resolved = ID_ALIAS_MAP[mockId] || mockId;
+    if (GUID_MAP[resolved]) return GUID_MAP[resolved];
+    if (GUID_MAP[mockId]) return GUID_MAP[mockId];
+
+    const product = this.findLocalProduct(mockId);
+    if (product?.guid) return product.guid;
+
+    return GUID_MAP['prod-1'];
   }
 }

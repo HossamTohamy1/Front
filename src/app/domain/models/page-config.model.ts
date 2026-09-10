@@ -4,7 +4,11 @@ export interface HeroSlide {
   id: string;
   image: string;
   title?: string;
+  titleAr?: string;
+  titleEn?: string;
   subtitle?: string;
+  subtitleAr?: string;
+  subtitleEn?: string;
   link?: string;
 }
 
@@ -27,6 +31,7 @@ export interface CategoryItem {
 
 export interface ProductItem {
   id: string;
+  productId?: string;
   name: string;
   nameAr?: string;
   nameEn?: string;
@@ -43,6 +48,8 @@ export interface SectionConfig {
   type: SectionType;
   enabled: boolean;
   title?: string;
+  titleAr?: string;
+  titleEn?: string;
   image?: string;
   slides?: HeroSlide[];
   benefits?: BenefitItem[];

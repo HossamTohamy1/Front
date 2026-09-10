@@ -83,51 +83,70 @@ export interface AboutPageConfig {
     contacts: AboutContactConfig[];
 }
 
-
 const initialConfig: AboutPageConfig = {
     showTitle: true,
     headerTitle: 'من نحن',
+    headerTitleAr: 'من نحن',
+    headerTitleEn: 'About Us',
     headerSubtitle: 'لوكس كينج... ثقتك، راحتك، جمالك',
+    headerSubtitleAr: 'لوكس كينج... ثقتك، راحتك، جمالك',
+    headerSubtitleEn: 'Loxxking... Your Confidence, Comfort, and Beauty',
     
     showIntroSection: true,
     introText: 'لوكس كينج هو متجرك الموثوق لمشدات الجسم ومنتجات العناية بالجمال عالية الجودة.\n\nنحن نؤمن أن الثقة تبدأ من الراحة، ونختار لك الأفضل لتشعري بأجمل إطلالة كل يوم.',
+    introTextAr: 'لوكس كينج هو متجرك الموثوق لمشدات الجسم ومنتجات العناية بالجمال عالية الجودة.\n\nنحن نؤمن أن الثقة تبدأ من الراحة، ونختار لك الأفضل لتشعري بأجمل إطلالة كل يوم.',
+    introTextEn: 'Loxxking is your trusted store for premium body shapers and beauty products.\n\nWe believe confidence starts with comfort, offering you the best to feel your finest every day.',
     
     showReasonsSection: true,
     reasonsTitle: 'لماذا نحن؟',
+    reasonsTitleAr: 'لماذا نحن؟',
+    reasonsTitleEn: 'Why Us?',
     reasons: [
-        { id: '1', icon: 'ShieldCheck', title: 'جودة استثنائية', text: 'نختار منتجاتنا بعناية فائقة لضمان أفضل النتائج.' },
-        { id: '2', icon: 'Heart', title: 'راحة تامة', text: 'تصاميم تناسب الاستخدام اليومي دون إزعاج.' },
-        { id: '3', icon: 'Star', title: 'نتائج ملحوظة', text: 'منتجات تساعدك على إبراز جمالك الطبيعي.' }
+        { id: '1', icon: 'ShieldCheck', title: 'جودة استثنائية', titleAr: 'جودة استثنائية', titleEn: 'Exceptional Quality', text: 'نختار منتجاتنا بعناية فائقة لضمان أفضل النتائج.', textAr: 'نختار منتجاتنا بعناية فائقة لضمان أفضل النتائج.', textEn: 'We carefully select our products to ensure the best results.' },
+        { id: '2', icon: 'Heart', title: 'راحة تامة', titleAr: 'راحة تامة', titleEn: 'Total Comfort', text: 'تصاميم تناسب الاستخدام اليومي دون إزعاج.', textAr: 'تصاميم تناسب الاستخدام اليومي دون إزعاج.', textEn: 'Designs tailored for everyday wear with complete comfort.' },
+        { id: '3', icon: 'Star', title: 'نتائج ملحوظة', titleAr: 'نتائج ملحوظة', titleEn: 'Visible Results', text: 'منتجات تساعدك على إبراز جمالك الطبيعي.', textAr: 'منتجات تساعدك على إبراز جمالك الطبيعي.', textEn: 'Products designed to enhance your natural beauty.' }
     ],
     
     showVisionSection: true,
     visionTitle: 'رؤيتنا',
+    visionTitleAr: 'رؤيتنا',
+    visionTitleEn: 'Our Vision',
     visionText: 'أن نكون الخيار الأول في مجال مشدات الجسم ومنتجات الجمال في الوطن العربي من خلال الجودة، المصداقية وخدمة العملاء المتميزة.',
+    visionTextAr: 'أن نكون الخيار الأول في مجال مشدات الجسم ومنتجات الجمال في الوطن العربي من خلال الجودة، المصداقية وخدمة العملاء المتميزة.',
+    visionTextEn: 'To be the premier choice for body shapers and beauty products across the region through uncompromised quality and customer service.',
     
     showMissionSection: true,
     missionTitle: 'رسالتنا',
+    missionTitleAr: 'رسالتنا',
+    missionTitleEn: 'Our Mission',
     missionText: 'تقديم منتجات موثوقة وآمنة تساعدك على إبراز جمالك وثقتك بنفسك، مع تجربة تسوق سهلة، سريعة وآمنة.',
+    missionTextAr: 'تقديم منتجات موثوقة وآمنة تساعدك على إبراز جمالك وثقتك بنفسك، مع تجربة تسوق سهلة، سريعة وآمنة.',
+    missionTextEn: 'Providing safe and trusted products that elevate your beauty and confidence, with a seamless, swift shopping experience.',
     
     showValuesSection: true,
     valuesTitle: 'قيمنا',
+    valuesTitleAr: 'قيمنا',
+    valuesTitleEn: 'Our Values',
     values: [
-        { id: '1', icon: 'ShieldCheck', label: 'المصداقية' },
-        { id: '2', icon: 'Heart', label: 'العناية بالعميل' },
-        { id: '3', icon: 'Star', label: 'الجودة العالية' },
-        { id: '4', icon: 'Target', label: 'الابتكار المستمر' },
-        { id: '5', icon: 'Check', label: 'الشفافية' }
+        { id: '1', icon: 'ShieldCheck', label: 'المصداقية', labelAr: 'المصداقية', labelEn: 'Integrity' },
+        { id: '2', icon: 'Heart', label: 'العناية بالعميل', labelAr: 'العناية بالعميل', labelEn: 'Customer Care' },
+        { id: '3', icon: 'Star', label: 'الجودة العالية', labelAr: 'الجودة العالية', labelEn: 'High Quality' },
+        { id: '4', icon: 'Target', label: 'الابتكار المستمر', labelAr: 'الابتكار المستمر', labelEn: 'Continuous Innovation' },
+        { id: '5', icon: 'Check', label: 'الشفافية', labelAr: 'الشفافية', labelEn: 'Transparency' }
     ],
     
     showContactSection: true,
     contactTitle: 'تواصل معنا',
+    contactTitleAr: 'تواصل معنا',
+    contactTitleEn: 'Contact Us',
     contacts: [
-        { id: '1', icon: 'facebook', label: 'فيسبوك', link: 'https://facebook.com' },
-        { id: '2', icon: 'instagram', label: 'إنستغرام', link: 'https://instagram.com' },
-        { id: '3', icon: 'mail', label: 'بريد إلكتروني', link: 'mailto:support@loxxking.com' },
-        { id: '4', icon: 'phone', label: 'اتصال', link: 'tel:+201000000000' },
-        { id: '5', icon: 'whatsapp', label: 'واتساب', link: 'https://wa.me/201000000000' }
+        { id: '1', icon: 'facebook', label: 'فيسبوك', labelAr: 'فيسبوك', labelEn: 'Facebook', link: 'https://facebook.com' },
+        { id: '2', icon: 'instagram', label: 'إنستغرام', labelAr: 'إنستغرام', labelEn: 'Instagram', link: 'https://instagram.com' },
+        { id: '3', icon: 'mail', label: 'بريد إلكتروني', labelAr: 'بريد إلكتروني', labelEn: 'Email', link: 'mailto:support@loxxking.com' },
+        { id: '4', icon: 'phone', label: 'اتصال', labelAr: 'اتصال', labelEn: 'Phone Call', link: 'tel:+201000000000' },
+        { id: '5', icon: 'whatsapp', label: 'واتساب', labelAr: 'واتساب', labelEn: 'WhatsApp', link: 'https://wa.me/201000000000' }
     ]
-}
+};
 
 @Injectable({
   providedIn: 'root'
@@ -135,18 +154,34 @@ const initialConfig: AboutPageConfig = {
 export class AboutPageConfigService {
   private readonly storageKey = 'loxxking-about-page-config';
 
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson: string = '';
+
   readonly pageConfig = signal<AboutPageConfig>(this.loadInitialConfig());
   private zone = inject(NgZone);
 
   constructor() {
+    this.lastSavedJson = JSON.stringify(this.pageConfig());
+
     window.addEventListener('storage', (e: StorageEvent) => {
       if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
 
       if (e.key === this.storageKey && e.newValue) {
+        if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
         try {
           const updated = JSON.parse(e.newValue);
+          const merged = this.mergeWithInitial(updated);
+          const mergedJson = JSON.stringify(merged);
+          if (mergedJson === this.lastSavedJson) return;
+
           this.zone.run(() => {
-            this.pageConfig.set(this.mergeWithInitial(updated));
+            this.isApplyingExternalUpdate = true;
+            this.lastSavedJson = mergedJson;
+            this.pageConfig.set(merged);
+            queueMicrotask(() => {
+              this.isApplyingExternalUpdate = false;
+            });
           });
         } catch (_) {}
       }
@@ -154,12 +189,18 @@ export class AboutPageConfigService {
 
     effect(() => {
       const config = this.pageConfig();
-      localStorage.setItem(this.storageKey, JSON.stringify(config));
+      const stringified = JSON.stringify(config);
+
+      if (this.isApplyingExternalUpdate) return;
+      if (stringified === this.lastSavedJson) return;
+
+      this.lastSavedJson = stringified;
+      localStorage.setItem(this.storageKey, stringified);
       
       try {
         const event = new StorageEvent('storage', {
           key: this.storageKey,
-          newValue: JSON.stringify(config),
+          newValue: stringified,
           storageArea: localStorage,
         });
         (event as any).__sourceInstanceId = INSTANCE_ID;
