@@ -66,10 +66,20 @@ export class ProductsComponent {
   }
 
   getMappedProduct(product: any) {
-    if ('productId' in product) return product;
+    const aliasMap: Record<string, string> = {
+      'home-product-1': 'prod-2',
+      'home-product-2': 'prod-3',
+      'home-product-3': 'prod-4',
+      'home-product-4': 'prod-6',
+      'home-product-5': 'prod-1'
+    };
+    const resolvedId = aliasMap[product.id] || product.productId || aliasMap[product.productId] || product.id;
+    if ('productId' in product && product.productId && !aliasMap[product.productId]) {
+      return { ...product, productId: resolvedId };
+    }
     return {
-      id: product.id,
-      productId: product.id,
+      id: resolvedId,
+      productId: resolvedId,
       name: this.getLocalizedProductName(product),
       nameAr: product.nameAr,
       nameEn: product.nameEn,

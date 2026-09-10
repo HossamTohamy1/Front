@@ -9,6 +9,7 @@ import { HomePageConfigService } from '../../../../core/services/page-configs/ho
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { homeCategories, homeProducts } from '../../../../shared/data/homePageData';
 import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
+import { PreviewScrollService } from '../../../../core/services/page-configs/preview-scroll.service';
 
 type SectionType = 'hero' | 'benefits' | 'categories' | 'bestsellers' | 'promo';
 
@@ -26,10 +27,11 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
   showAddMenu = false;
   editingSection: any = null;
 
-  // Local state to prevent input jumping while typing
   localSections: any[] = [];
   private sectionUpdateSubject = new Subject<any[]>();
   private sub?: Subscription;
+  private editorScrollSub?: Subscription;
+  private previewScrollService = inject(PreviewScrollService);
 
   titles: Record<string, string> = {
     hero: "الصورة الرئيسية (البانر)",
@@ -96,10 +98,40 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
     ).subscribe(newSections => {
       this.configService.updateConfig({ ...this.config(), sections: newSections });
     });
+
+    this.editorScrollSub = this.previewScrollService.scrollToEditor$.subscribe(idOrType => {
+      this.scrollToEditorCard(idOrType);
+    });
   }
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
+    this.editorScrollSub?.unsubscribe();
+  }
+
+  onCardClick(section: any) {
+    if (!section) return;
+    this.previewScrollService.scrollToSection({
+      sectionId: section.id,
+      sectionType: section.type
+    });
+  }
+
+  scrollToEditorCard(idOrType: string | number) {
+    let card: HTMLElement | null = null;
+    if (typeof idOrType === 'string') {
+      card = document.getElementById('editor-card-' + idOrType)
+        || document.getElementById('editor-card-sec-' + idOrType)
+        || document.querySelector(`[data-card-type="${idOrType}"]`);
+    }
+    if (!card && typeof idOrType === 'number') {
+      card = document.getElementById('editor-card-index-' + idOrType);
+    }
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('ring-2', 'ring-blue-500', 'shadow-lg');
+      setTimeout(() => card?.classList.remove('ring-2', 'ring-blue-500', 'shadow-lg'), 1600);
+    }
   }
 
   trackBySectionId(index: number, section: any): string {
@@ -195,6 +227,10 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
     const newSections = [...this.sections];
     [newSections[index], newSections[index - 1]] = [newSections[index - 1], newSections[index]];
     this.updateConfig({ sections: newSections });
+    const moved = newSections[index - 1];
+    if (moved) {
+      this.previewScrollService.scrollToSection({ sectionId: moved.id, sectionType: moved.type });
+    }
   }
 
   moveDown(index: number) {
@@ -202,6 +238,10 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
     const newSections = [...this.sections];
     [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
     this.updateConfig({ sections: newSections });
+    const moved = newSections[index + 1];
+    if (moved) {
+      this.previewScrollService.scrollToSection({ sectionId: moved.id, sectionType: moved.type });
+    }
   }
 
   addSection(type: SectionType) {
@@ -257,6 +297,12 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
 
     this.updateConfig({ sections: [...this.sections, newSection] });
     this.showAddMenu = false;
+
+    setTimeout(() => {
+      this.previewScrollService.scrollToSection({ sectionId: newSection.id, sectionType: newSection.type });
+      const card = document.getElementById('editor-card-' + newSection.id);
+      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 120);
   }
 
   addHeroSlide(section: any) {
@@ -307,6 +353,12 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
       isDragging: false,
       onSave
     };
+    this.previewScrollService.scrollToEditorTop();
+    setTimeout(() => {
+      this.previewScrollService.scrollToEditorTop();
+      const modal = document.getElementById('image-upload-modal');
+      modal?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   closeImageUploadModal() {
@@ -532,10 +584,31 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
       });
     }
     this.editingSection = section;
+
+    // Scroll Live Preview to this section immediately
+    this.previewScrollService.scrollToSection({
+      sectionId: section.id,
+      sectionType: section.type
+    });
+
+    // Smoothly scroll editor container to top so the edit form is directly visible
+    this.previewScrollService.scrollToEditorTop();
+    setTimeout(() => {
+      this.previewScrollService.scrollToEditorTop();
+      const modal = document.getElementById('content-editor-modal');
+      modal?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   closeContentEditor() {
+    const closedSection = this.editingSection;
     this.editingSection = null;
+    if (closedSection?.id) {
+      setTimeout(() => {
+        const card = document.getElementById('editor-card-' + closedSection.id);
+        card?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
   }
 
   removeItemFromActiveSection(idx: number) {

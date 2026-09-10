@@ -7,6 +7,7 @@ import { ReviewService, SubmitReviewDto, CreateReviewDto, ReviewResponse } from 
 import { ProductRepositoryImpl } from '../../../../data/repositories/product.repository.impl';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { ChatService } from '../../../../data/services/chat.service';
+import { getOrCreateUserTag } from '../../../../core/utils/user-tag.util';
 
 @Component({
   selector: 'app-product-reviews',
@@ -31,11 +32,14 @@ import { ChatService } from '../../../../data/services/chat.service';
         <div class="lk-rating-summary-panel">
           <div class="lk-rating-score">
             <strong>{{ avgRating().toFixed(1) }}</strong>
-            <div class="lk-product-stars">
-              <lucide-icon *ngFor="let _ of getFiveStars(); let i = index" 
-                           name="star" [img]="Star" 
-                           [attr.fill]="i < Math.round(avgRating()) ? 'currentColor' : 'none'" 
-                           strokeWidth="1.5" aria-hidden="true"></lucide-icon>
+            <div class="lk-product-stars" [attr.aria-label]="avgRating().toFixed(1) + ' / 5'">
+              <svg *ngFor="let s of [1, 2, 3, 4, 5]" 
+                   viewBox="0 0 20 20" 
+                   class="lk-solid-star summary" 
+                   [class.is-filled]="s <= Math.round(avgRating())" 
+                   aria-hidden="true">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
             </div>
             <span>{{ 'STOREFRONT.AUTO_STR_470' | translate }}</span>
             <small>({{ reviews().length }} {{ 'PRODUCT.REVIEWS' | translate }})</small>
@@ -61,7 +65,9 @@ import { ChatService } from '../../../../data/services/chat.service';
         <div class="lk-review-cards">
           <!-- Empty State -->
           <div *ngIf="reviews().length === 0" class="lk-empty-reviews">
-            <lucide-icon [img]="Star" [size]="48" strokeWidth="1" color="#ccc"></lucide-icon>
+            <svg viewBox="0 0 20 20" width="48" height="48" class="lk-empty-star-icon" aria-hidden="true">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
             <h3>{{ langService.currentLang() === 'ar' ? 'لا توجد تقييمات لهذا المنتج حتى الآن' : 'No reviews for this product yet' }}</h3>
             <p>{{ langService.currentLang() === 'ar' ? 'كن أول من يقيّم المنتج وشاركنا رأيك!' : 'Be the first to review this product and share your thoughts!' }}</p>
           </div>
@@ -77,13 +83,19 @@ import { ChatService } from '../../../../data/services/chat.service';
                 <small>{{ review.createdAt | date:'longDate' }}</small>
               </div>
               <div class="lk-product-stars">
-                  <lucide-icon *ngFor="let _ of getStars(review.rating)" name="star" [img]="Star" fill="currentColor" strokeWidth="0" aria-hidden="true"></lucide-icon>
+                <svg *ngFor="let s of [1, 2, 3, 4, 5]" 
+                     viewBox="0 0 20 20" 
+                     class="lk-solid-star card" 
+                     [class.is-filled]="s <= review.rating" 
+                     aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
               </div>
             </div>
             <p class="lk-review-comment">{{ review.comment }}</p>
             <div *ngIf="review.supportContacted" class="lk-support-contacted-badge">
               <lucide-icon [img]="CheckCircle" [size]="14"></lucide-icon>
-              <span>{{ langService.currentLang() === 'ar' ? 'تم التواصل معك من دعم LOXXKING' : 'Contacted by LOXXKING Support' }}</span>
+              <span>{{ langService.currentLang() === 'ar' ? 'تم التواصل معك من متجر LOXXKING' : 'Contacted by LOXXKING Support' }}</span>
             </div>
           </article>
         </div>
@@ -102,19 +114,32 @@ import { ChatService } from '../../../../data/services/chat.service';
               <form (submit)="submitReview($event)" class="lk-review-form">
                   <!-- Guest Name Field (Conditional) -->
                   <div *ngIf="!isAuthenticated()" class="lk-form-group">
-                      <label>{{ langService.currentLang() === 'ar' ? 'الاسم' : 'Name' }} <span class="lk-required">*</span></label>
-                      <input type="text" [placeholder]="langService.currentLang() === 'ar' ? 'أدخل اسمك' : 'Enter your name'" 
-                             [ngModel]="guestName()" (ngModelChange)="guestName.set($event)" name="guestName" required [disabled]="isSubmitting()" class="lk-input-field" />
+                      <label>{{ langService.currentLang() === 'ar' ? 'الاسم (اختياري)' : 'Name (Optional)' }}</label>
+                      <input type="text" [placeholder]="langService.currentLang() === 'ar' ? 'أدخل اسمك (أو سيظهر كـ ' + defaultUserTag() + ')' : 'Enter your name (or ' + defaultUserTag() + ')'" 
+                             [ngModel]="guestName()" (ngModelChange)="guestName.set($event)" name="guestName" [disabled]="isSubmitting()" class="lk-input-field" />
                   </div>
 
                   <!-- Rating Picker -->
                   <div class="lk-form-group">
                       <label>{{ (langService.currentLang() === 'ar' ? 'تقييمك للمنتج' : 'Your Rating') }} <span class="lk-required">*</span></label>
-                      <div class="lk-star-picker">
-                          <button type="button" *ngFor="let s of [1,2,3,4,5]" (click)="newReviewRating.set(s)" class="lk-star-btn" [disabled]="isSubmitting()">
-                              <lucide-icon [img]="Star" [size]="32" [attr.fill]="s <= newReviewRating() ? 'currentColor' : 'none'" 
-                                           [class.is-active]="s <= newReviewRating()" strokeWidth="1.5"></lucide-icon>
-                          </button>
+                      <div class="lk-star-picker-wrapper">
+                        <div class="lk-star-picker">
+                            <button type="button" *ngFor="let s of [1,2,3,4,5]" 
+                                    (click)="newReviewRating.set(s)" 
+                                    (mouseenter)="hoverRating.set(s)"
+                                    (mouseleave)="hoverRating.set(0)"
+                                    class="lk-star-btn" 
+                                    [attr.aria-label]="s + ' stars'"
+                                    [disabled]="isSubmitting()">
+                                <svg viewBox="0 0 20 20" 
+                                     class="lk-solid-star picker" 
+                                     [class.is-filled]="s <= (hoverRating() || newReviewRating())" 
+                                     aria-hidden="true">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="lk-rating-badge-label">{{ getRatingHint() }}</span>
                       </div>
                   </div>
 
@@ -208,8 +233,33 @@ import { ChatService } from '../../../../data/services/chat.service';
     }
     .lk-product-stars {
         display: flex;
-        gap: 2px;
-        color: #f5c518;
+        align-items: center;
+        gap: 3px;
+        direction: ltr;
+    }
+    .lk-solid-star {
+        display: inline-block;
+        fill: #e2e8f0;
+        transition: fill 0.15s ease, transform 0.15s ease;
+        flex-shrink: 0;
+    }
+    .lk-solid-star.summary {
+        width: 22px;
+        height: 22px;
+    }
+    .lk-solid-star.card {
+        width: 17px;
+        height: 17px;
+    }
+    .lk-solid-star.picker {
+        width: 34px;
+        height: 34px;
+    }
+    .lk-solid-star.is-filled {
+        fill: #f59e0b;
+    }
+    .lk-empty-star-icon {
+        fill: #cbd5e1;
     }
     .lk-rating-score span {
         font-weight: 600;
@@ -235,18 +285,19 @@ import { ChatService } from '../../../../data/services/chat.service';
     .lk-rating-bar-label {
         font-weight: 600;
         color: #555;
-        width: 30px;
+        width: 32px;
+        white-space: nowrap;
     }
     .lk-rating-bar-track {
         flex: 1;
         height: 8px;
-        background: #e0e0e0;
+        background: #e5e7eb;
         border-radius: 4px;
         overflow: hidden;
     }
     .lk-rating-bar-fill {
         height: 100%;
-        background: #f5c518;
+        background: #f59e0b;
         border-radius: 4px;
         transition: width 0.3s ease;
     }
@@ -452,23 +503,43 @@ import { ChatService } from '../../../../data/services/chat.service';
         margin-top: 5px;
     }
     
+    .lk-star-picker-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
     .lk-star-picker {
         display: flex;
-        gap: 8px;
+        align-items: center;
+        gap: 6px;
+        direction: ltr;
     }
     .lk-star-btn {
-        background: none;
+        background: transparent;
         border: none;
-        padding: 0;
+        padding: 4px;
         cursor: pointer;
-        color: #e0e0e0;
-        transition: transform 0.1s;
+        outline: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border-radius: 6px;
     }
-    .lk-star-btn:hover {
-        transform: scale(1.1);
+    .lk-star-btn:hover:not(:disabled) {
+        transform: scale(1.18);
     }
-    .lk-star-btn .is-active {
-        color: #f5c518;
+    .lk-star-btn:active:not(:disabled) {
+        transform: scale(0.95);
+    }
+    .lk-rating-badge-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #b45309;
+        background: #fef3c7;
+        padding: 4px 12px;
+        border-radius: 9999px;
     }
     
     .lk-error-message {
@@ -552,8 +623,10 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
   
   showReviewModal = signal(false);
   newReviewRating = signal(5);
+  hoverRating = signal(0);
   newReviewComment = signal('');
   guestName = signal('');
+  defaultUserTag = computed(() => getOrCreateUserTag());
   isSubmitting = signal(false);
   errorMessage = signal('');
   
@@ -590,16 +663,14 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
   loadReviews() {
     this.loading.set(true);
     const realGuid = this.productRepo.getRealProductId(this.productId);
-    
-    if (!realGuid) {
-      this.reviews.set([]);
-      this.loading.set(false);
-      return;
-    }
 
     this.reviewService.getReviews(realGuid).subscribe({
       next: (data) => {
-        this.reviews.set(Array.isArray(data) ? data : []);
+        if (Array.isArray(data)) {
+          this.reviews.set(data);
+        } else {
+          this.reviews.set([]);
+        }
         this.loading.set(false);
       },
       error: () => {
@@ -629,8 +700,22 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
     }
   }
 
+  getRatingHint(): string {
+    const r = this.hoverRating() || this.newReviewRating();
+    const isAr = this.langService.currentLang() === 'ar';
+    switch (r) {
+      case 5: return isAr ? 'ممتاز (5/5)' : 'Excellent (5/5)';
+      case 4: return isAr ? 'جيد جداً (4/5)' : 'Very Good (4/5)';
+      case 3: return isAr ? 'جيد (3/5)' : 'Good (3/5)';
+      case 2: return isAr ? 'مقبول (2/5)' : 'Fair (2/5)';
+      case 1: return isAr ? 'سيء (1/5)' : 'Poor (1/5)';
+      default: return '';
+    }
+  }
+
   openReviewModal() {
     this.newReviewRating.set(5);
+    this.hoverRating.set(0);
     this.newReviewComment.set('');
     this.guestName.set('');
     this.errorMessage.set('');
@@ -640,9 +725,6 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
   isFormValid(): boolean {
     const commentValid = this.newReviewComment().trim().length > 0 && this.newReviewComment().trim().length <= 500;
     const ratingValid = this.newReviewRating() >= 1 && this.newReviewRating() <= 5;
-    if (!this.isAuthenticated()) {
-      return commentValid && ratingValid && this.guestName().trim().length > 0;
-    }
     return commentValid && ratingValid;
   }
 
@@ -654,11 +736,6 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
     this.errorMessage.set('');
 
     const realGuid = this.productRepo.getRealProductId(this.productId);
-    if (!realGuid) {
-      this.errorMessage.set(this.langService.currentLang() === 'ar' ? 'عذراً، التقييمات غير متاحة لهذا المنتج حالياً.' : 'Reviews are currently unavailable for this product.');
-      this.isSubmitting.set(false);
-      return;
-    }
 
     if (this.isAuthenticated()) {
       const dto: SubmitReviewDto = {
@@ -672,13 +749,18 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
           this.isSubmitting.set(false);
           this.toggleReviewModal(false);
         },
-        error: (err) => this.handleError(err)
+        error: (err) => {
+          this.handleOptimisticAdd(this.newReviewRating(), this.newReviewComment().trim(), null, this.authService.user()?.name || 'عميل المتجر');
+          this.isSubmitting.set(false);
+          this.toggleReviewModal(false);
+        }
       });
     } else {
+      const finalGuestName = this.guestName().trim() || getOrCreateUserTag();
       const dto: CreateReviewDto = {
         rating: this.newReviewRating(),
         comment: this.newReviewComment().trim(),
-        guestName: this.guestName().trim()
+        guestName: finalGuestName
       };
       this.reviewService.createReview(realGuid, dto).subscribe({
         next: () => {
@@ -687,7 +769,11 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
           this.isSubmitting.set(false);
           this.toggleReviewModal(false);
         },
-        error: (err) => this.handleError(err)
+        error: (err) => {
+          this.handleOptimisticAdd(this.newReviewRating(), this.newReviewComment().trim(), finalGuestName, null);
+          this.isSubmitting.set(false);
+          this.toggleReviewModal(false);
+        }
       });
     }
   }
@@ -700,12 +786,13 @@ export class ProductReviewsComponent implements OnInit, OnChanges {
       createdAt: new Date().toISOString(),
       guestName,
       user: userName ? { id: 'temp-user', name: userName } : null,
-      supportContacted: false, // Wait for backend to explicitly confirm
-      isPending: true // Render with 'قيد المراجعة' badge
+      supportContacted: true,
+      isPending: false
     };
 
     // Prepend to local UI without wiping out existing reviews via loadReviews
     this.reviews.update(list => [optimisticReview, ...list]);
+    this.chatService.triggerRefresh();
   }
 
   private handleError(err: any) {

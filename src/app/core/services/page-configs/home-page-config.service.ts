@@ -64,10 +64,10 @@ const initialConfig: PageConfig = {
       titleEn: 'Bestsellers',
       showTitle: true,
       products: [
-        { id: 'home-product-1', name: 'مشد كامل للجسم', nameAr: 'مشد كامل للجسم', nameEn: 'Full Body Shaper', price: 260, originalPrice: 320, image: '/assets/home/product-full-body-hd.png', rating: 4.9, reviewsCount: 112 },
-        { id: 'home-product-2', name: 'مشد ما بعد الولادة', nameAr: 'مشد ما بعد الولادة', nameEn: 'Postpartum Shaper', price: 210, originalPrice: 250, image: '/assets/home/product-postpartum-beige-hd.png', rating: 4.8, reviewsCount: 96 },
-        { id: 'home-product-3', name: 'مشد رياضي', nameAr: 'مشد رياضي', nameEn: 'Sports Shaper', price: 230, originalPrice: 270, image: '/assets/home/product-sport-black-hd.png', discount: '-15%', rating: 4.7, reviewsCount: 86 },
-        { id: 'home-product-4', name: 'مشد يومي مربع', nameAr: 'مشد يومي مربع', nameEn: 'Daily Square Shaper', price: 195, originalPrice: 250, image: '/assets/home/product-beige-square-hd.png', rating: 4.7, reviewsCount: 96 }
+        { id: 'prod-2', productId: 'prod-2', name: 'مشد كامل للجسم', nameAr: 'مشد كامل للجسم', nameEn: 'Full Body Shaper', price: 260, originalPrice: 320, image: '/assets/home/product-full-body-hd.png', rating: 4.9, reviewsCount: 112 },
+        { id: 'prod-3', productId: 'prod-3', name: 'مشد ما بعد الولادة', nameAr: 'مشد ما بعد الولادة', nameEn: 'Postpartum Shaper', price: 210, originalPrice: 250, image: '/assets/home/product-postpartum-beige-hd.png', rating: 4.8, reviewsCount: 96 },
+        { id: 'prod-4', productId: 'prod-4', name: 'مشد رياضي', nameAr: 'مشد رياضي', nameEn: 'Sports Shaper', price: 230, originalPrice: 270, image: '/assets/home/product-sport-black-hd.png', discount: '-15%', rating: 4.7, reviewsCount: 86 },
+        { id: 'prod-6', productId: 'prod-6', name: 'مشد يومي مربع', nameAr: 'مشد يومي مربع', nameEn: 'Daily Square Shaper', price: 195, originalPrice: 250, image: '/assets/home/product-beige-square-hd.png', rating: 4.7, reviewsCount: 96 }
       ]
     },
     {
@@ -213,6 +213,28 @@ export class HomePageConfigService {
   }
 
   private mergeWithInitial(parsed: any): PageConfig {
-    return sanitizeWithInitial(parsed, initialConfig);
+    const config = sanitizeWithInitial(parsed, initialConfig);
+    if (config?.sections) {
+      for (const sec of config.sections) {
+        if (sec.type === 'bestsellers' && Array.isArray(sec.products)) {
+          const aliasMap: Record<string, string> = {
+            'home-product-1': 'prod-2',
+            'home-product-2': 'prod-3',
+            'home-product-3': 'prod-4',
+            'home-product-4': 'prod-6',
+            'home-product-5': 'prod-1'
+          };
+          sec.products = sec.products.map((p: any) => {
+            const mappedId = aliasMap[p.id] || p.productId || p.id;
+            return {
+              ...p,
+              productId: p.productId || mappedId,
+              id: mappedId
+            };
+          });
+        }
+      }
+    }
+    return config;
   }
 }

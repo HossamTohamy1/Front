@@ -31,6 +31,7 @@ export interface CategoryItem {
 
 export interface ProductItem {
   id: string;
+  productId?: string;
   name: string;
   nameAr?: string;
   nameEn?: string;

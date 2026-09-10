@@ -13,6 +13,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      // 401 Unauthorized: Do not show session expired error toast because the site works in guest mode without login
+      if (error.status === 401) {
+        return throwError(() => error);
+      }
+
+      // Do not show errors for background silent checks
+      if (req.url.includes('/users/me') || req.url.includes('/home-page-config')) {
+        return throwError(() => error);
+      }
+
       const toastService = injector.get(ToastService, null, { optional: true });
       const translateService = injector.get(TranslateService, null, { optional: true });
       let errorMessage = translateService ? translateService.instant('ERROR.UNEXPECTED') : 'Unexpected error';
@@ -20,9 +30,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.error instanceof ErrorEvent) {
         errorMessage = (translateService ? translateService.instant('ERROR.BROWSER') : '${error.error.message}').replace('${error.error.message}', error.error.message);
       } else {
-        if (error.status === 401) {
-          errorMessage = translateService ? translateService.instant('ERROR.SESSION_EXPIRED') : 'Session expired';
-        } else if (error.status === 403) {
+        if (error.status === 403) {
           errorMessage = translateService ? translateService.instant('ERROR.UNAUTHORIZED') : 'Unauthorized';
         } else if (error.status === 404) {
           errorMessage = translateService ? translateService.instant('ERROR.NOT_FOUND') : 'Not found';

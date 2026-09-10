@@ -42,16 +42,21 @@ export class AuthService {
 
   async fetchUser(): Promise<User | null> {
     const token = this.getToken();
-    let tokenPayload: any = null;
+    if (!token) {
+      this.setUser(null);
+      return null;
+    }
 
-    if (token) {
-      try {
-        tokenPayload = JSON.parse(atob(token.split('.')[1]));
-        if (tokenPayload.exp && tokenPayload.exp < Date.now() / 1000) {
-          this.setUser(null);
-          return null;
-        }
-      } catch { }
+    let tokenPayload: any = null;
+    try {
+      tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      if (tokenPayload.exp && tokenPayload.exp < Date.now() / 1000) {
+        this.setUser(null);
+        return null;
+      }
+    } catch {
+      this.setUser(null);
+      return null;
     }
 
     try {

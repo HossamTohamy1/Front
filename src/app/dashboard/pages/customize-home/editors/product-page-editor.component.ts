@@ -8,6 +8,7 @@ import { Trash2 } from 'lucide-angular';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
+import { PreviewScrollService } from '../../../../core/services/page-configs/preview-scroll.service';
 
 @Component({
   selector: 'app-product-page-editor',
@@ -20,7 +21,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
         <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_12' | translate }}</p>
       </div>
 
-      <app-section-card title="الرأس ومعلومات المنتج" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card (click)="onCardClick(0)" (focusin)="onCardClick(0)" title="الرأس ومعلومات المنتج" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار مسار التنقل (Breadcrumb)', field: 'showBreadcrumb' }"></ng-container>
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار علامة الأكثر مبيعاً', field: 'showBestSellerBadge' }"></ng-container>
         <app-bilingual-input title="نص علامة الأكثر مبيعاً" labelAr="عربي / AR" labelEn="English / EN" 
@@ -30,7 +31,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار سطر التقييم', field: 'showRatingLine' }"></ng-container>
       </app-section-card>
 
-      <app-section-card title="خيارات الشراء" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card (click)="onCardClick(1)" (focusin)="onCardClick(1)" title="خيارات الشراء" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (toggle)="noop()" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <ng-container *ngTemplateOutlet="checkboxTemplate; context: { label: 'إظهار خيارات الألوان', field: 'showColorOptions' }"></ng-container>
         <app-bilingual-input title="تسمية اللون" labelAr="عربي / AR" labelEn="English / EN" 
                 [valueAr]="$any(config())['colorLabelAr'] || ''" 
@@ -58,7 +59,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
                 (valueChange)="updateBilingualField('buyNowText', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="مميزات الخدمة (أسفل الشراء)" [index]="2" [enabled]="config().showServiceRow" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showServiceRow: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addService.bind(this) }">
+      <app-section-card (click)="onCardClick(2)" (focusin)="onCardClick(2)" title="مميزات الخدمة (أسفل الشراء)" [index]="2" [enabled]="config().showServiceRow" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showServiceRow: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addService.bind(this) }">
         <div class="flex flex-col gap-3">
           <div *ngFor="let svc of config().services || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
@@ -86,7 +87,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
         </div>
       </app-section-card>
 
-      <app-section-card title="محتوى التفاصيل (التبويبات)" [index]="3" [enabled]="config().showTabs" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showTabs: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card (click)="onCardClick(3)" (focusin)="onCardClick(3)" title="محتوى التفاصيل (التبويبات)" [index]="3" [enabled]="config().showTabs" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showTabs: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="عنوان تبويب الوصف" labelAr="عربي / AR" labelEn="English / EN" 
                 [valueAr]="$any(config())['tabDescriptionTextAr'] || ''" 
                 [valueEn]="$any(config())['tabDescriptionTextEn'] || ''" 
@@ -105,7 +106,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
                 (valueChange)="updateBilingualField('tabFeaturesText', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="قائمة مميزات المنتج" [index]="4" [enabled]="config().showFeaturesSection" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showFeaturesSection: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addFeature.bind(this) }">
+      <app-section-card (click)="onCardClick(4)" (focusin)="onCardClick(4)" title="قائمة مميزات المنتج" [index]="4" [enabled]="config().showFeaturesSection" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showFeaturesSection: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة ميزة', onClick: addFeature.bind(this) }">
         <div class="flex flex-col gap-3">
           <div *ngFor="let feat of config().features || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
@@ -162,6 +163,19 @@ export class ProductPageEditorComponent {
   readonly configService = inject(ProductPageConfigService);
   readonly config = this.configService.pageConfig;
   readonly Trash2 = Trash2;
+  private previewScrollService = inject(PreviewScrollService);
+
+  onCardClick(index: number) {
+    const targets = [
+      { selector: '.lk-product-summary' },
+      { selector: '.lk-product-info' },
+      { selector: '.lk-product-features-grid, .lk-product-features' },
+      { selector: '.lk-product-tabs' },
+      { selector: '.lk-product-features-grid, .lk-product-features' }
+    ];
+    const target = targets[index] || { index };
+    this.previewScrollService.scrollToSection(target);
+  }
 
   constructor() {
     this.backfillLocalizedStrings();

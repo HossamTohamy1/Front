@@ -79,7 +79,7 @@
             },
             "backend": {
               "outputPath": {
-                "base": "../../Backend/Loxxking/loxxking-backend-clean.Api/wwwroot",
+                "base": "../../backend/BackEnd/loxxking-backend-clean.Api/wwwroot",
                 "browser": ""
               },
               "deleteOutputPath": false,
@@ -107,7 +107,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": { "proxyConfig": "proxy.conf.json" },
+          "options": {
+            "port": 5050,
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "loxxkingdesign-angular:build:production"

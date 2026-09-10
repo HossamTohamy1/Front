@@ -1,6 +1,7 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PreviewScrollService } from '../../../../core/services/page-configs/preview-scroll.service';
 
 import { HomePageEditorComponent } from './home-page-editor.component';
 import { AboutPageEditorComponent } from './about-page-editor.component';
@@ -55,7 +56,6 @@ import { SizeGuidePageEditorComponent } from './size-guide-page-editor.component
       [class.opacity-0]="isTransitioning"
       [class.translate-y-2]="isTransitioning"
       [class.opacity-100]="!isTransitioning"
-      [class.translate-y-0]="!isTransitioning"
     >
       @switch (editorKey) {
         @case ('home') { <app-home-page-editor></app-home-page-editor> }
@@ -94,6 +94,7 @@ export class EditorRouterComponent implements OnChanges {
   editorKey: string = 'fallback';
   isTransitioning: boolean = false;
   private transitionTimer: any;
+  private previewScrollService = inject(PreviewScrollService);
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['currentRoute']) {
@@ -103,6 +104,7 @@ export class EditorRouterComponent implements OnChanges {
       this.transitionTimer = setTimeout(() => {
         this.updateEditorKey();
         this.isTransitioning = false;
+        this.previewScrollService.scrollToEditorTop();
       }, 150);
     }
   }

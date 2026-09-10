@@ -53,11 +53,23 @@ export class ChatService {
     );
   }
 
-  sendMessage(conversationId: string, text: string): Observable<any> {
+  uploadMedia(file: File | Blob, fileName: string = 'recording.webm'): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file, fileName);
+    return this.http.post<any>(`${this.baseUrl}/chat/upload`, formData).pipe(
+      map(res => {
+        const data = res?.data ?? res;
+        return data?.url || '';
+      })
+    );
+  }
+
+  sendMessage(conversationId: string, text: string, attachmentUrl?: string, guestName?: string): Observable<any> {
+    const payload: any = { message: text, text, attachmentUrl, guestName };
     if (!conversationId) {
-      return this.http.post<any>(`${this.baseUrl}/chat/send`, { message: text });
+      return this.http.post<any>(`${this.baseUrl}/chat/send`, payload);
     }
-    return this.http.post(`${this.baseUrl}/chat/conversations/${conversationId}/messages`, { text });
+    return this.http.post(`${this.baseUrl}/chat/conversations/${conversationId}/messages`, payload);
   }
 
   markRead(conversationId: string): Observable<any> {
