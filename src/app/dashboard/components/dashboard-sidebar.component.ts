@@ -1,7 +1,7 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, X, LayoutDashboard, Store, UserCog, Globe, Star, FileText, MessageSquare, Database, History, LogOut, ChevronLeft } from 'lucide-angular';
+import { LucideAngularModule, X, LayoutDashboard, Store, LogOut, ChevronLeft } from 'lucide-angular';
 import { StaffAccount } from '../../domain/models/staff-account.model';
 
 @Component({
@@ -46,62 +46,6 @@ import { StaffAccount } from '../../domain/models/staff-account.model';
             </span>
             <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
           </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/admin/accounts')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="UserCogIcon" [size]="17"></lucide-icon>
-              <span>{{ 'DASHBOARD.AUTO_STR_394' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="GlobeIcon" [size]="17"></lucide-icon>
-              <span>{{ 'DASHBOARD.AUTO_STR_129' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/admin/reviews')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="StarIcon" [size]="17"></lucide-icon>
-              <span>{{ 'PRODUCT.REVIEWS' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/admin/invoices')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="FileTextIcon" [size]="17"></lucide-icon>
-              <span>{{ 'COMMON.INVOICES' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/admin/notifications')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="MessageSquareIcon" [size]="17"></lucide-icon>
-              <span>{{ 'NOTIFICATIONS.TITLE' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/admin/operations')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="DatabaseIcon" [size]="17"></lucide-icon>
-              <span>{{ 'DASHBOARD.AUTO_STR_222' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
-
-          <button type="button" class="dashboard-sidebar__nav-row" (click)="navigate.emit('/admin/edit-logs')">
-            <span class="dashboard-sidebar__nav-main">
-              <lucide-icon [img]="HistoryIcon" [size]="17"></lucide-icon>
-              <span>{{ 'COMMON.EDITLOGS' | translate }}</span>
-            </span>
-            <lucide-icon [img]="ChevronLeftIcon" [size]="15"></lucide-icon>
-          </button>
         </nav>
 
         <button type="button" class="dashboard-sidebar__logout" (click)="logout.emit()">
@@ -116,13 +60,6 @@ export class DashboardSidebarComponent {
   readonly XIcon = X;
   readonly LayoutDashboardIcon = LayoutDashboard;
   readonly StoreIcon = Store;
-  readonly UserCogIcon = UserCog;
-  readonly GlobeIcon = Globe;
-  readonly StarIcon = Star;
-  readonly FileTextIcon = FileText;
-  readonly MessageSquareIcon = MessageSquare;
-  readonly DatabaseIcon = Database;
-  readonly HistoryIcon = History;
   readonly LogOutIcon = LogOut;
   readonly ChevronLeftIcon = ChevronLeft;
 
@@ -132,4 +69,5 @@ export class DashboardSidebarComponent {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout = new EventEmitter<void>();
 }
+
 
