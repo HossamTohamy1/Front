@@ -71,9 +71,6 @@ export class AdminLayoutComponent implements OnInit {
   navItems: NavItem[] = [
     { key: 'dashboard', label: 'DASHBOARD.AUTO_STR_175', path: '/admin', icon: LayoutDashboard },
     { key: 'store-customizer', label: 'DASHBOARD.AUTO_STR_265', path: '/admin/store-customizer', icon: Store },
-    { key: 'accounts-page', label: 'DASHBOARD.AUTO_STR_394', path: '/admin/accounts', icon: UserCog, adminOnly: true },
-    { key: 'store-home', label: 'DASHBOARD.AUTO_STR_129', path: '/', icon: Store },
-    { key: 'operations', label: 'DASHBOARD.AUTO_STR_222', path: '/admin/operations', icon: Database },
   ];
 
   pathname = '';
