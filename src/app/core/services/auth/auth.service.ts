@@ -16,10 +16,6 @@ export class AuthService {
   isAdmin = computed(() => isStaffRole(this.user()?.role));
 
   constructor() {
-    // If we want to auto-fetch on load:
-    if (isPlatformBrowser(this.platformId)) {
-      this.fetchUser().catch(() => { });
-    }
   }
 
   isAuthenticated(): boolean {
@@ -46,19 +42,17 @@ export class AuthService {
 
   async fetchUser(): Promise<User | null> {
     const token = this.getToken();
-    if (!token) {
-      this.user.set(null);
-      return null;
-    }
-
     let tokenPayload: any = null;
-    try {
-      tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      if (tokenPayload.exp && tokenPayload.exp < Date.now() / 1000) {
-        this.setUser(null);
-        return null;
-      }
-    } catch { }
+
+    if (token) {
+      try {
+        tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        if (tokenPayload.exp && tokenPayload.exp < Date.now() / 1000) {
+          this.setUser(null);
+          return null;
+        }
+      } catch { }
+    }
 
     try {
       const url = `${environment.apiBaseUrl || '/api'}/users/me`;

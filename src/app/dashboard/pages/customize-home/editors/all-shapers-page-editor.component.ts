@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AllShapersPageConfigService } from '../../../../core/services/page-configs/all-shapers-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-all-shapers-page-editor',
@@ -70,13 +71,17 @@ export class AllShapersPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'headerTitle', 'emptyTitle', 'emptyText', 'emptyCta'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -93,7 +98,7 @@ export class AllShapersPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 

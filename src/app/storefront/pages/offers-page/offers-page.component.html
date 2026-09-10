@@ -3,8 +3,8 @@
     <main class="lk-offers-page">
         <section *ngIf="pageConfig().showHero" class="lk-offers-hero" aria-labelledby="offers-title" [ngStyle]="heroStyle">
             <div class="lk-offers-hero__copy">
-                <h1 id="offers-title">{{ pageConfig().heroTitle | translate }}</h1>
-                <p>{{ pageConfig().heroSubtitle | translate }}</p>
+                <h1 id="offers-title">{{ (pageConfig().heroTitle || 'OFFERS.TITLE') | localize: pageConfig().heroTitleAr : pageConfig().heroTitleEn | translate }}</h1>
+                <p>{{ (pageConfig().heroSubtitle || 'OFFERS.SUBTITLE') | localize: pageConfig().heroSubtitleAr : pageConfig().heroSubtitleEn | translate }}</p>
                 <button type="button" (click)="scrollToOffers()">
                     <lucide-icon class="rtl-flip" [img]="ArrowLeft" aria-hidden="true"></lucide-icon>
                     <span>{{ 'STOREFRONT.AUTO_STR_368' | translate }}</span>
@@ -16,9 +16,9 @@
             </div>
         </section>
 
-        <section class="lk-offers-section" id="current-offers" aria-labelledby="current-offers-title">
+        <section *ngIf="pageConfig().showCurrentOffers" class="lk-offers-section" id="current-offers" aria-labelledby="current-offers-title">
             <div class="lk-offers-section__heading">
-                <h2 id="current-offers-title">{{ pageConfig().currentOffersTitle | translate }}</h2>
+                <h2 id="current-offers-title">{{ (pageConfig().currentOffersTitle || 'OFFERS.CURRENT') | localize: pageConfig().currentOffersTitleAr : pageConfig().currentOffersTitleEn | translate }}</h2>
                 <a href="#bundles">{{ 'COMMON.SEEALL' | translate }}</a>
             </div>
 
@@ -56,9 +56,9 @@
             </div>
         </section>
 
-        <section class="lk-offers-section" id="bundles" aria-labelledby="bundles-title">
+        <section *ngIf="pageConfig().showBundles" class="lk-offers-section" id="bundles" aria-labelledby="bundles-title">
             <div class="lk-offers-section__heading">
-                <h2 id="bundles-title">{{ pageConfig().bundlesTitle | translate }}</h2>
+                <h2 id="bundles-title">{{ (pageConfig().bundlesTitle || 'OFFERS.BUNDLES') | localize: pageConfig().bundlesTitleAr : pageConfig().bundlesTitleEn | translate }}</h2>
                 <button
                     type="button"
                     class="lk-offers-section__show-all"
@@ -73,7 +73,7 @@
                 <article *ngFor="let bundle of getVisibleBundles()" class="lk-offer-bundle-card" [ngClass]="'lk-offer-bundle-card--' + bundle.imageType">
                     <div class="lk-offer-bundle-card__copy">
                         <h3>{{ bundle.title | translate}}</h3>
-                        <p>{{ bundle.subtitle | translate}}</p>
+                        <p>{{ (pageConfig().bundlesSubtitle || bundle.subtitle) | localize: pageConfig().bundlesSubtitleAr : pageConfig().bundlesSubtitleEn | translate }}</p>
                         <strong>{{ bundle.price }} <span>{{ 'COMMON.CURRENCY' | translate }}</span></strong>
                         <del>{{ bundle.originalPrice }} {{ 'COMMON.CURRENCY' | translate }}</del>
                     </div>
@@ -110,9 +110,9 @@
             </div>
         </section>
 
-        <section class="lk-offers-section" id="multi-buy" aria-labelledby="multi-buy-title">
+        <section *ngIf="pageConfig().showMultiBuy" class="lk-offers-section" id="multi-buy" aria-labelledby="multi-buy-title">
             <div class="lk-offers-section__heading lk-offers-section__heading--single">
-                <h2 id="multi-buy-title">{{ 'STOREFRONT.AUTO_STR_154' | translate }}</h2>
+                <h2 id="multi-buy-title">{{ (pageConfig().multiBuyTitle || 'STOREFRONT.AUTO_STR_154') | localize: pageConfig().multiBuyTitleAr : pageConfig().multiBuyTitleEn | translate }}</h2>
             </div>
 
             <div class="lk-offers-multi-grid">
@@ -140,9 +140,9 @@
             </div>
         </section>
 
-        <section class="lk-offers-section lk-offers-section--limited" aria-labelledby="limited-offer-title">
+        <section *ngIf="pageConfig().showLimitedOffer" class="lk-offers-section lk-offers-section--limited" aria-labelledby="limited-offer-title">
             <div class="lk-offers-section__heading lk-offers-section__heading--single">
-                <h2 id="limited-offer-title">{{ 'STOREFRONT.AUTO_STR_189' | translate }}</h2>
+                <h2 id="limited-offer-title">{{ (pageConfig().limitedOfferTitle || 'STOREFRONT.AUTO_STR_189') | localize: pageConfig().limitedOfferTitleAr : pageConfig().limitedOfferTitleEn | translate }}</h2>
             </div>
 
             <article class="lk-offers-limited-card" aria-label='STOREFRONT.AUTO_STR_189'>
@@ -152,7 +152,7 @@
                     </span>
 
                     <div class="lk-offers-limited-card__timer-copy">
-                        <span class="lk-offers-limited-card__ends">{{ 'STOREFRONT.AUTO_STR_399' | translate }}</span>
+                        <span class="lk-offers-limited-card__ends">{{ (pageConfig().limitedOfferSubtitle || 'STOREFRONT.AUTO_STR_399') | localize: pageConfig().limitedOfferSubtitleAr : pageConfig().limitedOfferSubtitleEn | translate }}</span>
 
                         <div class="lk-offers-limited-card__values" dir="ltr">
                             <div class="lk-offers-limited-card__unit">

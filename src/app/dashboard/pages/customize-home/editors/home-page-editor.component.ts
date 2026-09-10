@@ -8,6 +8,7 @@ import { debounceTime } from 'rxjs/operators';
 import { HomePageConfigService } from '../../../../core/services/page-configs/home-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { homeCategories, homeProducts } from '../../../../shared/data/homePageData';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 type SectionType = 'hero' | 'benefits' | 'categories' | 'bestsellers' | 'promo';
 
@@ -43,28 +44,38 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
 
   private backfillLocalizedNames(sections: any[]): any[] {
     if (!sections || !Array.isArray(sections)) return sections;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
+
     sections.forEach((sec: any) => {
       if (sec.categories && Array.isArray(sec.categories)) {
         sec.categories.forEach((cat: any) => {
           if (!cat.nameAr && cat.name) cat.nameAr = cat.name;
-          if (!cat.nameEn && cat.name) cat.nameEn = cat.name;
+          if (!cat.nameEn || ARABIC_REGEX.test(cat.nameEn)) {
+            cat.nameEn = getEnglishTranslation(cat.nameAr || cat.name, 'Category');
+          }
         });
       }
       if (sec.products && Array.isArray(sec.products)) {
         sec.products.forEach((prod: any) => {
           if (!prod.nameAr && prod.name) prod.nameAr = prod.name;
-          if (!prod.nameEn && prod.name) prod.nameEn = prod.name;
+          if (!prod.nameEn || ARABIC_REGEX.test(prod.nameEn)) {
+            prod.nameEn = getEnglishTranslation(prod.nameAr || prod.name, 'Product');
+          }
         });
       }
       if (sec.benefits && Array.isArray(sec.benefits)) {
         sec.benefits.forEach((benefit: any) => {
           if (!benefit.textAr && benefit.text) benefit.textAr = benefit.text;
-          if (!benefit.textEn && benefit.text) benefit.textEn = benefit.text;
+          if (!benefit.textEn || ARABIC_REGEX.test(benefit.textEn)) {
+            benefit.textEn = getEnglishTranslation(benefit.textAr || benefit.text, 'Feature Benefit');
+          }
         });
       }
-      if (sec.title && !sec.titleAr && !sec.titleEn) {
+      if (sec.title && !sec.titleAr) {
         sec.titleAr = sec.title;
-        sec.titleEn = sec.title;
+      }
+      if (!sec.titleEn || ARABIC_REGEX.test(sec.titleEn)) {
+        sec.titleEn = getEnglishTranslation(sec.titleAr || sec.title, 'Section Title');
       }
     });
     return sections;
@@ -250,7 +261,7 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
 
   addHeroSlide(section: any) {
     const slides = section.slides || (section.image ? [{ id: 'old-1', image: section.image }] : []);
-    const newSlide = { id: 'slide-' + Date.now().toString(36), image: this.heroVisual, title: 'عنوان الشريحة' };
+    const newSlide = { id: 'slide-' + Date.now().toString(36), image: this.heroVisual, title: 'عنوان الشريحة', titleAr: 'عنوان الشريحة', titleEn: 'Slide Title' };
     this.updateSection(section.id, { slides: [...slides, newSlide] });
   }
 
@@ -503,16 +514,21 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
   }
 
   openContentEditor(section: any) {
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     if (section.categories) {
       section.categories.forEach((cat: any) => {
         if (!cat.nameAr && cat.name) cat.nameAr = cat.name;
-        if (!cat.nameEn && cat.name) cat.nameEn = cat.name;
+        if (!cat.nameEn || ARABIC_REGEX.test(cat.nameEn)) {
+          cat.nameEn = getEnglishTranslation(cat.nameAr || cat.name, 'Category');
+        }
       });
     }
     if (section.products) {
       section.products.forEach((prod: any) => {
         if (!prod.nameAr && prod.name) prod.nameAr = prod.name;
-        if (!prod.nameEn && prod.name) prod.nameEn = prod.name;
+        if (!prod.nameEn || ARABIC_REGEX.test(prod.nameEn)) {
+          prod.nameEn = getEnglishTranslation(prod.nameAr || prod.name, 'Product');
+        }
       });
     }
     this.editingSection = section;
@@ -540,22 +556,25 @@ export class HomePageEditorComponent implements OnInit, OnDestroy {
     if (this.editingSection.type === 'categories') {
       const cats = [...(this.editingSection.categories || [])];
       const sample = homeCategories[cats.length % homeCategories.length];
+      const sampleAr = getEnglishTranslation(sample.label) ? sample.label : 'تصنيف';
+      const sampleEn = getEnglishTranslation(sample.label, 'Category');
       cats.push({
         id: `cat-${Date.now().toString(36)}`,
         name: sample.label,
-        nameAr: sample.label,
-        nameEn: sample.label,
+        nameAr: sampleAr,
+        nameEn: sampleEn,
         image: sample.image
       });
       this.updateSection(this.editingSection.id, { categories: cats });
     } else if (this.editingSection.type === 'bestsellers') {
       const prods = [...(this.editingSection.products || [])];
       const sample = homeProducts[prods.length % homeProducts.length];
+      const sampleEn = getEnglishTranslation(sample.name, 'Product');
       prods.push({
         id: `prod-${Date.now().toString(36)}`,
         name: sample.name,
         nameAr: sample.name,
-        nameEn: sample.name,
+        nameEn: sampleEn,
         price: sample.price,
         originalPrice: sample.oldPrice,
         image: sample.image,

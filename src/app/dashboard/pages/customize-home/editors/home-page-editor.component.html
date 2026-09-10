@@ -73,26 +73,26 @@
                 <lucide-icon *ngIf="bIdx === 1" name="truck" [size]="18"></lucide-icon>
                 <lucide-icon *ngIf="bIdx > 1" name="package" [size]="18"></lucide-icon>
               </div>
-              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0" dir="rtl">
                 <div class="flex flex-col gap-1">
-                  <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                  <label class="text-[10px] font-bold text-gray-500 uppercase text-right">عربي / AR</label>
                   <input
                     type="text"
                     dir="rtl"
-                    class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800"
+                    class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800 text-right"
                     [(ngModel)]="benefit.textAr"
-                    (ngModelChange)="benefit.text = benefit.textEn || benefit.textAr; updateSection(section.id, { benefits: section.benefits })"
+                    (ngModelChange)="benefit.text = benefit.textAr || benefit.textEn; updateSection(section.id, { benefits: section.benefits })"
                     placeholder="نص الميزة"
                   />
                 </div>
                 <div class="flex flex-col gap-1">
-                  <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                  <label class="text-[10px] font-bold text-gray-500 uppercase text-left">English / EN</label>
                   <input
                     type="text"
                     dir="ltr"
-                    class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800"
+                    class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-1.5 outline-none focus:border-blue-500 font-medium text-gray-800 text-left"
                     [(ngModel)]="benefit.textEn"
-                    (ngModelChange)="benefit.text = benefit.textEn || benefit.textAr; updateSection(section.id, { benefits: section.benefits })"
+                    (ngModelChange)="benefit.text = benefit.textAr || benefit.textEn; updateSection(section.id, { benefits: section.benefits })"
                     placeholder="Benefit Text"
                   />
                 </div>
@@ -159,16 +159,16 @@
               <input type="checkbox" class="sr-only peer" [checked]="section.showTitle !== false" (change)="updateSection(section.id, { showTitle: $any($event.target).checked })" />
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
             </label>
-            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2" dir="rtl">
               <div class="flex flex-col gap-1">
-                <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
-                <input type="text" dir="rtl" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium" 
-                  [ngModel]="section.titleAr || ''" (ngModelChange)="section.title = section.titleEn || $event; updateSection(section.id, { titleAr: $event, title: section.title })" placeholder="عنوان القسم (عربي)" />
+                <label class="text-[10px] font-bold text-gray-500 uppercase text-right">عربي / AR</label>
+                <input type="text" dir="rtl" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium text-right" 
+                  [ngModel]="section.titleAr || ''" (ngModelChange)="section.title = $event || section.titleEn; updateSection(section.id, { titleAr: $event, title: section.title })" placeholder="عنوان القسم (عربي)" />
               </div>
               <div class="flex flex-col gap-1">
-                <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                <label class="text-[10px] font-bold text-gray-500 uppercase text-left">English / EN</label>
                 <input type="text" dir="ltr" class="w-full text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 outline-none focus:border-blue-500 font-medium text-left" 
-                  [ngModel]="section.titleEn || ''" (ngModelChange)="section.title = $event || section.titleAr; updateSection(section.id, { titleEn: $event, title: section.title })" placeholder="Section Title (EN)" />
+                  [ngModel]="section.titleEn || ''" (ngModelChange)="section.title = section.titleAr || $event; updateSection(section.id, { titleEn: $event, title: section.title })" placeholder="Section Title (EN)" />
               </div>
             </div>
           </div>
@@ -236,23 +236,23 @@
                 </div>
                 <input #catFileInput type="file" accept="image/*" class="hidden" (change)="onItemFileSelected($event, 'category', cIdx)" />
               </div>
-              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0" dir="rtl">
                 <div class="flex flex-col gap-1">
-                  <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                  <label class="text-[10px] font-bold text-gray-500 uppercase text-right">عربي / AR</label>
                   <input type="text"
                          [(ngModel)]="cat.nameAr"
-                         (ngModelChange)="cat.name = cat.nameEn || cat.nameAr; updateSection(editingSection.id, { categories: editingSection.categories })"
+                         (ngModelChange)="cat.name = cat.nameAr || cat.nameEn; updateSection(editingSection.id, { categories: editingSection.categories })"
                          dir="rtl"
-                         class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                         class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all text-right"
                          placeholder="الاسم (بالعربي)" />
                 </div>
                 <div class="flex flex-col gap-1">
-                  <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                  <label class="text-[10px] font-bold text-gray-500 uppercase text-left">English / EN</label>
                   <input type="text"
                          [(ngModel)]="cat.nameEn"
-                         (ngModelChange)="cat.name = cat.nameEn || cat.nameAr; updateSection(editingSection.id, { categories: editingSection.categories })"
+                         (ngModelChange)="cat.name = cat.nameAr || cat.nameEn; updateSection(editingSection.id, { categories: editingSection.categories })"
                          dir="ltr"
-                         class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                         class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all text-left"
                          placeholder="Name (English)" />
                 </div>
               </div>
@@ -281,23 +281,23 @@
                 <input #prodFileInput type="file" accept="image/*" class="hidden" (change)="onItemFileSelected($event, 'product', pIdx)" />
               </div>
               <div class="flex flex-col flex-1 min-w-0 gap-1.5">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" dir="rtl">
                   <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase">عربي / AR</label>
+                    <label class="text-[10px] font-bold text-gray-500 uppercase text-right">عربي / AR</label>
                     <input type="text"
                            [(ngModel)]="prod.nameAr"
-                           (ngModelChange)="prod.name = prod.nameEn || prod.nameAr; updateSection(editingSection.id, { products: editingSection.products })"
+                           (ngModelChange)="prod.name = prod.nameAr || prod.nameEn; updateSection(editingSection.id, { products: editingSection.products })"
                            dir="rtl"
-                           class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                           class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all text-right"
                            placeholder="اسم المنتج (بالعربي)" />
                   </div>
                   <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase">English / EN</label>
+                    <label class="text-[10px] font-bold text-gray-500 uppercase text-left">English / EN</label>
                     <input type="text"
                            [(ngModel)]="prod.nameEn"
-                           (ngModelChange)="prod.name = prod.nameEn || prod.nameAr; updateSection(editingSection.id, { products: editingSection.products })"
+                           (ngModelChange)="prod.name = prod.nameAr || prod.nameEn; updateSection(editingSection.id, { products: editingSection.products })"
                            dir="ltr"
-                           class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                           class="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all text-left"
                            placeholder="Product Name (English)" />
                   </div>
                 </div>

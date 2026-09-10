@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { AboutPageConfigService } from '../../../../core/services/page-configs/about-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-about-page-editor',
@@ -45,16 +46,16 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of config().reasons; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
+                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                   [ngModel]="item.titleAr" (ngModelChange)="updateReason(idx, { titleAr: $event })" placeholder="العنوان (عربي)" />
-                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                   [ngModel]="item.titleEn" (ngModelChange)="updateReason(idx, { titleEn: $event })" placeholder="Title (EN)" />
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <textarea dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
+                <textarea dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                   [ngModel]="item.textAr" (ngModelChange)="updateReason(idx, { textAr: $event })" placeholder="الوصف (عربي)" rows="2"></textarea>
-                <textarea dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                <textarea dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                   [ngModel]="item.textEn" (ngModelChange)="updateReason(idx, { textEn: $event })" placeholder="Description (EN)" rows="2"></textarea>
               </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
@@ -100,10 +101,10 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of config().values; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
+                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                   [ngModel]="item.labelAr" (ngModelChange)="updateValue(idx, { labelAr: $event })" placeholder="القيمة (عربي)" />
-                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                   [ngModel]="item.labelEn" (ngModelChange)="updateValue(idx, { labelEn: $event })" placeholder="Label (EN)" />
               </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
@@ -130,10 +131,10 @@ import { SectionCardComponent } from '../components/section-card/section-card.co
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of config().contacts; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
+                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                   [ngModel]="item.labelAr" (ngModelChange)="updateContact(idx, { labelAr: $event })" placeholder="الاسم (عربي)" />
-                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" 
+                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                   [ngModel]="item.labelEn" (ngModelChange)="updateContact(idx, { labelEn: $event })" placeholder="Name (EN)" />
               </div>
               <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
@@ -174,9 +175,15 @@ export class AboutPageEditorComponent {
     ];
     
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (!c[f + 'Ar'] && c[f]) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En']) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f] || '', '');
+        changed = true;
+      } else if (/[\u0600-\u06FF]/.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'En'], '');
         changed = true;
       }
     }
@@ -184,8 +191,14 @@ export class AboutPageEditorComponent {
     if (c.reasons) {
         c.reasons = c.reasons.map((r: any) => {
             let rc = false;
-            if (r.title && !r.titleAr && !r.titleEn) { r.titleAr = r.title; r.titleEn = r.title; rc = true; }
-            if (r.text && !r.textAr && !r.textEn) { r.textAr = r.text; r.textEn = r.text; rc = true; }
+            if (!r.titleAr && r.title) { r.titleAr = r.title; rc = true; }
+            if (!r.titleEn) { r.titleEn = getEnglishTranslation(r.titleAr || r.title || '', 'Feature'); rc = true; }
+            else if (/[\u0600-\u06FF]/.test(r.titleEn)) { r.titleEn = getEnglishTranslation(r.titleEn, 'Feature'); rc = true; }
+
+            if (!r.textAr && r.text) { r.textAr = r.text; rc = true; }
+            if (!r.textEn) { r.textEn = getEnglishTranslation(r.textAr || r.text || '', 'Description'); rc = true; }
+            else if (/[\u0600-\u06FF]/.test(r.textEn)) { r.textEn = getEnglishTranslation(r.textEn, 'Description'); rc = true; }
+
             if (rc) changed = true;
             return r;
         });
@@ -193,14 +206,24 @@ export class AboutPageEditorComponent {
     
     if (c.values) {
         c.values = c.values.map((v: any) => {
-            if (v.label && !v.labelAr && !v.labelEn) { v.labelAr = v.label; v.labelEn = v.label; changed = true; }
+            let vc = false;
+            if (!v.labelAr && v.label) { v.labelAr = v.label; vc = true; }
+            if (!v.labelEn) { v.labelEn = getEnglishTranslation(v.labelAr || v.label || '', 'Value'); vc = true; }
+            else if (/[\u0600-\u06FF]/.test(v.labelEn)) { v.labelEn = getEnglishTranslation(v.labelEn, 'Value'); vc = true; }
+
+            if (vc) changed = true;
             return v;
         });
     }
 
     if (c.contacts) {
         c.contacts = c.contacts.map((contact: any) => {
-            if (contact.label && !contact.labelAr && !contact.labelEn) { contact.labelAr = contact.label; contact.labelEn = contact.label; changed = true; }
+            let cc = false;
+            if (!contact.labelAr && contact.label) { contact.labelAr = contact.label; cc = true; }
+            if (!contact.labelEn) { contact.labelEn = getEnglishTranslation(contact.labelAr || contact.label || '', 'Contact'); cc = true; }
+            else if (/[\u0600-\u06FF]/.test(contact.labelEn)) { contact.labelEn = getEnglishTranslation(contact.labelEn, 'Contact'); cc = true; }
+
+            if (cc) changed = true;
             return contact;
         });
     }
@@ -217,7 +240,7 @@ export class AboutPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 
@@ -227,7 +250,7 @@ export class AboutPageEditorComponent {
 
   addReason() {
     const list = [...(this.config().reasons || [])];
-    list.push({ id: 'r-' + Date.now(), icon: 'Star', title: 'ميزة جديدة', text: 'وصف قصير' });
+    list.push({ id: 'r-' + Date.now(), icon: 'Star', title: 'ميزة جديدة', titleAr: 'ميزة جديدة', titleEn: 'New Feature', text: 'وصف قصير', textAr: 'وصف قصير', textEn: 'Short Description' });
     this.updateConfig({ reasons: list });
   }
 
@@ -235,10 +258,10 @@ export class AboutPageEditorComponent {
     const list = [...(this.config().reasons || [])];
     const newVal = { ...list[index], ...updates };
     if (updates.titleAr !== undefined || updates.titleEn !== undefined) {
-      newVal.title = newVal.titleEn || newVal.titleAr;
+      newVal.title = newVal.titleAr || newVal.titleEn;
     }
     if (updates.textAr !== undefined || updates.textEn !== undefined) {
-      newVal.text = newVal.textEn || newVal.textAr;
+      newVal.text = newVal.textAr || newVal.textEn;
     }
     list[index] = newVal;
     this.updateConfig({ reasons: list });
@@ -252,7 +275,7 @@ export class AboutPageEditorComponent {
 
   addValue() {
     const list = [...(this.config().values || [])];
-    list.push({ id: 'v-' + Date.now(), icon: 'Star', label: 'قيمة جديدة' });
+    list.push({ id: 'v-' + Date.now(), icon: 'Star', label: 'قيمة جديدة', labelAr: 'قيمة جديدة', labelEn: 'New Value' });
     this.updateConfig({ values: list });
   }
 
@@ -260,7 +283,7 @@ export class AboutPageEditorComponent {
     const list = [...(this.config().values || [])];
     const newVal = { ...list[index], ...updates };
     if (updates.labelAr !== undefined || updates.labelEn !== undefined) {
-      newVal.label = newVal.labelEn || newVal.labelAr;
+      newVal.label = newVal.labelAr || newVal.labelEn;
     }
     list[index] = newVal;
     this.updateConfig({ values: list });
@@ -274,7 +297,7 @@ export class AboutPageEditorComponent {
 
   addContact() {
     const list = [...(this.config().contacts || [])];
-    list.push({ id: 'c-' + Date.now(), icon: 'phone', label: 'طريقة تواصل', link: '#' });
+    list.push({ id: 'c-' + Date.now(), icon: 'phone', label: 'طريقة تواصل', labelAr: 'طريقة تواصل', labelEn: 'Contact Method', link: '#' });
     this.updateConfig({ contacts: list });
   }
 
@@ -282,7 +305,7 @@ export class AboutPageEditorComponent {
     const list = [...(this.config().contacts || [])];
     const newVal = { ...list[index], ...updates };
     if (updates.labelAr !== undefined || updates.labelEn !== undefined) {
-      newVal.label = newVal.labelEn || newVal.labelAr;
+      newVal.label = newVal.labelAr || newVal.labelEn;
     }
     list[index] = newVal;
     this.updateConfig({ contacts: list });

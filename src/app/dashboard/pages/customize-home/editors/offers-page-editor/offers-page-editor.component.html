@@ -1,23 +1,140 @@
-<div class="space-y-4">
-    <div class="bg-card border border-border rounded-2xl overflow-hidden mb-4">
-        <div class="p-4 bg-muted/30 border-b border-border font-medium flex justify-between items-center">
-            <span>{{ 'DASHBOARD.AUTO_STR_208' | translate }}</span>
-            <input type="checkbox" [ngModel]="config().showHero" (ngModelChange)="updateConfig('showHero', $event)" class="lk-checkbox" />
-        </div>
-        @if (config().showHero) {
-            <div class="p-4 space-y-3">
-                <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'COMMON.ADDRESS' | translate }}</span><input type="text" [ngModel]="config().heroTitle" (ngModelChange)="updateConfig('heroTitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
-                <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'PRODUCT.DESCRIPTION' | translate }}</span><input type="text" [ngModel]="config().heroSubtitle" (ngModelChange)="updateConfig('heroSubtitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
-            </div>
-        }
+<div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
+    <div class="text-center mb-4">
+        <h2 class="text-xl font-bold text-gray-900 mb-1">{{ 'OFFERS.TITLE' | translate }}</h2>
+        <p class="text-sm text-gray-500">قم بتخصيص نصوص وأقسام صفحة العروض والتخفيضات</p>
     </div>
 
-    <div class="bg-card border border-border rounded-2xl overflow-hidden mb-4">
-        <div class="p-4 bg-muted/30 border-b border-border font-medium">{{ 'DASHBOARD.AUTO_STR_401' | translate }}</div>
-        <div class="p-4 space-y-3">
-            <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_187' | translate }}</span><input type="text" [ngModel]="config().currentOffersTitle" (ngModelChange)="updateConfig('currentOffersTitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
-            <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_246' | translate }}</span><input type="text" [ngModel]="config().bundlesTitle" (ngModelChange)="updateConfig('bundlesTitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
-            <label class="flex flex-col gap-1.5"><span class="text-sm font-medium">{{ 'DASHBOARD.AUTO_STR_332' | translate }}</span><input type="text" [ngModel]="config().bundlesSubtitle" (ngModelChange)="updateConfig('bundlesSubtitle', $event)" class="lk-input h-10 px-3 rounded-xl border border-border" /></label>
-        </div>
-    </div>
+    <!-- 1. البانر الرئيسي -->
+    <app-section-card 
+        title="البانر الرئيسي (Hero)" 
+        [index]="0" 
+        [enabled]="config().showHero" 
+        [isFirst]="true" 
+        [isLast]="false"
+        [draggable]="false" 
+        [showReorder]="false" 
+        [showCopy]="false" 
+        [showDelete]="false" 
+        (toggle)="updateConfig({ showHero: $event })">
+        <app-bilingual-input 
+            title="عنوان البانر" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['heroTitleAr'] || ''" 
+            [valueEn]="$any(config())['heroTitleEn'] || ''" 
+            (valueChange)="updateBilingualField('heroTitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+        <app-bilingual-input 
+            title="النص الفرعي" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['heroSubtitleAr'] || ''" 
+            [valueEn]="$any(config())['heroSubtitleEn'] || ''" 
+            (valueChange)="updateBilingualField('heroSubtitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+    </app-section-card>
+
+    <!-- 2. التخفيضات الحالية -->
+    <app-section-card 
+        title="التخفيضات الحالية" 
+        [index]="1" 
+        [enabled]="config().showCurrentOffers" 
+        [isFirst]="false" 
+        [isLast]="false"
+        [draggable]="false" 
+        [showReorder]="false" 
+        [showCopy]="false" 
+        [showDelete]="false" 
+        (toggle)="updateConfig({ showCurrentOffers: $event })">
+        <app-bilingual-input 
+            title="عنوان القسم" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['currentOffersTitleAr'] || ''" 
+            [valueEn]="$any(config())['currentOffersTitleEn'] || ''" 
+            (valueChange)="updateBilingualField('currentOffersTitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+    </app-section-card>
+
+    <!-- 3. وفر أكثر مع الباقات -->
+    <app-section-card 
+        title="وفر أكثر مع الباقات" 
+        [index]="2" 
+        [enabled]="config().showBundles" 
+        [isFirst]="false" 
+        [isLast]="false"
+        [draggable]="false" 
+        [showReorder]="false" 
+        [showCopy]="false" 
+        [showDelete]="false" 
+        (toggle)="updateConfig({ showBundles: $event })">
+        <app-bilingual-input 
+            title="عنوان الباقات" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['bundlesTitleAr'] || ''" 
+            [valueEn]="$any(config())['bundlesTitleEn'] || ''" 
+            (valueChange)="updateBilingualField('bundlesTitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+        <app-bilingual-input 
+            title="وصف الباقات" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['bundlesSubtitleAr'] || ''" 
+            [valueEn]="$any(config())['bundlesSubtitleEn'] || ''" 
+            (valueChange)="updateBilingualField('bundlesSubtitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+    </app-section-card>
+
+    <!-- 4. عروض شراء أكثر من قطعة -->
+    <app-section-card 
+        title="عروض شراء أكثر من قطعة" 
+        [index]="3" 
+        [enabled]="config().showMultiBuy" 
+        [isFirst]="false" 
+        [isLast]="false"
+        [draggable]="false" 
+        [showReorder]="false" 
+        [showCopy]="false" 
+        [showDelete]="false" 
+        (toggle)="updateConfig({ showMultiBuy: $event })">
+        <app-bilingual-input 
+            title="عنوان القسم" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['multiBuyTitleAr'] || ''" 
+            [valueEn]="$any(config())['multiBuyTitleEn'] || ''" 
+            (valueChange)="updateBilingualField('multiBuyTitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+    </app-section-card>
+
+    <!-- 5. العروض محدودة المدة -->
+    <app-section-card 
+        title="العروض محدودة المدة" 
+        [index]="4" 
+        [enabled]="config().showLimitedOffer" 
+        [isFirst]="false" 
+        [isLast]="true"
+        [draggable]="false" 
+        [showReorder]="false" 
+        [showCopy]="false" 
+        [showDelete]="false" 
+        (toggle)="updateConfig({ showLimitedOffer: $event })">
+        <app-bilingual-input 
+            title="عنوان العرض" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['limitedOfferTitleAr'] || ''" 
+            [valueEn]="$any(config())['limitedOfferTitleEn'] || ''" 
+            (valueChange)="updateBilingualField('limitedOfferTitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+        <app-bilingual-input 
+            title="نص التنبيه الفرعي" 
+            labelAr="عربي / AR" 
+            labelEn="English / EN" 
+            [valueAr]="$any(config())['limitedOfferSubtitleAr'] || ''" 
+            [valueEn]="$any(config())['limitedOfferSubtitleEn'] || ''" 
+            (valueChange)="updateBilingualField('limitedOfferSubtitle', $event.lang, $event.value)">
+        </app-bilingual-input>
+    </app-section-card>
 </div>

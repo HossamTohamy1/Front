@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Trash2 } from 'lucide-angular';
 import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/services/page-configs/checkout-page-config.service';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-checkout-page-editor',
@@ -78,24 +79,24 @@ import { CheckoutPageConfigService, CheckoutPageConfig } from '../../../../core/
                 <div class="flex flex-col gap-3 mt-3">
                     <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                         <div class="flex flex-col gap-2 flex-1">
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-2 gap-2" dir="rtl">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
-                                    <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.titleAr" (ngModelChange)="updateTrustBadge(idx, { titleAr: $event })" />
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">العنوان (عربي)</span>
+                                    <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [ngModel]="badge.titleAr" (ngModelChange)="updateTrustBadge(idx, { titleAr: $event })" />
                                 </div>
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                                    <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.titleEn" (ngModelChange)="updateTrustBadge(idx, { titleEn: $event })" />
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Title (EN)</span>
+                                    <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [ngModel]="badge.titleEn" (ngModelChange)="updateTrustBadge(idx, { titleEn: $event })" />
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-2 gap-2" dir="rtl">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف القصير (عربي)</span>
-                                    <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitleAr" (ngModelChange)="updateTrustBadge(idx, { subtitleAr: $event })" />
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">الوصف القصير (عربي)</span>
+                                    <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [ngModel]="badge.subtitleAr" (ngModelChange)="updateTrustBadge(idx, { subtitleAr: $event })" />
                                 </div>
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
-                                    <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="badge.subtitleEn" (ngModelChange)="updateTrustBadge(idx, { subtitleEn: $event })" />
+                                    <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Subtitle (EN)</span>
+                                    <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [ngModel]="badge.subtitleEn" (ngModelChange)="updateTrustBadge(idx, { subtitleEn: $event })" />
                                 </div>
                             </div>
                             <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 mt-1" [ngModel]="badge.icon" (ngModelChange)="updateTrustBadge(idx, { icon: $event })">
@@ -128,15 +129,19 @@ export class CheckoutPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'headerTitle', 'headerSubtitle', 'customerInfoTitle', 'paymentInfoTitle',
       'summaryTitle', 'safeShoppingTitle', 'safeShoppingText', 'emptyStateTitle',
       'emptyStateText', 'emptyStateCta'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -144,14 +149,20 @@ export class CheckoutPageEditorComponent {
     if (c.trustBadges && c.trustBadges.length > 0) {
       const newBadges = c.trustBadges.map((b: any) => {
         let bChanged = false;
-        if (b.title && !b.titleAr && !b.titleEn) {
+        if (b.title && !b.titleAr) {
           b.titleAr = b.title;
-          b.titleEn = b.title;
           bChanged = true;
         }
-        if (b.subtitle && !b.subtitleAr && !b.subtitleEn) {
+        if (!b.titleEn || ARABIC_REGEX.test(b.titleEn)) {
+          b.titleEn = getEnglishTranslation(b.titleAr || b.title, 'Feature');
+          bChanged = true;
+        }
+        if (b.subtitle && !b.subtitleAr) {
           b.subtitleAr = b.subtitle;
-          b.subtitleEn = b.subtitle;
+          bChanged = true;
+        }
+        if (!b.subtitleEn || ARABIC_REGEX.test(b.subtitleEn)) {
+          b.subtitleEn = getEnglishTranslation(b.subtitleAr || b.subtitle, 'Feature Details');
           bChanged = true;
         }
         if (bChanged) changed = true;
@@ -172,13 +183,18 @@ export class CheckoutPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 
   addTrustBadge() {
     const badges = [...(this.config().trustBadges || [])];
-    badges.push({ id: 'tb-' + Date.now(), icon: 'BadgeCheck', title: 'ميزة جديدة', subtitle: 'وصف قصير' });
+    badges.push({ 
+      id: 'tb-' + Date.now(), 
+      icon: 'BadgeCheck', 
+      title: 'ميزة جديدة', titleAr: 'ميزة جديدة', titleEn: 'New Feature', 
+      subtitle: 'وصف قصير', subtitleAr: 'وصف قصير', subtitleEn: 'Short Description' 
+    });
     this.updateConfig({ trustBadges: badges });
   }
 
