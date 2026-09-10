@@ -1,18 +1,21 @@
 import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { BilingualInputComponent } from '../components/bilingual-input/bilingual-input.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SearchPageConfigService } from '../../../../core/services/page-configs/search-page-config.service';
+import { SearchPageConfigService, SearchPageConfig } from '../../../../core/services/page-configs/search-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { LucideAngularModule, Trash2 } from 'lucide-angular';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-search-page-editor',
   standalone: true,
   imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule, SectionCardComponent, BilingualInputComponent],
   template: `
-    <div class="w-full flex flex-col gap-2 pb-24" dir="rtl">
+    <div *ngIf="localConfig" class="w-full flex flex-col gap-2 pb-24" dir="rtl">
       <div class="text-center mb-4">
         <h2 class="text-xl font-bold text-gray-900 mb-1">{{ 'DASHBOARD.AUTO_STR_364' | translate }}</h2>
         <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_32' | translate }}</p>
@@ -20,26 +23,26 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
 
       <app-section-card title="إعدادات حقل البحث" [index]="0" [enabled]="true" [isFirst]="true" [isLast]="false" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="نص حقل البحث (Placeholder)" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['searchPlaceholderAr'] || ''" 
-                [valueEn]="$any(config())['searchPlaceholderEn'] || ''" 
+                [(valueAr)]="localConfig.searchPlaceholderAr" 
+                [(valueEn)]="localConfig.searchPlaceholderEn" 
                 (valueChange)="updateBilingualField('searchPlaceholder', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
       <app-section-card title="عمليات البحث الشائعة" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()" [addAction]="{ label: 'إضافة كلمة', onClick: addSuggestion.bind(this) }">
         <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['quickSuggestionsTitleAr'] || ''" 
-                [valueEn]="$any(config())['quickSuggestionsTitleEn'] || ''" 
+                [(valueAr)]="localConfig.quickSuggestionsTitleAr" 
+                [(valueEn)]="localConfig.quickSuggestionsTitleEn" 
                 (valueChange)="updateBilingualField('quickSuggestionsTitle', $event.lang, $event.value)"></app-bilingual-input>
         <div class="flex flex-col gap-2 mt-2">
-          <div *ngFor="let sugg of config().quickSuggestions || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-2 items-start">
+          <div *ngFor="let sugg of localConfig.quickSuggestions || []; let idx = index; trackBy: trackBySuggestionId" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-2 items-start">
             <div class="flex flex-col sm:flex-row gap-2 w-full">
                <div class="w-full">
                  <span class="text-xs font-bold text-gray-500 mb-1 block">عربي / AR</span>
-                 <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="sugg.textAr" (ngModelChange)="updateSuggestion(idx, { textAr: $event })" />
+                 <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [(ngModel)]="sugg.textAr" (ngModelChange)="onSuggestionChanged(idx)" />
                </div>
                <div class="w-full">
                  <span class="text-xs font-bold text-gray-500 mb-1 block text-left">English / EN</span>
-                 <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="sugg.textEn" (ngModelChange)="updateSuggestion(idx, { textEn: $event })" />
+                 <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" [(ngModel)]="sugg.textEn" (ngModelChange)="onSuggestionChanged(idx)" />
                </div>
             </div>
             <button (click)="removeSuggestion(idx)" class="p-2 mt-5 text-red-400 hover:text-red-600">
@@ -49,119 +52,149 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
         </div>
       </app-section-card>
 
-      <app-section-card title="عمليات البحث الأخيرة" [index]="2" [enabled]="config().showRecentSearch" [isFirst]="false" [isLast]="false" (toggle)="updateConfig({showRecentSearch: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card title="عمليات البحث الأخيرة" [index]="2" [enabled]="localConfig.showRecentSearch" [isFirst]="false" [isLast]="false" (toggle)="updateToggle('showRecentSearch', $event)" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['recentSearchTitleAr'] || ''" 
-                [valueEn]="$any(config())['recentSearchTitleEn'] || ''" 
+                [(valueAr)]="localConfig.recentSearchTitleAr" 
+                [(valueEn)]="localConfig.recentSearchTitleEn" 
                 (valueChange)="updateBilingualField('recentSearchTitle', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
       <app-section-card title="حالة عدم وجود نتائج" [index]="3" [enabled]="true" [isFirst]="false" [isLast]="false" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="العنوان" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['noResultsTitleAr'] || ''" 
-                [valueEn]="$any(config())['noResultsTitleEn'] || ''" 
+                [(valueAr)]="localConfig.noResultsTitleAr" 
+                [(valueEn)]="localConfig.noResultsTitleEn" 
                 (valueChange)="updateBilingualField('noResultsTitle', $event.lang, $event.value)"></app-bilingual-input>
         <app-bilingual-input title="الوصف الفرعي" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['noResultsSubtitleAr'] || ''" 
-                [valueEn]="$any(config())['noResultsSubtitleEn'] || ''" 
+                [(valueAr)]="localConfig.noResultsSubtitleAr" 
+                [(valueEn)]="localConfig.noResultsSubtitleEn" 
                 (valueChange)="updateBilingualField('noResultsSubtitle', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
       <app-section-card title="المنتجات المقترحة" [index]="4" [enabled]="true" [isFirst]="false" [isLast]="false" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="عنوان المنتجات المقترحة" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['suggestedProductsTitleAr'] || ''" 
-                [valueEn]="$any(config())['suggestedProductsTitleEn'] || ''" 
+                [(valueAr)]="localConfig.suggestedProductsTitleAr" 
+                [(valueEn)]="localConfig.suggestedProductsTitleEn" 
                 (valueChange)="updateBilingualField('suggestedProductsTitle', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="بطاقة الدعم والمساعدة" [index]="5" [enabled]="config().showSupportCard" [isFirst]="false" [isLast]="true" (toggle)="updateConfig({showSupportCard: $event})" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
+      <app-section-card title="بطاقة الدعم والمساعدة" [index]="5" [enabled]="localConfig.showSupportCard" [isFirst]="false" [isLast]="true" (toggle)="updateToggle('showSupportCard', $event)" (duplicate)="noop()" (delete)="noop()" (moveUp)="noop()" (moveDown)="noop()" (onDragStart)="noop()" (onDragEnd)="noop()" (onDragOver)="noop()" (onDrop)="noop()">
         <app-bilingual-input title="عنوان البطاقة" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['supportCardTitleAr'] || ''" 
-                [valueEn]="$any(config())['supportCardTitleEn'] || ''" 
+                [(valueAr)]="localConfig.supportCardTitleAr" 
+                [(valueEn)]="localConfig.supportCardTitleEn" 
                 (valueChange)="updateBilingualField('supportCardTitle', $event.lang, $event.value)"></app-bilingual-input>
         <app-bilingual-input title="النص الفرعي" labelAr="عربي / AR" labelEn="English / EN" 
-                [valueAr]="$any(config())['supportCardSubtitleAr'] || ''" 
-                [valueEn]="$any(config())['supportCardSubtitleEn'] || ''" 
+                [(valueAr)]="localConfig.supportCardSubtitleAr" 
+                [(valueEn)]="localConfig.supportCardSubtitleEn" 
                 (valueChange)="updateBilingualField('supportCardSubtitle', $event.lang, $event.value)"></app-bilingual-input>
       </app-section-card>
-
-      
     </div>
   `
 })
-export class SearchPageEditorComponent {
+export class SearchPageEditorComponent implements OnInit, OnDestroy {
   readonly configService = inject(SearchPageConfigService);
-  readonly config = this.configService.pageConfig;
   readonly Trash2 = Trash2;
 
-  constructor() {
-    this.backfillLocalizedStrings();
+  localConfig: any = null;
+  private updateSubject = new Subject<void>();
+  private sub?: Subscription;
+
+  ngOnInit() {
+    this.initLocalConfig();
+    this.sub = this.updateSubject.pipe(
+      debounceTime(300)
+    ).subscribe(() => {
+      this.flushSave();
+    });
   }
 
-  backfillLocalizedStrings() {
-    const c: any = { ...this.config() };
-    let changed = false;
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+
+  private initLocalConfig() {
+    const raw = this.configService.pageConfig();
+    const c: any = JSON.parse(JSON.stringify(raw));
+    
+    // Backfill localized fields if needed
     const fields = [
       'searchPlaceholder', 'quickSuggestionsTitle', 'recentSearchTitle', 
       'noResultsTitle', 'noResultsSubtitle', 'supportCardTitle', 'supportCardSubtitle', 'suggestedProductsTitle'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (!c[f + 'Ar'] && c[f]) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
-        changed = true;
+      }
+      if (!c[f + 'En']) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f] || '', '');
+      } else if (/[\u0600-\u06FF]/.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'En'], '');
       }
     }
     
     if (c.quickSuggestions && c.quickSuggestions.length > 0) {
-      const newSuggs = c.quickSuggestions.map((s: any) => {
+      c.quickSuggestions = c.quickSuggestions.map((s: any, idx: number) => {
         if (typeof s === 'string') {
-          changed = true;
-          return { text: s, textAr: s, textEn: s };
+          return { id: 'qs-' + (idx + 1), text: s, textAr: s, textEn: getEnglishTranslation(s, 'Search Keyword') };
         }
-        return s;
+        const item = { id: s.id || ('qs-' + (idx + 1)), ...s };
+        if (!item.textAr && item.text) item.textAr = item.text;
+        if (!item.textEn) {
+          item.textEn = getEnglishTranslation(item.textAr || item.text || '', 'Search Keyword');
+        } else if (/[\u0600-\u06FF]/.test(item.textEn)) {
+          item.textEn = getEnglishTranslation(item.textEn, 'Search Keyword');
+        }
+        return item;
       });
-      c.quickSuggestions = newSuggs;
     }
-    
-    if (changed) {
-      this.configService.updateConfig(c);
-    }
+
+    this.localConfig = c;
   }
 
   noop() {}
 
-  updateConfig(updates: Partial<any>) {
-    this.configService.updateConfig({ ...this.config(), ...updates });
+  updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
+    if (!this.localConfig) return;
+    this.localConfig[field + lang] = value;
+    this.localConfig[field] = this.localConfig[field + 'Ar'] || this.localConfig[field + 'En'];
+    this.updateSubject.next();
   }
 
-  updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
-    const current = { ...this.config() } as any;
-    current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
-    this.updateConfig(current);
+  onSuggestionChanged(index: number) {
+    if (!this.localConfig?.quickSuggestions?.[index]) return;
+    const item = this.localConfig.quickSuggestions[index];
+    item.text = item.textAr || item.textEn || '';
+    this.updateSubject.next();
   }
 
   addSuggestion() {
-    const suggs = [...(this.config().quickSuggestions || [])];
-    suggs.push({ text: 'مشد كولومبي', textAr: 'مشد كولومبي', textEn: 'Colombian Corset' });
-    this.updateConfig({ quickSuggestions: suggs });
-  }
-
-  updateSuggestion(index: number, updates: any) {
-    const suggs = [...(this.config().quickSuggestions || [])];
-    suggs[index] = { ...suggs[index], ...updates };
-    suggs[index].text = suggs[index].textEn || suggs[index].textAr || '';
-    this.updateConfig({ quickSuggestions: suggs });
+    if (!this.localConfig) return;
+    const newId = 'qs-' + Date.now();
+    this.localConfig.quickSuggestions = [
+      ...(this.localConfig.quickSuggestions || []),
+      { id: newId, text: 'مشد كولومبي', textAr: 'مشد كولومبي', textEn: 'Colombian Corset' }
+    ];
+    this.flushSave();
   }
 
   removeSuggestion(index: number) {
-    const suggs = [...(this.config().quickSuggestions || [])];
-    suggs.splice(index, 1);
-    this.updateConfig({ quickSuggestions: suggs });
+    if (!this.localConfig?.quickSuggestions) return;
+    this.localConfig.quickSuggestions.splice(index, 1);
+    this.localConfig.quickSuggestions = [...this.localConfig.quickSuggestions];
+    this.flushSave();
   }
 
-  trackByIndex(index: number, item: any): number {
-    return index;
+  updateToggle(field: string, enabled: boolean) {
+    if (!this.localConfig) return;
+    this.localConfig[field] = enabled;
+    this.flushSave();
+  }
+
+  trackBySuggestionId(index: number, item: any): string {
+    return item?.id || index.toString();
+  }
+
+  private flushSave() {
+    if (!this.localConfig) return;
+    this.configService.updateConfig(JSON.parse(JSON.stringify(this.localConfig)));
   }
 }

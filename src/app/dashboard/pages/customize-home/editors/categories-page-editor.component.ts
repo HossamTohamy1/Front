@@ -5,6 +5,7 @@ import { BilingualInputComponent } from '../components/bilingual-input/bilingual
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoriesPageConfigService, CategoriesPageConfig } from '../../../../core/services/page-configs/categories-page-config.service';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-categories-page-editor',
@@ -64,40 +65,40 @@ import { CategoriesPageConfigService, CategoriesPageConfig } from '../../../../c
                 <div *ngFor="let cat of config().categories; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <div class="flex flex-col gap-2 flex-1">
                         <div class="text-xs font-bold text-gray-500">التصنيف: {{cat.id}}</div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
                             <div>
-                                <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان الأول (عربي)</span>
-                                <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                                <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">العنوان الأول (عربي)</span>
+                                <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                                        [ngModel]="cat.titleAr" (ngModelChange)="updateCategory(idx, { titleAr: $event })" />
                             </div>
                             <div>
-                                <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                                <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                                <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Title (EN)</span>
+                                <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                                        [ngModel]="cat.titleEn" (ngModelChange)="updateCategory(idx, { titleEn: $event })" />
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
                             <div>
-                                <span class="text-[10px] font-bold text-gray-500 mb-1 block">الكلمة المميزة (عربي)</span>
-                                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-blue-600" 
+                                <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">الكلمة المميزة (عربي)</span>
+                                <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-blue-600 text-right" 
                                        [ngModel]="cat.accentAr" (ngModelChange)="updateCategory(idx, { accentAr: $event })" />
                             </div>
                             <div>
-                                <span class="text-[10px] font-bold text-gray-500 mb-1 block">Accent (EN)</span>
-                                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-blue-600" 
+                                <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Accent (EN)</span>
+                                <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-blue-600 text-left" 
                                        [ngModel]="cat.accentEn" (ngModelChange)="updateCategory(idx, { accentEn: $event })" />
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
                             <div>
-                                <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
-                                <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                                          [ngModel]="cat.descriptionAr" (ngModelChange)="updateCategory(idx, { descriptionAr: $event })" rows="2"></textarea>
+                                <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">الوصف (عربي)</span>
+                                <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
+                                          [ngModel]="cat.descriptionAr" (ngModelChange)="updateCategory(idx, { descriptionAr: $event })" rows="2" dir="rtl"></textarea>
                             </div>
                             <div>
-                                <span class="text-[10px] font-bold text-gray-500 mb-1 block">Description (EN)</span>
-                                <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
-                                          [ngModel]="cat.descriptionEn" (ngModelChange)="updateCategory(idx, { descriptionEn: $event })" rows="2"></textarea>
+                                <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Description (EN)</span>
+                                <textarea class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
+                                          [ngModel]="cat.descriptionEn" (ngModelChange)="updateCategory(idx, { descriptionEn: $event })" rows="2" dir="ltr"></textarea>
                             </div>
                         </div>
                         <div>
@@ -125,13 +126,17 @@ export class CategoriesPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'headerTitle', 'headerSubtitle'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -139,19 +144,28 @@ export class CategoriesPageEditorComponent {
     if (c.categories && c.categories.length > 0) {
       const newCats = c.categories.map((cat: any) => {
         let catChanged = false;
-        if (cat.title && !cat.titleAr && !cat.titleEn) {
+        if (cat.title && !cat.titleAr) {
           cat.titleAr = cat.title;
-          cat.titleEn = cat.title;
           catChanged = true;
         }
-        if (cat.accent && !cat.accentAr && !cat.accentEn) {
+        if (!cat.titleEn || ARABIC_REGEX.test(cat.titleEn)) {
+          cat.titleEn = getEnglishTranslation(cat.titleAr || cat.title, 'Category');
+          catChanged = true;
+        }
+        if (cat.accent && !cat.accentAr) {
           cat.accentAr = cat.accent;
-          cat.accentEn = cat.accent;
           catChanged = true;
         }
-        if (cat.description && !cat.descriptionAr && !cat.descriptionEn) {
+        if (!cat.accentEn || ARABIC_REGEX.test(cat.accentEn)) {
+          cat.accentEn = getEnglishTranslation(cat.accentAr || cat.accent, 'Collection');
+          catChanged = true;
+        }
+        if (cat.description && !cat.descriptionAr) {
           cat.descriptionAr = cat.description;
-          cat.descriptionEn = cat.description;
+          catChanged = true;
+        }
+        if (!cat.descriptionEn || ARABIC_REGEX.test(cat.descriptionEn)) {
+          cat.descriptionEn = getEnglishTranslation(cat.descriptionAr || cat.description, 'Explore our curated collection');
           catChanged = true;
         }
         if (catChanged) changed = true;

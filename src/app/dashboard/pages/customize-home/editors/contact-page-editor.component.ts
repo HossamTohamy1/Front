@@ -7,12 +7,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Edit2, Image as ImageIcon, Trash2 } from 'lucide-angular';
 import { ContactPageConfigService } from '../../../../core/services/page-configs/contact-page-config.service';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 export interface ContactMethod {
   id: string;
   type: string;
   title: string;
+  titleAr?: string;
+  titleEn?: string;
   value: string;
+  valueAr?: string;
+  valueEn?: string;
   link: string;
 }
 
@@ -63,27 +68,27 @@ export interface ContactMethod {
                         <button type="button" (click)="deleteMethod(m.id)" class="absolute top-2 left-2 text-destructive opacity-0 group-hover:opacity-100">
                             <lucide-icon [img]="Trash2" size="16"></lucide-icon>
                         </button>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
                             <div>
                                 <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
-                                <input type="text" dir="rtl" class="lk-input h-8 px-2 rounded-lg border border-border text-sm" 
+                                <input type="text" dir="rtl" class="lk-input h-8 px-2 rounded-lg border border-border text-sm text-right" 
                                        [ngModel]="m.titleAr" (ngModelChange)="updateMethod(m.id, { titleAr: $event })" />
                             </div>
                             <div>
                                 <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                                <input type="text" dir="ltr" class="lk-input h-8 px-2 rounded-lg border border-border text-sm" 
+                                <input type="text" dir="ltr" class="lk-input h-8 px-2 rounded-lg border border-border text-sm text-left" 
                                        [ngModel]="m.titleEn" (ngModelChange)="updateMethod(m.id, { titleEn: $event })" />
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
                             <div>
                                 <span class="text-[10px] font-bold text-gray-500 mb-1 block">القيمة (عربي)</span>
-                                <input type="text" dir="rtl" class="lk-input h-8 px-2 rounded-lg border border-border text-sm" 
+                                <input type="text" dir="rtl" class="lk-input h-8 px-2 rounded-lg border border-border text-sm text-right" 
                                        [ngModel]="m.valueAr" (ngModelChange)="updateMethod(m.id, { valueAr: $event })" />
                             </div>
                             <div>
                                 <span class="text-[10px] font-bold text-gray-500 mb-1 block">Value (EN)</span>
-                                <input type="text" dir="ltr" class="lk-input h-8 px-2 rounded-lg border border-border text-sm" 
+                                <input type="text" dir="ltr" class="lk-input h-8 px-2 rounded-lg border border-border text-sm text-left" 
                                        [ngModel]="m.valueEn" (ngModelChange)="updateMethod(m.id, { valueEn: $event })" />
                             </div>
                         </div>
@@ -129,9 +134,15 @@ export class ContactPageEditorComponent {
       'pageTitle', 'pageSubtitle', 'formTitle', 'formSubtitle'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (!c[f + 'Ar'] && c[f]) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En']) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f] || '', '');
+        changed = true;
+      } else if (/[\u0600-\u06FF]/.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'En'], '');
         changed = true;
       }
     }
@@ -139,14 +150,23 @@ export class ContactPageEditorComponent {
     if (c.contactMethods && c.contactMethods.length > 0) {
       const newMethods = c.contactMethods.map((m: any) => {
         let mChanged = false;
-        if (m.title && !m.titleAr && !m.titleEn) {
+        if (!m.titleAr && m.title) {
           m.titleAr = m.title;
-          m.titleEn = m.title;
           mChanged = true;
         }
-        if (m.value && !m.valueAr && !m.valueEn) {
+        if (!m.titleEn) {
+          m.titleEn = getEnglishTranslation(m.titleAr || m.title || '', 'Contact Method');
+          mChanged = true;
+        } else if (/[\u0600-\u06FF]/.test(m.titleEn)) {
+          m.titleEn = getEnglishTranslation(m.titleEn, 'Contact Method');
+          mChanged = true;
+        }
+        if (!m.valueAr && m.value) {
           m.valueAr = m.value;
-          m.valueEn = m.value;
+          mChanged = true;
+        }
+        if (!m.valueEn) {
+          m.valueEn = m.valueAr || m.value || '';
           mChanged = true;
         }
         if (mChanged) changed = true;
@@ -167,7 +187,7 @@ export class ContactPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.configService.updateConfig(current);
   }
 
@@ -183,7 +203,7 @@ export class ContactPageEditorComponent {
   }
 
   addMethod() {
-    const newMethod: ContactMethod = { id: crypto.randomUUID(), type: 'phone', title: 'رقم جديد', value: '', link: '' };
+    const newMethod: ContactMethod = { id: crypto.randomUUID(), type: 'phone', title: 'رقم جديد', titleAr: 'رقم جديد', titleEn: 'New Contact Method', value: '', valueAr: '', valueEn: '', link: '' };
     this.updateConfig('contactMethods', [...(this.config().contactMethods || []), newMethod]);
   }
 
@@ -195,10 +215,10 @@ export class ContactPageEditorComponent {
       const newVal = { ...old, ...updates };
 
       if (updates.titleAr !== undefined || updates.titleEn !== undefined) {
-        newVal.title = newVal.titleEn || newVal.titleAr;
+        newVal.title = newVal.titleAr || newVal.titleEn;
       }
       if (updates.valueAr !== undefined || updates.valueEn !== undefined) {
-        newVal.value = newVal.valueEn || newVal.valueAr;
+        newVal.value = newVal.valueAr || newVal.valueEn;
       }
 
       methods[index] = newVal;

@@ -18,30 +18,54 @@ const INSTANCE_ID = typeof crypto !== 'undefined' && crypto.randomUUID
 export class LoginPageConfigService {
   private readonly storageKey = 'loxx-login-config';
 
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson: string = '';
+
   readonly pageConfig = signal<any>(this.loadInitialConfig());
 
   private zone = inject(NgZone);
 
   constructor() {
+    this.lastSavedJson = JSON.stringify(this.pageConfig());
+
     window.addEventListener('storage', (e: StorageEvent) => {
       if ((e as any).__sourceInstanceId === INSTANCE_ID) return; // Discard self-triggered synthetic events
 
       if (e.key === this.storageKey && e.newValue) {
+        if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
         try {
           const updated = JSON.parse(e.newValue);
-          this.zone.run(() => { this.pageConfig.set(this.mergeWithInitial(updated)); });
+          const merged = this.mergeWithInitial(updated);
+          const mergedJson = JSON.stringify(merged);
+          if (mergedJson === this.lastSavedJson) return;
+
+          this.zone.run(() => {
+            this.isApplyingExternalUpdate = true;
+            this.lastSavedJson = mergedJson;
+            this.pageConfig.set(merged);
+            queueMicrotask(() => {
+              this.isApplyingExternalUpdate = false;
+            });
+          });
         } catch (_) {}
       }
     });
 
     effect(() => {
       const config = this.pageConfig();
-      localStorage.setItem(this.storageKey, JSON.stringify(config));
+      const stringified = JSON.stringify(config);
+
+      if (this.isApplyingExternalUpdate) return;
+      if (stringified === this.lastSavedJson) return;
+
+      this.lastSavedJson = stringified;
+      localStorage.setItem(this.storageKey, stringified);
       
       try {
         const event = new StorageEvent('storage', {
           key: this.storageKey,
-          newValue: JSON.stringify(config),
+          newValue: stringified,
           storageArea: localStorage,
         });
         (event as any).__sourceInstanceId = INSTANCE_ID;

@@ -5,6 +5,8 @@ import { LucideAngularModule, ArrowLeft, Clock3, Heart, Percent, ShoppingBag } f
 import { StoreLayoutComponent } from '../../../shared/components/layout/store-layout/store-layout.component';
 import { HomeHeaderComponent } from '../../../shared/components/layout/home-header/home-header.component';
 import { LangService } from '../../../core/services/lang/lang.service';
+import { OffersPageConfigService } from '../../../core/services/page-configs/offers-page-config.service';
+import { LocalizeFieldPipe } from '../../../shared/pipes/localize-field.pipe';
 
 export type SizeChartRow = {
     size: string;
@@ -157,7 +159,7 @@ const bundleOffers: BundleOffer[] = [
 @Component({
   selector: 'app-offers-page',
   standalone: true,
-  imports: [TranslatePipe, TranslateDirective, CommonModule, LucideAngularModule, StoreLayoutComponent, HomeHeaderComponent],
+  imports: [TranslatePipe, TranslateDirective, CommonModule, LucideAngularModule, StoreLayoutComponent, HomeHeaderComponent, LocalizeFieldPipe],
   templateUrl: './offers-page.component.html',
   styleUrls: ['./offers-page.component.css']
 })
@@ -168,7 +170,8 @@ export class OffersPageComponent implements OnInit, OnDestroy {
   Percent = Percent;
   ShoppingBag = ShoppingBag;
 
-  pageConfig = signal<OffersPageConfig>(DEFAULT_CONFIG);
+  private configService = inject(OffersPageConfigService);
+  pageConfig = this.configService.pageConfig;
   currentOffers = currentOffers;
   bundleOffers = bundleOffers;
   

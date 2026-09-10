@@ -7,6 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CartPageConfigService } from '../../../../core/services/page-configs/cart-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { AddItemButtonComponent } from '../components/add-item-button/add-item-button.component';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-cart-page-editor',
@@ -88,27 +89,27 @@ import { AddItemButtonComponent } from '../components/add-item-button/add-item-b
         <div class="flex flex-col gap-3">
           <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackByIndex" class="flex gap-2 items-start bg-gray-50 border border-gray-200 rounded-lg p-2">
             <div class="flex flex-col gap-2 flex-1">
-               <div class="grid grid-cols-2 gap-2">
+               <div class="grid grid-cols-2 gap-2" dir="rtl">
                  <div>
-                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
-                   <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">العنوان (عربي)</span>
+                   <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                      [ngModel]="badge.titleAr" (ngModelChange)="updateTrustBadge(idx, { titleAr: $event })" />
                  </div>
                  <div>
-                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                   <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Title (EN)</span>
+                   <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                      [ngModel]="badge.titleEn" (ngModelChange)="updateTrustBadge(idx, { titleEn: $event })" />
                  </div>
                </div>
-               <div class="grid grid-cols-2 gap-2">
+               <div class="grid grid-cols-2 gap-2" dir="rtl">
                  <div>
-                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
-                   <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">الوصف (عربي)</span>
+                   <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500 text-right" 
                      [ngModel]="badge.subtitleAr" (ngModelChange)="updateTrustBadge(idx, { subtitleAr: $event })" />
                  </div>
                  <div>
-                   <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
-                   <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                   <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Subtitle (EN)</span>
+                   <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500 text-left" 
                      [ngModel]="badge.subtitleEn" (ngModelChange)="updateTrustBadge(idx, { subtitleEn: $event })" />
                  </div>
                </div>
@@ -143,14 +144,18 @@ export class CartPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'headerTitle', 'couponTitle', 'couponPlaceholder', 'couponButtonText', 
       'checkoutButtonText', 'emptyCartText'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -158,14 +163,20 @@ export class CartPageEditorComponent {
     if (c.trustBadges && c.trustBadges.length > 0) {
       const newBadges = c.trustBadges.map((b: any) => {
         let bChanged = false;
-        if (b.title && !b.titleAr && !b.titleEn) {
+        if (b.title && !b.titleAr) {
           b.titleAr = b.title;
-          b.titleEn = b.title;
           bChanged = true;
         }
-        if (b.subtitle && !b.subtitleAr && !b.subtitleEn) {
+        if (!b.titleEn || ARABIC_REGEX.test(b.titleEn)) {
+          b.titleEn = getEnglishTranslation(b.titleAr || b.title, 'Feature');
+          bChanged = true;
+        }
+        if (b.subtitle && !b.subtitleAr) {
           b.subtitleAr = b.subtitle;
-          b.subtitleEn = b.subtitle;
+          bChanged = true;
+        }
+        if (!b.subtitleEn || ARABIC_REGEX.test(b.subtitleEn)) {
+          b.subtitleEn = getEnglishTranslation(b.subtitleAr || b.subtitle, 'Feature Details');
           bChanged = true;
         }
         if (bChanged) changed = true;
@@ -194,7 +205,7 @@ export class CartPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 

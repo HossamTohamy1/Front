@@ -7,6 +7,7 @@ import { ProductPageConfigService } from '../../../../core/services/page-configs
 import { Trash2 } from 'lucide-angular';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { LucideAngularModule } from 'lucide-angular';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-product-page-editor',
@@ -61,14 +62,14 @@ import { LucideAngularModule } from 'lucide-angular';
         <div class="flex flex-col gap-3">
           <div *ngFor="let svc of config().services || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">نص الخدمة (عربي)</span>
-                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="svc.textAr" (ngModelChange)="updateService(idx, { textAr: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">نص الخدمة (عربي)</span>
+                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [ngModel]="svc.textAr" (ngModelChange)="updateService(idx, { textAr: $event })" />
                 </div>
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">Text (EN)</span>
-                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="svc.textEn" (ngModelChange)="updateService(idx, { textEn: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Text (EN)</span>
+                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [ngModel]="svc.textEn" (ngModelChange)="updateService(idx, { textEn: $event })" />
                 </div>
               </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 mt-1" [ngModel]="svc.icon" (ngModelChange)="updateService(idx, { icon: $event })">
@@ -108,24 +109,24 @@ import { LucideAngularModule } from 'lucide-angular';
         <div class="flex flex-col gap-3">
           <div *ngFor="let feat of config().features || []; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <div class="flex flex-col gap-2 flex-1">
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
-                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="feat.titleAr" (ngModelChange)="updateFeature(idx, { titleAr: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">العنوان (عربي)</span>
+                  <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [ngModel]="feat.titleAr" (ngModelChange)="updateFeature(idx, { titleAr: $event })" />
                 </div>
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="feat.titleEn" (ngModelChange)="updateFeature(idx, { titleEn: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Title (EN)</span>
+                  <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [ngModel]="feat.titleEn" (ngModelChange)="updateFeature(idx, { titleEn: $event })" />
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2" dir="rtl">
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
-                  <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="feat.subtitleAr" (ngModelChange)="updateFeature(idx, { subtitleAr: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-right">الوصف (عربي)</span>
+                  <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600 text-right" [ngModel]="feat.subtitleAr" (ngModelChange)="updateFeature(idx, { subtitleAr: $event })" />
                 </div>
                 <div>
-                  <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
-                  <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="feat.subtitleEn" (ngModelChange)="updateFeature(idx, { subtitleEn: $event })" />
+                  <span class="text-[10px] font-bold text-gray-500 mb-1 block text-left">Subtitle (EN)</span>
+                  <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600 text-left" [ngModel]="feat.subtitleEn" (ngModelChange)="updateFeature(idx, { subtitleEn: $event })" />
                 </div>
               </div>
               <select class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 mt-1" [ngModel]="feat.icon" (ngModelChange)="updateFeature(idx, { icon: $event })">
@@ -169,14 +170,18 @@ export class ProductPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'bestSellerText', 'colorLabel', 'sizeLabel', 'sizeGuideText',
       'addToCartText', 'buyNowText', 'tabDescriptionText', 'tabReviewsText', 'tabFeaturesText'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -184,9 +189,12 @@ export class ProductPageEditorComponent {
     if (c.services && c.services.length > 0) {
       const newServices = c.services.map((s: any) => {
         let sChanged = false;
-        if (s.text && !s.textAr && !s.textEn) {
+        if (s.text && !s.textAr) {
           s.textAr = s.text;
-          s.textEn = s.text;
+          sChanged = true;
+        }
+        if (!s.textEn || ARABIC_REGEX.test(s.textEn)) {
+          s.textEn = getEnglishTranslation(s.textAr || s.text, 'Service text');
           sChanged = true;
         }
         if (sChanged) changed = true;
@@ -198,14 +206,20 @@ export class ProductPageEditorComponent {
     if (c.features && c.features.length > 0) {
       const newFeatures = c.features.map((f: any) => {
         let fChanged = false;
-        if (f.title && !f.titleAr && !f.titleEn) {
+        if (f.title && !f.titleAr) {
           f.titleAr = f.title;
-          f.titleEn = f.title;
           fChanged = true;
         }
-        if (f.subtitle && !f.subtitleAr && !f.subtitleEn) {
+        if (!f.titleEn || ARABIC_REGEX.test(f.titleEn)) {
+          f.titleEn = getEnglishTranslation(f.titleAr || f.title, 'Feature');
+          fChanged = true;
+        }
+        if (f.subtitle && !f.subtitleAr) {
           f.subtitleAr = f.subtitle;
-          f.subtitleEn = f.subtitle;
+          fChanged = true;
+        }
+        if (!f.subtitleEn || ARABIC_REGEX.test(f.subtitleEn)) {
+          f.subtitleEn = getEnglishTranslation(f.subtitleAr || f.subtitle, 'Feature Details');
           fChanged = true;
         }
         if (fChanged) changed = true;
@@ -228,7 +242,7 @@ export class ProductPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 
@@ -243,7 +257,7 @@ export class ProductPageEditorComponent {
 
   addService() {
     const services = [...(this.config().services || [])];
-    services.push({ id: 's-' + Date.now(), icon: 'Truck', text: 'شحن سريع ومجاني' });
+    services.push({ id: 's-' + Date.now(), icon: 'Truck', text: 'شحن سريع ومجاني', textAr: 'شحن سريع ومجاني', textEn: 'Fast & Free Shipping' });
     this.updateConfig({ services });
   }
 
@@ -261,7 +275,12 @@ export class ProductPageEditorComponent {
 
   addFeature() {
     const features = [...(this.config().features || [])];
-    features.push({ id: 'f-' + Date.now(), icon: 'shield', title: 'خامة فاخرة', subtitle: 'مريحة ومناسبة للاستخدام اليومي' });
+    features.push({ 
+      id: 'f-' + Date.now(), 
+      icon: 'shield', 
+      title: 'خامة فاخرة', titleAr: 'خامة فاخرة', titleEn: 'Premium Material', 
+      subtitle: 'مريحة ومناسبة للاستخدام اليومي', subtitleAr: 'مريحة ومناسبة للاستخدام اليومي', subtitleEn: 'Comfortable and suitable for daily wear' 
+    });
     this.updateConfig({ features });
   }
 

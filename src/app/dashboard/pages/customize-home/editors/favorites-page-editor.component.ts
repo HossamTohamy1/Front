@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { FavoritesPageConfigService } from '../../../../core/services/page-configs/favorites-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { LucideAngularModule, Trash2 } from 'lucide-angular';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-favorites-page-editor',
@@ -146,27 +147,27 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
             <div class="flex flex-col gap-3">
                 <div *ngFor="let badge of config().trustBadges; let idx = index; trackBy: trackById" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <div class="flex flex-col gap-2 flex-1">
-                       <div class="grid grid-cols-2 gap-2">
+                       <div class="grid grid-cols-2 gap-2" dir="rtl">
                          <div>
                            <span class="text-[10px] font-bold text-gray-500 mb-1 block">العنوان (عربي)</span>
-                           <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                           <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-right" 
                              [ngModel]="badge.titleAr" (ngModelChange)="updateBadge(idx, { titleAr: $event })" />
                          </div>
                          <div>
                            <span class="text-[10px] font-bold text-gray-500 mb-1 block">Title (EN)</span>
-                           <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1" 
+                           <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-left" 
                              [ngModel]="badge.titleEn" (ngModelChange)="updateBadge(idx, { titleEn: $event })" />
                          </div>
                        </div>
-                       <div class="grid grid-cols-2 gap-2">
+                       <div class="grid grid-cols-2 gap-2" dir="rtl">
                          <div>
                            <span class="text-[10px] font-bold text-gray-500 mb-1 block">الوصف (عربي)</span>
-                           <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                           <input type="text" dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500 text-right" 
                              [ngModel]="badge.subtitleAr" (ngModelChange)="updateBadge(idx, { subtitleAr: $event })" />
                          </div>
                          <div>
                            <span class="text-[10px] font-bold text-gray-500 mb-1 block">Subtitle (EN)</span>
-                           <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500" 
+                           <input type="text" dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-500 text-left" 
                              [ngModel]="badge.subtitleEn" (ngModelChange)="updateBadge(idx, { subtitleEn: $event })" />
                          </div>
                        </div>
@@ -200,14 +201,18 @@ export class FavoritesPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'headerTitle', 'headerSubtitle', 'addAllToCartText', 
       'emptyStateTitle', 'emptyStateSubtitle', 'emptyStateButtonText'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -215,14 +220,20 @@ export class FavoritesPageEditorComponent {
     if (c.trustBadges && c.trustBadges.length > 0) {
       const newBadges = c.trustBadges.map((b: any) => {
         let bChanged = false;
-        if (b.title && !b.titleAr && !b.titleEn) {
+        if (b.title && !b.titleAr) {
           b.titleAr = b.title;
-          b.titleEn = b.title;
           bChanged = true;
         }
-        if (b.subtitle && !b.subtitleAr && !b.subtitleEn) {
+        if (!b.titleEn || ARABIC_REGEX.test(b.titleEn)) {
+          b.titleEn = getEnglishTranslation(b.titleAr || b.title, 'Feature');
+          bChanged = true;
+        }
+        if (b.subtitle && !b.subtitleAr) {
           b.subtitleAr = b.subtitle;
-          b.subtitleEn = b.subtitle;
+          bChanged = true;
+        }
+        if (!b.subtitleEn || ARABIC_REGEX.test(b.subtitleEn)) {
+          b.subtitleEn = getEnglishTranslation(b.subtitleAr || b.subtitle, 'Feature Details');
           bChanged = true;
         }
         if (bChanged) changed = true;
@@ -245,7 +256,7 @@ export class FavoritesPageEditorComponent {
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
     const current = { ...this.config() } as any;
     current[field + lang] = value;
-    current[field] = current[field + 'En'] || current[field + 'Ar'];
+    current[field] = current[field + 'Ar'] || current[field + 'En'];
     this.updateConfig(current);
   }
 
@@ -256,8 +267,8 @@ export class FavoritesPageEditorComponent {
   updateBadge(index: number, updates: any) {
       const badges = [...(this.config().trustBadges || [])];
       badges[index] = { ...badges[index], ...updates };
-      badges[index].title = badges[index].titleEn || badges[index].titleAr || '';
-      badges[index].subtitle = badges[index].subtitleEn || badges[index].subtitleAr || '';
+      badges[index].title = badges[index].titleAr || badges[index].titleEn || '';
+      badges[index].subtitle = badges[index].subtitleAr || badges[index].subtitleEn || '';
       this.updateConfig({ trustBadges: badges });
   }
 

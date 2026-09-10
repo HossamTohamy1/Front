@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { FaqPageConfigService } from '../../../../core/services/page-configs/faq-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { LucideAngularModule, Trash2 } from 'lucide-angular';
+import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 
 @Component({
   selector: 'app-faq-page-editor',
@@ -42,15 +43,15 @@ import { LucideAngularModule, Trash2 } from 'lucide-angular';
 
         <app-section-card title="قائمة الأسئلة" [index]="1" [enabled]="true" [isFirst]="false" [isLast]="false" [addAction]="{ label: 'إضافة سؤال', onClick: addFaq }">
             <div class="flex flex-col gap-3">
-                <div *ngFor="let faq of config().faqs; let idx = index; trackBy: trackByIndex" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div *ngFor="let faq of config().faqs; let idx = index; trackBy: trackByFaqId" class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-3">
                     <div class="flex flex-col gap-2 flex-1">
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="faq.questionAr" (ngModelChange)="updateFaq(idx, { questionAr: $event })" placeholder="السؤال (عربي)" />
-                            <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1" [ngModel]="faq.questionEn" (ngModelChange)="updateFaq(idx, { questionEn: $event })" placeholder="Question (EN)" />
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
+                            <input type="text" dir="rtl" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-right" [(ngModel)]="faq.questionAr" (ngModelChange)="updateFaq(idx, { questionAr: $event })" placeholder="السؤال (عربي)" />
+                            <input type="text" dir="ltr" class="w-full text-sm font-bold bg-white border border-gray-200 rounded-md px-2 py-1 text-left" [(ngModel)]="faq.questionEn" (ngModelChange)="updateFaq(idx, { questionEn: $event })" placeholder="Question (EN)" />
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <textarea dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="faq.answerAr" (ngModelChange)="updateFaq(idx, { answerAr: $event })" placeholder="الإجابة (عربي)" rows="2"></textarea>
-                            <textarea dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600" [ngModel]="faq.answerEn" (ngModelChange)="updateFaq(idx, { answerEn: $event })" placeholder="Answer (EN)" rows="2"></textarea>
+                        <div class="grid grid-cols-2 gap-2" dir="rtl">
+                            <textarea dir="rtl" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600 text-right" [(ngModel)]="faq.answerAr" (ngModelChange)="updateFaq(idx, { answerAr: $event })" placeholder="الإجابة (عربي)" rows="2"></textarea>
+                            <textarea dir="ltr" class="w-full text-sm bg-white border border-gray-200 rounded-md px-2 py-1 text-gray-600 text-left" [(ngModel)]="faq.answerEn" (ngModelChange)="updateFaq(idx, { answerEn: $event })" placeholder="Answer (EN)" rows="2"></textarea>
                         </div>
                     </div>
                     <button (click)="removeFaq(idx)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md h-fit">
@@ -85,13 +86,17 @@ export class FaqPageEditorComponent {
   backfillLocalizedStrings() {
     const c: any = { ...this.config() };
     let changed = false;
+    const ARABIC_REGEX = /[\u0600-\u06FF]/;
     const fields = [
       'title', 'subtitle', 'searchPlaceholder', 'supportCardTitle', 'supportCardSubtitle'
     ];
     for (const f of fields) {
-      if (c[f] && !c[f + 'Ar'] && !c[f + 'En']) {
+      if (c[f] && !c[f + 'Ar']) {
         c[f + 'Ar'] = c[f];
-        c[f + 'En'] = c[f];
+        changed = true;
+      }
+      if (!c[f + 'En'] || ARABIC_REGEX.test(c[f + 'En'])) {
+        c[f + 'En'] = getEnglishTranslation(c[f + 'Ar'] || c[f]);
         changed = true;
       }
     }
@@ -99,14 +104,20 @@ export class FaqPageEditorComponent {
     if (c.faqs && c.faqs.length > 0) {
       const newFaqs = c.faqs.map((f: any) => {
         let fChanged = false;
-        if (f.question && !f.questionAr && !f.questionEn) {
+        if (f.question && !f.questionAr) {
           f.questionAr = f.question;
-          f.questionEn = f.question;
           fChanged = true;
         }
-        if (f.answer && !f.answerAr && !f.answerEn) {
+        if (!f.questionEn || ARABIC_REGEX.test(f.questionEn)) {
+          f.questionEn = getEnglishTranslation(f.questionAr || f.question, 'Question');
+          fChanged = true;
+        }
+        if (f.answer && !f.answerAr) {
           f.answerAr = f.answer;
-          f.answerEn = f.answer;
+          fChanged = true;
+        }
+        if (!f.answerEn || ARABIC_REGEX.test(f.answerEn)) {
+          f.answerEn = getEnglishTranslation(f.answerAr || f.answer, 'Answer');
           fChanged = true;
         }
         if (fChanged) changed = true;
@@ -122,7 +133,15 @@ export class FaqPageEditorComponent {
 
   addFaq = () => {
       const faqs = [...this.config().faqs];
-      faqs.push({ id: 'f-' + Date.now(), question: 'سؤال جديد', answer: 'إجابة جديدة' });
+      faqs.push({
+        id: 'f-' + Date.now(),
+        question: 'سؤال جديد',
+        questionAr: 'سؤال جديد',
+        questionEn: 'New Question',
+        answer: 'إجابة جديدة',
+        answerAr: 'إجابة جديدة',
+        answerEn: 'New Answer'
+      });
       this.updateConfig({ faqs });
   };
 
@@ -151,8 +170,8 @@ export class FaqPageEditorComponent {
       this.updateConfig({ faqs });
   }
 
-  trackByIndex(index: number, item: any): number {
-    return index;
+  trackByFaqId(index: number, item: any): string {
+    return item?.id || index.toString();
   }
 
   updateBilingualField(field: string, lang: 'Ar' | 'En', value: string) {
