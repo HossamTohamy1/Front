@@ -83,6 +83,14 @@
                 "browser": ""
               },
               "deleteOutputPath": false,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -107,7 +115,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": { "proxyConfig": "proxy.conf.json" },
+          "options": {
+            "port": 5050,
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "loxxkingdesign-angular:build:production"
@@ -148,4 +159,3 @@
     "analytics": "ed740843-0c3e-4658-a5fd-ed645648ab83"
   }
 }
-

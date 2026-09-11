@@ -7,6 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { AboutPageConfigService } from '../../../../core/services/page-configs/about-page-config.service';
 import { SectionCardComponent } from '../components/section-card/section-card.component';
 import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
+import { PreviewScrollService } from '../../../../core/services/page-configs/preview-scroll.service';
 
 @Component({
   selector: 'app-about-page-editor',
@@ -19,7 +20,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
         <p class="text-sm text-gray-500">{{ 'DASHBOARD.AUTO_STR_49' | translate }}</p>
       </div>
 
-      <app-section-card title="الرأس والمقدمة" [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false"
+      <app-section-card (click)="onCardClick(0)" (focusin)="onCardClick(0)" title="الرأس والمقدمة" [index]="0" [enabled]="config().showTitle" [isFirst]="true" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showTitle: $event })">
         <app-bilingual-input title="العنوان الرئيسي" labelAr="عربي / AR" labelEn="English / EN" 
                 [valueAr]="$any(config())['headerTitleAr'] || ''" 
@@ -36,7 +37,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
                 (valueChange)="updateBilingualField('introText', $event.lang, $event.value)" [isTextArea]="true"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="قسم لماذا نحن؟" [index]="1" [enabled]="config().showReasonsSection" [isFirst]="false" [isLast]="false"
+      <app-section-card (click)="onCardClick(1)" (focusin)="onCardClick(1)" title="قسم لماذا نحن؟" [index]="1" [enabled]="config().showReasonsSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة سبب" (onAddAction)="addReason()"
         (toggle)="updateConfig({ showReasonsSection: $event })">
         <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
@@ -70,7 +71,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
         </div>
       </app-section-card>
 
-      <app-section-card title="قسم الرؤية والرسالة" [index]="2" [enabled]="config().showVisionSection" [isFirst]="false" [isLast]="false"
+      <app-section-card (click)="onCardClick(2)" (focusin)="onCardClick(2)" title="قسم الرؤية والرسالة" [index]="2" [enabled]="config().showVisionSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" (toggle)="updateConfig({ showVisionSection: $event })">
         <app-bilingual-input title="عنوان الرؤية" labelAr="عربي / AR" labelEn="English / EN" 
                 [valueAr]="$any(config())['visionTitleAr'] || ''" 
@@ -91,7 +92,7 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
                 (valueChange)="updateBilingualField('missionText', $event.lang, $event.value)" [isTextArea]="true"></app-bilingual-input>
       </app-section-card>
 
-      <app-section-card title="القيم" [index]="3" [enabled]="config().showValuesSection" [isFirst]="false" [isLast]="false"
+      <app-section-card (click)="onCardClick(3)" (focusin)="onCardClick(3)" title="القيم" [index]="3" [enabled]="config().showValuesSection" [isFirst]="false" [isLast]="false"
         [draggable]="false" [showReorder]="false" [showCopy]="false" [showDelete]="false" addActionLabel="إضافة قيمة" (onAddAction)="addValue()"
         (toggle)="updateConfig({ showValuesSection: $event })">
         <app-bilingual-input title="عنوان القسم" labelAr="عربي / AR" labelEn="English / EN" 
@@ -160,6 +161,19 @@ import { getEnglishTranslation } from '../../../../core/utils/config-sanitizer';
 export class AboutPageEditorComponent {
   private configService = inject(AboutPageConfigService);
   config = this.configService.pageConfig;
+  private previewScrollService = inject(PreviewScrollService);
+
+  onCardClick(index: number) {
+    const targets = [
+      { selector: '.lk-about-hero, .lk-about-intro' },
+      { selector: '.lk-about-reasons, #reasons-section' },
+      { selector: '.lk-about-vision, #vision-section' },
+      { selector: '.lk-about-values' },
+      { selector: '.lk-about-contact' }
+    ];
+    const target = targets[index] || { index };
+    this.previewScrollService.scrollToSection(target);
+  }
 
   constructor() {
     this.backfillLocalizedStrings();

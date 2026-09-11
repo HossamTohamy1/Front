@@ -48,7 +48,8 @@ export class ReviewService {
 
   // Used by guests
   createReview(productId: string, dto: CreateReviewDto): Observable<any> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/reviews`, { ...dto, productId })
+    const guestId = typeof window !== 'undefined' && window.localStorage ? localStorage.getItem('lk-guest-id') : null;
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/reviews`, { ...dto, productId, guestId })
       .pipe(map(res => res?.data || null));
   }
 

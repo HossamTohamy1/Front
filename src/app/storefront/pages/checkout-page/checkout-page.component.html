@@ -47,7 +47,7 @@
                   type="text"
                   [(ngModel)]="fullName"
                   name="fullName"
-                  placeholder='STOREFRONT.AUTO_STR_226'
+                  [placeholder]="'STOREFRONT.AUTO_STR_226' | translate"
                   required
                   autocomplete="name"
                 />
@@ -73,25 +73,25 @@
 
             <div class="lk-checkout-field-grid">
               <label class="lk-checkout-field">
-                <span>{{ 'CHECKOUT.CITY' | translate }}</span>
-                <div class="lk-checkout-field__input is-select">
-                  <lucide-icon name="map-pin" aria-hidden="true"></lucide-icon>
-                  <select [(ngModel)]="city" name="city">
-                    <option value="">{{ 'STOREFRONT.AUTO_STR_330' | translate }}</option>
-                    <option *ngIf="city() && !CHECKOUT_CITY_OPTIONS.includes(city())" [value]="city()">{{ city() }}</option>
-                    <option *ngFor="let option of CHECKOUT_CITY_OPTIONS" [value]="option">{{ option }}</option>
-                  </select>
-                </div>
-              </label>
-
-              <label class="lk-checkout-field">
                 <span>{{ 'DASHBOARD.AUTO_STR_393' | translate }}</span>
                 <div class="lk-checkout-field__input is-select">
                   <lucide-icon name="map" aria-hidden="true"></lucide-icon>
                   <select [(ngModel)]="area" name="area">
                     <option value="">{{ 'STOREFRONT.AUTO_STR_331' | translate }}</option>
                     <option *ngIf="area() && !CHECKOUT_AREA_OPTIONS.includes(area())" [value]="area()">{{ area() }}</option>
-                    <option *ngFor="let option of CHECKOUT_AREA_OPTIONS" [value]="option">{{ option }}</option>
+                    <option *ngFor="let option of CHECKOUT_AREA_OPTIONS" [value]="option">{{ option | translate }}</option>
+                  </select>
+                </div>
+              </label>
+
+              <label class="lk-checkout-field">
+                <span>{{ 'CHECKOUT.CITY' | translate }}</span>
+                <div class="lk-checkout-field__input is-select">
+                  <lucide-icon name="map-pin" aria-hidden="true"></lucide-icon>
+                  <select [(ngModel)]="city" name="city">
+                    <option value="">{{ 'STOREFRONT.AUTO_STR_330' | translate }}</option>
+                    <option *ngIf="city() && !CHECKOUT_CITY_OPTIONS.includes(city())" [value]="city()">{{ city() }}</option>
+                    <option *ngFor="let option of CHECKOUT_CITY_OPTIONS" [value]="option">{{ option | translate }}</option>
                   </select>
                 </div>
               </label>
@@ -104,7 +104,7 @@
                   rows="4"
                   [(ngModel)]="address"
                   name="address"
-                  placeholder="اكتب عنوانك بالتفصيل (الشارع، المعلم، رقم المنزل...)"
+                  [placeholder]="('STOREFRONT.AUTO_STR_172' | translate) + ' (' + ('STOREFRONT.AUTO_STR_111' | translate) + '...)'"
                   required
                   minlength="5"
                   autocomplete="street-address"
@@ -113,13 +113,13 @@
             </label>
 
             <label class="lk-checkout-field">
-              <span>{{ 'STOREFRONT.AUTO_STR_299' | translate }}<em>(اختياري)</em></span>
+              <span>{{ 'STOREFRONT.AUTO_STR_299' | translate }} <em>({{ 'STOREFRONT.AUTO_STR_444' | translate }})</em></span>
               <div class="lk-checkout-field__textarea is-small">
                 <textarea
                   rows="3"
                   [(ngModel)]="notes"
                   name="notes"
-                  placeholder='STOREFRONT.AUTO_STR_107'
+                  [placeholder]="'STOREFRONT.AUTO_STR_107' | translate"
                 ></textarea>
               </div>
             </label>
@@ -183,7 +183,7 @@
                   class="lk-wallet-panel__back"
                   (click)="paymentMethod.set('cod')"
                 >
-                  <lucide-icon name="arrow-left" aria-hidden="true"></lucide-icon>
+                  <lucide-icon name="arrow-left" class="rtl-flip" aria-hidden="true"></lucide-icon>
                   <span>{{ 'STOREFRONT.AUTO_STR_473' | translate }}</span>
                 </button>
                 <h3>{{ 'STOREFRONT.AUTO_STR_173' | translate }}</h3>
@@ -204,7 +204,7 @@
                   />
                   <span class="lk-wallet-option__radio" aria-hidden="true"></span>
                   <img [src]="option.image" [alt]="option.label" class="lk-wallet-option__logo" />
-                  <lucide-icon name="chevron-right" class="lk-wallet-option__chevron" aria-hidden="true"></lucide-icon>
+                  <lucide-icon name="chevron-right" class="lk-wallet-option__chevron rtl-flip" aria-hidden="true"></lucide-icon>
                 </label>
               </div>
 
@@ -222,11 +222,11 @@
               <dl class="lk-bank-transfer-details">
                 <div>
                   <dt>{{ 'STOREFRONT.AUTO_STR_421' | translate }}</dt>
-                  <dd>{{ BANK_TRANSFER_DETAILS.bankName }}</dd>
+                  <dd>{{ BANK_TRANSFER_DETAILS.bankName | translate }}</dd>
                 </div>
                 <div>
                   <dt>{{ 'STOREFRONT.AUTO_STR_332' | translate }}</dt>
-                  <dd>{{ BANK_TRANSFER_DETAILS.beneficiaryName }}</dd>
+                  <dd>{{ BANK_TRANSFER_DETAILS.beneficiaryName | translate }}</dd>
                 </div>
                 <div>
                   <dt>{{ 'STOREFRONT.AUTO_STR_393' | translate }}</dt>
@@ -238,7 +238,7 @@
                 </div>
                 <div>
                   <dt>{{ 'STOREFRONT.AUTO_STR_247' | translate }}</dt>
-                  <dd>{{ BANK_TRANSFER_DETAILS.transferNote }}</dd>
+                  <dd>{{ BANK_TRANSFER_DETAILS.transferNote | translate }}</dd>
                 </div>
               </dl>
 
@@ -276,7 +276,7 @@
             <button type="submit" class="lk-checkout-confirm-button">
               <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>{{ 'COMMON.PLACEORDER' | translate }}</button>
 
-            <p class="lk-checkout-terms">{{ 'STOREFRONT.AUTO_STR_50' | translate }}<a routerLink="/about">{{ 'STOREFRONT.AUTO_STR_249' | translate }}</a>
+            <p class="lk-checkout-terms">{{ 'STOREFRONT.AUTO_STR_50' | translate }} <a routerLink="/about">{{ 'STOREFRONT.AUTO_STR_249' | translate }}</a>
             </p>
           </ng-container>
         </form>
@@ -287,7 +287,7 @@
               <lucide-icon name="lock-keyhole" aria-hidden="true"></lucide-icon>
               <div>
                 <h2>{{ config().summaryTitle | localize: config().summaryTitleAr : config().summaryTitleEn }}</h2>
-                <span>({{ itemCount() }} منتجات)</span>
+                <span>({{ itemCount() }} {{ (itemCount() === 1 ? 'STOREFRONT.AUTO_STR_471' : 'STOREFRONT.AUTO_STR_448') | translate }})</span>
               </div>
             </div>
 
@@ -300,7 +300,7 @@
 
                 <div class="lk-checkout-summary-item__content">
                   <a [routerLink]="['/product', item.cartItem.product.id]">
-                    <h3>{{ item.name | translate}}</h3>
+                    <h3>{{ item.nameAr | localize: item.nameAr : item.nameEn }}</h3>
                   </a>
                   <p>{{ 'PRODUCT.COLOR' | translate }}: {{ item.color | translate }}</p>
                   <p>{{ 'PRODUCT.SIZE' | translate }}: {{ item.cartItem.size }}</p>

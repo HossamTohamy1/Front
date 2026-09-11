@@ -35,6 +35,20 @@ export class AuthService {
 
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlToken = urlParams.get('token');
+      
+      if (urlToken) {
+        window.localStorage.setItem('lk-auth-token', urlToken);
+        
+        // Remove token from URL
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.delete('token');
+        window.history.replaceState({}, document.title, currentUrl.pathname + currentUrl.search);
+        
+        return urlToken;
+      }
+
       return window.localStorage.getItem('lk-auth-token');
     }
     return null;
@@ -42,16 +56,21 @@ export class AuthService {
 
   async fetchUser(): Promise<User | null> {
     const token = this.getToken();
-    let tokenPayload: any = null;
+    if (!token) {
+      this.setUser(null);
+      return null;
+    }
 
-    if (token) {
-      try {
-        tokenPayload = JSON.parse(atob(token.split('.')[1]));
-        if (tokenPayload.exp && tokenPayload.exp < Date.now() / 1000) {
-          this.setUser(null);
-          return null;
-        }
-      } catch { }
+    let tokenPayload: any = null;
+    try {
+      tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      if (tokenPayload.exp && tokenPayload.exp < Date.now() / 1000) {
+        this.setUser(null);
+        return null;
+      }
+    } catch {
+      this.setUser(null);
+      return null;
     }
 
     try {

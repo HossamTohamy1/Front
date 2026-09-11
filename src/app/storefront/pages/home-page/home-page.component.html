@@ -1,20 +1,26 @@
 <app-store-layout [showFloatingChat]="false">
 
   <div class="lk-home-page">
-    @for (section of pageConfig().sections; track section.id) {
+    @for (section of pageConfig().sections; track section.id; let sIdx = $index) {
       @if (section.enabled) {
-        @switch (section.type) {
-          @case ('hero') { <app-hero [config]="section"></app-hero> }
-          @case ('benefits') { <app-benefits [config]="section"></app-benefits> }
-          @case ('categories') { <app-categories [config]="section"></app-categories> }
-          @case ('bestsellers') { <app-products [config]="section"></app-products> }
-          @case ('promo') { <app-offer [config]="section"></app-offer> }
-        }
+        <div [id]="'section-' + section.id"
+             [attr.data-section-id]="section.id"
+             [attr.data-section-type]="section.type"
+             [attr.data-section-index]="sIdx"
+             class="lk-home-section-wrapper transition-all duration-300">
+          @switch (section.type) {
+            @case ('hero') { <app-hero [config]="section"></app-hero> }
+            @case ('benefits') { <app-benefits [config]="section"></app-benefits> }
+            @case ('categories') { <app-categories [config]="section"></app-categories> }
+            @case ('bestsellers') { <app-products [config]="section"></app-products> }
+            @case ('promo') { <app-offer [config]="section"></app-offer> }
+          }
+        </div>
       }
     }
 
     <!-- These were not in the customizer, keeping them at the bottom -->
-    <app-testimonials></app-testimonials>
-    <app-faq className="lk-faq-section--home"></app-faq>
+    <div id="section-testimonials" data-section-type="testimonials"><app-testimonials></app-testimonials></div>
+    <div id="section-faq" data-section-type="faq"><app-faq className="lk-faq-section--home"></app-faq></div>
   </div>
 </app-store-layout>

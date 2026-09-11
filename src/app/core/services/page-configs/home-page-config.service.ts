@@ -64,10 +64,10 @@ const initialConfig: PageConfig = {
       titleEn: 'Bestsellers',
       showTitle: true,
       products: [
-        { id: 'home-product-1', name: 'مشد كامل للجسم', nameAr: 'مشد كامل للجسم', nameEn: 'Full Body Shaper', price: 260, originalPrice: 320, image: '/assets/home/product-full-body-hd.png', rating: 4.9, reviewsCount: 112 },
-        { id: 'home-product-2', name: 'مشد ما بعد الولادة', nameAr: 'مشد ما بعد الولادة', nameEn: 'Postpartum Shaper', price: 210, originalPrice: 250, image: '/assets/home/product-postpartum-beige-hd.png', rating: 4.8, reviewsCount: 96 },
-        { id: 'home-product-3', name: 'مشد رياضي', nameAr: 'مشد رياضي', nameEn: 'Sports Shaper', price: 230, originalPrice: 270, image: '/assets/home/product-sport-black-hd.png', discount: '-15%', rating: 4.7, reviewsCount: 86 },
-        { id: 'home-product-4', name: 'مشد يومي مربع', nameAr: 'مشد يومي مربع', nameEn: 'Daily Square Shaper', price: 195, originalPrice: 250, image: '/assets/home/product-beige-square-hd.png', rating: 4.7, reviewsCount: 96 }
+        { id: 'prod-2', productId: 'prod-2', name: 'مشد كامل للجسم', nameAr: 'مشد كامل للجسم', nameEn: 'Full Body Shaper', price: 260, originalPrice: 320, image: '/assets/home/product-full-body-hd.png', rating: 4.9, reviewsCount: 112 },
+        { id: 'prod-3', productId: 'prod-3', name: 'مشد ما بعد الولادة', nameAr: 'مشد ما بعد الولادة', nameEn: 'Postpartum Shaper', price: 210, originalPrice: 250, image: '/assets/home/product-postpartum-beige-hd.png', rating: 4.8, reviewsCount: 96 },
+        { id: 'prod-4', productId: 'prod-4', name: 'مشد رياضي', nameAr: 'مشد رياضي', nameEn: 'Sports Shaper', price: 230, originalPrice: 270, image: '/assets/home/product-sport-black-hd.png', discount: '-15%', rating: 4.7, reviewsCount: 86 },
+        { id: 'prod-6', productId: 'prod-6', name: 'مشد يومي مربع', nameAr: 'مشد يومي مربع', nameEn: 'Daily Square Shaper', price: 195, originalPrice: 250, image: '/assets/home/product-beige-square-hd.png', rating: 4.7, reviewsCount: 96 }
       ]
     },
     {
@@ -93,9 +93,13 @@ export class HomePageConfigService {
   private updateSubject = new Subject<PageConfig>();
 
   private zone = inject(NgZone);
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson = '';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
+      this.lastSavedJson = JSON.stringify(this.pageConfig());
+
       // 0. Setup debounced backend sync
       this.updateSubject.pipe(
         debounceTime(750)
@@ -120,9 +124,22 @@ export class HomePageConfigService {
         }
 
         if (e.key === this.storageKey && e.newValue) {
+          if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
           try {
             const updated = JSON.parse(e.newValue);
-            this.zone.run(() => { this.pageConfig.set(this.mergeWithInitial(updated)); });
+            const merged = this.mergeWithInitial(updated);
+            const mergedJson = JSON.stringify(merged);
+            if (mergedJson === this.lastSavedJson) return;
+
+            this.zone.run(() => {
+              this.isApplyingExternalUpdate = true;
+              this.lastSavedJson = mergedJson;
+              this.pageConfig.set(merged);
+              queueMicrotask(() => {
+                this.isApplyingExternalUpdate = false;
+              });
+            });
           } catch (_) {}
         }
       });
@@ -130,14 +147,20 @@ export class HomePageConfigService {
       // 3. Keep local cache in sync and broadcast to preview iframes
       effect(() => {
         const config = this.pageConfig();
+        const stringified = JSON.stringify(config);
+
+        if (this.isApplyingExternalUpdate) return;
+        if (stringified === this.lastSavedJson) return;
+
+        this.lastSavedJson = stringified;
         try {
-          localStorage.setItem(this.storageKey, JSON.stringify(config));
+          localStorage.setItem(this.storageKey, stringified);
         } catch (_) {}
 
         try {
           const event = new StorageEvent('storage', {
             key: this.storageKey,
-            newValue: JSON.stringify(config),
+            newValue: stringified,
             storageArea: localStorage
           });
           (event as any).__sourceInstanceId = INSTANCE_ID;
@@ -148,6 +171,10 @@ export class HomePageConfigService {
   }
 
   updateConfig(newConfig: PageConfig) {
+    const stringified = JSON.stringify(newConfig);
+    if (stringified === this.lastSavedJson) return;
+
+    this.lastSavedJson = stringified;
     // 1. Optimistic local update
     this.zone.run(() => { this.pageConfig.set(newConfig); });
 
@@ -186,7 +213,17 @@ export class HomePageConfigService {
             const parsedSections = JSON.parse(data.sectionsJson);
             if (Array.isArray(parsedSections) && parsedSections.length > 0) {
               const merged = this.mergeWithInitial({ sections: parsedSections });
-              this.zone.run(() => { this.pageConfig.set(merged); });
+              const mergedJson = JSON.stringify(merged);
+              if (mergedJson === this.lastSavedJson) return;
+
+              this.zone.run(() => {
+                this.isApplyingExternalUpdate = true;
+                this.lastSavedJson = mergedJson;
+                this.pageConfig.set(merged);
+                queueMicrotask(() => {
+                  this.isApplyingExternalUpdate = false;
+                });
+              });
             }
           } catch (e) {
             console.error('Failed to parse sectionsJson from backend:', e);
@@ -213,6 +250,28 @@ export class HomePageConfigService {
   }
 
   private mergeWithInitial(parsed: any): PageConfig {
-    return sanitizeWithInitial(parsed, initialConfig);
+    const config = sanitizeWithInitial(parsed, initialConfig);
+    if (config?.sections) {
+      for (const sec of config.sections) {
+        if (sec.type === 'bestsellers' && Array.isArray(sec.products)) {
+          const aliasMap: Record<string, string> = {
+            'home-product-1': 'prod-2',
+            'home-product-2': 'prod-3',
+            'home-product-3': 'prod-4',
+            'home-product-4': 'prod-6',
+            'home-product-5': 'prod-1'
+          };
+          sec.products = sec.products.map((p: any) => {
+            const mappedId = aliasMap[p.id] || p.productId || p.id;
+            return {
+              ...p,
+              productId: p.productId || mappedId,
+              id: mappedId
+            };
+          });
+        }
+      }
+    }
+    return config;
   }
 }

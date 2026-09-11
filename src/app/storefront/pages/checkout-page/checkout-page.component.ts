@@ -97,10 +97,12 @@ export class CheckoutPageComponent implements OnInit {
   displayItems = computed(() => {
     return this.cart().map((item: any) => ({
       cartItem: item,
-      name: item.product?.nameAr || item.product?.name || 'STOREFRONT.AUTO_STR_471',
+      name: item.product?.name || 'STOREFRONT.AUTO_STR_471',
+      nameAr: item.product?.nameAr || item.product?.name || 'STOREFRONT.AUTO_STR_471',
+      nameEn: item.product?.nameEn || item.product?.name || 'STOREFRONT.AUTO_STR_471',
       image: item.product?.images?.[0] || '/assets/placeholder.png',
       price: item.product?.price || 0,
-      color: 'STOREFRONT.AUTO_STR_472'
+      color: item.product?.color || 'STOREFRONT.AUTO_STR_472'
     }));
   });
 
@@ -246,7 +248,7 @@ export class CheckoutPageComponent implements OnInit {
           },
           error: (err) => {
             console.error('Order creation failed:', err);
-            this.toastService.showToast('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى', 'error');
+            this.toastService.showToast('ERROR.SERVER_ERROR', 'error');
           }
         });
       };
@@ -262,7 +264,7 @@ export class CheckoutPageComponent implements OnInit {
       },
       error: (err) => {
         console.error('Order creation failed:', err);
-        this.toastService.showToast('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى', 'error');
+        this.toastService.showToast('ERROR.SERVER_ERROR', 'error');
       }
     });
   }

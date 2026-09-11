@@ -7,30 +7,32 @@ import { LucideAngularModule } from 'lucide-angular';
 import { ChatService } from '../../../../data/services/chat.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { Subscription } from 'rxjs';
+import { getOrCreateUserTag } from '../../../../core/utils/user-tag.util';
 
 @Component({
   selector: 'app-floating-chat',
   standalone: true,
   imports: [TranslatePipe, TranslateDirective, CommonModule, FormsModule, LucideAngularModule],
   template: `
-    <div class="customer-floating-chat">
+    <div class="customer-floating-chat" dir="rtl">
       @if (isOpen) {
         <section
           class="customer-floating-chat__panel"
           role="dialog"
           aria-modal="false"
-          [attr.aria-label]="'SHARED.AUTO_STR_27' | translate"
+          aria-label="محادثة الدعم الفني"
         >
+          <!-- Header -->
           <header class="customer-floating-chat__header">
             <div class="customer-floating-chat__support">
-              <span class="customer-floating-chat__support-icon" aria-hidden="true">
-                <lucide-icon name="message-circle" [size]="20" [strokeWidth]="2"></lucide-icon>
-              </span>
-              <div>
-                <strong>{{ 'SHARED.AUTO_STR_72' | translate }}</strong>
-                <span [class]="isSupportActive ? 'is-active' : 'is-recent'">
-                  <i aria-hidden="true"></i>
-                  {{ (isSupportActive ? 'SHARED.AUTO_STR_76' : 'SHARED.AUTO_STR_66') | translate }}
+              <div class="customer-floating-chat__avatar" aria-hidden="true">
+                <lucide-icon name="headphones" [size]="20" [strokeWidth]="2"></lucide-icon>
+              </div>
+              <div class="customer-floating-chat__info">
+                <strong class="customer-floating-chat__title">LOXX KING — الدعم الفني</strong>
+                <span class="customer-floating-chat__status is-active">
+                  <i class="customer-floating-chat__status-dot" aria-hidden="true"></i>
+                  متصل الآن للمساعدة
                 </span>
               </div>
             </div>
@@ -38,64 +40,89 @@ import { Subscription } from 'rxjs';
             <div class="customer-floating-chat__header-actions">
               <button
                 type="button"
+                class="customer-floating-chat__header-btn"
                 [class.is-active]="isSearchOpen"
                 (click)="toggleSearch()"
-                [attr.aria-label]="'SHARED.AUTO_STR_37' | translate"
+                title="بحث داخل المحادثة"
+                aria-label="بحث داخل المحادثة"
               >
                 <lucide-icon name="search" [size]="18" [strokeWidth]="2"></lucide-icon>
               </button>
-              <button type="button" (click)="setIsOpen(false)" [attr.aria-label]="'SHARED.AUTO_STR_47' | translate">
+              <button
+                type="button"
+                class="customer-floating-chat__header-btn"
+                (click)="setIsOpen(false)"
+                title="إغلاق المحادثة"
+                aria-label="إغلاق المحادثة"
+              >
                 <lucide-icon name="x" [size]="20" [strokeWidth]="2"></lucide-icon>
               </button>
             </div>
           </header>
 
+          <!-- Search Bar -->
           @if (isSearchOpen) {
-            <label class="customer-floating-chat__message-search">
-              <lucide-icon name="search" [size]="16"></lucide-icon>
+            <label class="customer-floating-chat__search-bar">
+              <lucide-icon name="search" [size]="16" [strokeWidth]="2"></lucide-icon>
               <input
                 [(ngModel)]="messageSearch"
-                [placeholder]="'SHARED.AUTO_STR_31' | translate"
+                placeholder="ابحث داخل الرسائل..."
                 autofocus
               />
               @if (normalizedMessageSearch) {
-                <span>{{ searchResultCount }} {{ 'COMMON.RESULTS' | translate }}</span>
+                <span class="customer-floating-chat__search-count">{{ searchResultCount }} نتيجة</span>
               }
               @if (messageSearch) {
-                <button type="button" (click)="messageSearch = ''" [attr.aria-label]="'SHARED.AUTO_STR_73' | translate">
-                  <lucide-icon name="x" [size]="15"></lucide-icon>
+                <button
+                  type="button"
+                  class="customer-floating-chat__search-clear"
+                  (click)="messageSearch = ''"
+                  aria-label="مسح البحث"
+                >
+                  <lucide-icon name="x" [size]="14"></lucide-icon>
                 </button>
               }
             </label>
           }
 
+          <!-- Messages Scroll Area -->
           <div #messagesRef class="customer-floating-chat__messages">
-            <span class="customer-floating-chat__day">{{ 'SHARED.AUTO_STR_95' | translate }}</span>
+            <span class="customer-floating-chat__day">اليوم</span>
 
             @if (messages.length === 0) {
               <div class="customer-floating-chat__welcome">
-                <lucide-icon name="message-circle" [size]="34" [strokeWidth]="1.6"></lucide-icon>
-                <strong>{{ 'SHARED.AUTO_STR_7' | translate }}</strong>
-                <p>{{ 'SHARED.AUTO_STR_4' | translate }}</p>
+                <div class="customer-floating-chat__welcome-icon">
+                  <lucide-icon name="message-circle" [size]="28" [strokeWidth]="2"></lucide-icon>
+                </div>
+                <strong>مرحبًا بك في خدمة عملاء LOXX KING</strong>
+                <p>اكتب رسالتك وسيقوم أحد ممثلي الدعم الفني بالرد عليك ومساعدتك على الفور.</p>
               </div>
             } @else {
               @for (message of messages; track message.id) {
                 <div
-                  class="customer-floating-chat__message-row"
+                  class="customer-floating-chat__row"
                   [ngClass]="{
-                    'customer-floating-chat__message-row--customer': message.sender === 'customer',
-                    'customer-floating-chat__message-row--staff': message.sender === 'staff',
+                    'customer-floating-chat__row--customer': message.sender === 'customer',
+                    'customer-floating-chat__row--staff': message.sender === 'staff',
                     'is-search-dim': normalizedMessageSearch && !isSearchMatch(message),
                     'is-search-match': normalizedMessageSearch && isSearchMatch(message)
                   }"
                   [attr.data-search-match]="normalizedMessageSearch && isSearchMatch(message) ? 'true' : 'false'"
                 >
-                  <div class="customer-floating-chat__message" [ngClass]="'customer-floating-chat__message--' + message.sender">
-                    @if (message.sender === 'staff') {
-                      <small>{{ 'SHARED.AUTO_STR_72' | translate }}</small>
-                    }
+                  <div class="customer-floating-chat__msg-group">
+                    <!-- Sender Name Tag -->
+                    <div class="customer-floating-chat__sender-tag" [ngClass]="'is-' + message.sender">
+                      @if (message.sender === 'staff') {
+                        <span class="customer-floating-chat__sender-badge">🎧</span>
+                        <span class="customer-floating-chat__sender-name">{{ message.senderName || 'أستاذ سعيد (الدعم الفني)' }}</span>
+                      } @else {
+                        <span class="customer-floating-chat__sender-badge">👤</span>
+                        <span class="customer-floating-chat__sender-name">{{ message.senderName || userTag }}</span>
+                      }
+                    </div>
+
                     @if (message.forwarded) {
-                      <em class="customer-floating-chat__forwarded">↳ {{ 'SHARED.AUTO_STR_53' | translate }}</em>
+                      <em class="customer-floating-chat__forwarded">↳ مُعاد توجيهها</em>
                     }
 
                     @if (message.replyTo) {
@@ -104,43 +131,130 @@ import { Subscription } from 'rxjs';
                         class="customer-floating-chat__reply-preview"
                         (click)="scrollToMessage(message.replyTo.messageId)"
                       >
-                        <strong>{{ (message.replyTo.sender === 'staff' ? 'SHARED.AUTO_STR_72' : 'SHARED.AUTO_STR_111') | translate }}</strong>
+                        <strong>{{ message.replyTo.sender === 'staff' ? 'الدعم الفني' : 'أنت' }}</strong>
                         <span>{{ message.replyTo.preview }}</span>
                       </button>
                     }
 
-                    <div class="customer-floating-chat__bubble" [attr.data-message-id]="message.id">
-                      @if (message.deletedForEveryone) {
-                        <p class="customer-floating-chat__deleted">{{ 'SHARED.AUTO_STR_32' | translate }}</p>
-                      } @else {
-                        @if (messageKind(message) === 'image' && message.mediaUrl) {
+                    <!-- Bubble + Actions Row -->
+                    <div class="customer-floating-chat__bubble-container">
+                      <!-- Customer Actions (left side of customer bubble) -->
+                      @if (message.sender === 'customer' && !message.deletedForEveryone) {
+                        <div class="customer-floating-chat__actions">
                           <button
                             type="button"
-                            class="customer-floating-chat__image"
-                            (click)="openImage(message.mediaUrl)"
+                            class="customer-floating-chat__more-btn"
+                            (click)="$event.stopPropagation(); toggleMenu(message.id)"
+                            title="خيارات الرسالة"
+                            aria-label="خيارات الرسالة"
                           >
-                            <img [src]="message.mediaUrl" [alt]="message.fileName || ('SHARED.AUTO_STR_70' | translate)" />
+                            <lucide-icon name="more-horizontal" [size]="15"></lucide-icon>
                           </button>
+                          @if (menuMessageId === message.id) {
+                            <div class="customer-floating-chat__menu is-customer">
+                              <button type="button" (click)="chooseReply(message)">
+                                <lucide-icon name="reply" [size]="13"></lucide-icon>رد
+                              </button>
+                              <button type="button" (click)="toggleReaction(message.id)">
+                                <lucide-icon name="smile" [size]="13"></lucide-icon>تفاعل
+                              </button>
+                              <button type="button" (click)="copyMessage(message)">
+                                <lucide-icon name="copy" [size]="13"></lucide-icon>نسخ
+                              </button>
+                              @if (messageKind(message) === 'text') {
+                                <button type="button" (click)="chooseEdit(message)">
+                                  <lucide-icon name="edit-3" [size]="13"></lucide-icon>تعديل
+                                </button>
+                              }
+                              <button type="button" class="is-danger" (click)="prepareDelete(message)">
+                                <lucide-icon name="trash-2" [size]="13"></lucide-icon>حذف
+                              </button>
+                            </div>
+                          }
+                          @if (reactionMessageId === message.id) {
+                            <div class="customer-floating-chat__reactions-popup is-customer">
+                              @for (emoji of REACTION_OPTIONS; track emoji) {
+                                <button type="button" (click)="reactToMessage(message, emoji)">{{ emoji }}</button>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      <!-- The Message Bubble -->
+                      <div class="customer-floating-chat__bubble" [ngClass]="'is-' + message.sender" [attr.data-message-id]="message.id">
+                        @if (message.deletedForEveryone) {
+                          <p class="customer-floating-chat__deleted">تم حذف هذه الرسالة</p>
+                        } @else {
+                          @if (messageKind(message) === 'image' && message.mediaUrl) {
+                            <div
+                              class="customer-floating-chat__media-image"
+                              (click)="openImage(message.mediaUrl)"
+                              title="عرض الصورة بالحجم الكامل"
+                            >
+                              <img [src]="message.mediaUrl" [alt]="message.fileName || 'صورة مرفقة'" />
+                            </div>
+                          }
+                          @if (messageKind(message) === 'audio' && message.mediaUrl) {
+                            <audio class="customer-floating-chat__media-audio" controls preload="metadata" [src]="message.mediaUrl"></audio>
+                          }
+                          @if (message.text) {
+                            <p class="customer-floating-chat__text">{{ message.text }}</p>
+                          }
                         }
-                        @if (messageKind(message) === 'audio' && message.mediaUrl) {
-                          <audio class="customer-floating-chat__audio" controls preload="metadata" [src]="message.mediaUrl"></audio>
-                        }
-                        @if (message.text) {
-                          <p>{{ message.text }}</p>
-                        }
+                      </div>
+
+                      <!-- Staff Actions (left side of staff bubble) -->
+                      @if (message.sender === 'staff' && !message.deletedForEveryone) {
+                        <div class="customer-floating-chat__actions">
+                          <button
+                            type="button"
+                            class="customer-floating-chat__more-btn"
+                            (click)="$event.stopPropagation(); toggleMenu(message.id)"
+                            title="خيارات الرسالة"
+                            aria-label="خيارات الرسالة"
+                          >
+                            <lucide-icon name="more-horizontal" [size]="15"></lucide-icon>
+                          </button>
+                          @if (menuMessageId === message.id) {
+                            <div class="customer-floating-chat__menu is-staff">
+                              <button type="button" (click)="chooseReply(message)">
+                                <lucide-icon name="reply" [size]="13"></lucide-icon>رد
+                              </button>
+                              <button type="button" (click)="toggleReaction(message.id)">
+                                <lucide-icon name="smile" [size]="13"></lucide-icon>تفاعل
+                              </button>
+                              <button type="button" (click)="copyMessage(message)">
+                                <lucide-icon name="copy" [size]="13"></lucide-icon>نسخ
+                              </button>
+                              <button type="button" class="is-danger" (click)="prepareDelete(message)">
+                                <lucide-icon name="trash-2" [size]="13"></lucide-icon>حذف
+                              </button>
+                            </div>
+                          }
+                          @if (reactionMessageId === message.id) {
+                            <div class="customer-floating-chat__reactions-popup is-staff">
+                              @for (emoji of REACTION_OPTIONS; track emoji) {
+                                <button type="button" (click)="reactToMessage(message, emoji)">{{ emoji }}</button>
+                              }
+                            </div>
+                          }
+                        </div>
                       }
                     </div>
 
-                    <span class="customer-floating-chat__message-meta">
+                    <!-- Meta: Sent time + Read status -->
+                    <div class="customer-floating-chat__meta" [ngClass]="'is-' + message.sender">
                       @if (message.editedAt) {
-                        <i>{{ 'SHARED.AUTO_STR_96' | translate }}</i>
+                        <i class="customer-floating-chat__edited">معدلة</i>
                       }
-                      {{ message.sentAt }}
+                      <span class="customer-floating-chat__time">{{ message.sentAt }}</span>
                       @if (message.sender === 'customer') {
-                        <lucide-icon name="check-check" [size]="14" [strokeWidth]="1.8"></lucide-icon>
+                        <lucide-icon name="check-check" [size]="13" [strokeWidth]="2" class="customer-floating-chat__check"></lucide-icon>
                       }
-                    </span>
+                    </div>
 
+                    <!-- Reactions List -->
                     @if (aggregateReactions(message).length > 0) {
                       <div class="customer-floating-chat__reactions">
                         @for (reaction of aggregateReactions(message); track reaction.emoji) {
@@ -151,73 +265,36 @@ import { Subscription } from 'rxjs';
                       </div>
                     }
                   </div>
-
-                  @if (!message.deletedForEveryone) {
-                    <div class="customer-floating-chat__message-controls">
-                      <button
-                        type="button"
-                        (click)="toggleMenu(message.id)"
-                        [attr.aria-label]="'SHARED.AUTO_STR_48' | translate"
-                      >
-                        <lucide-icon name="more-horizontal" [size]="17"></lucide-icon>
-                      </button>
-
-                      @if (menuMessageId === message.id) {
-                        <div class="customer-floating-chat__message-menu">
-                          <button type="button" (click)="chooseReply(message)">
-                            <lucide-icon name="reply" [size]="15"></lucide-icon>{{ 'SHARED.AUTO_STR_118' | translate }}</button>
-                          <button type="button" (click)="toggleReaction(message.id)">
-                            <lucide-icon name="smile" [size]="15"></lucide-icon>{{ 'SHARED.AUTO_STR_97' | translate }}</button>
-                          <button type="button" (click)="copyMessage(message)">
-                            <lucide-icon name="copy" [size]="15"></lucide-icon>{{ 'SHARED.AUTO_STR_115' | translate }}</button>
-                          @if (message.sender === 'customer' && messageKind(message) === 'text') {
-                            <button type="button" (click)="chooseEdit(message)">
-                              <lucide-icon name="edit-3" [size]="15"></lucide-icon>{{ 'COMMON.EDIT' | translate }}</button>
-                          }
-                          <button
-                            type="button"
-                            class="is-danger"
-                            (click)="prepareDelete(message)"
-                          >
-                            <lucide-icon name="trash-2" [size]="15"></lucide-icon>{{ 'COMMON.DELETE' | translate }}</button>
-                        </div>
-                      }
-
-                      @if (reactionMessageId === message.id) {
-                        <div class="customer-floating-chat__reaction-picker">
-                          @for (emoji of REACTION_OPTIONS; track emoji) {
-                            <button type="button" (click)="reactToMessage(message, emoji)">
-                              {{ emoji }}
-                            </button>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
                 </div>
               }
             }
           </div>
 
+          <!-- Composer Context (Reply / Edit Mode) -->
           @if (replyMessage || editMessage) {
             <div class="customer-floating-chat__composer-context">
-              <div>
-                <strong>{{ (editMessage ? 'SHARED.AUTO_STR_54' : 'SHARED.AUTO_STR_40') | translate }}</strong>
+              <div class="customer-floating-chat__context-details">
+                <strong>{{ editMessage ? 'تعديل الرسالة' : 'الرد على الرسالة' }}</strong>
                 <span>{{ getPreview(editMessage || replyMessage) | slice:0:90 }}</span>
               </div>
-              <button type="button" (click)="clearComposerMode()" [attr.aria-label]="'COMMON.CANCEL' | translate">
-                <lucide-icon name="x" [size]="17"></lucide-icon>
+              <button type="button" class="customer-floating-chat__context-close" (click)="clearComposerMode()" title="إلغاء">
+                <lucide-icon name="x" [size]="16"></lucide-icon>
               </button>
             </div>
           }
 
+          <!-- Voice Recording Bar -->
           @if (isRecording) {
             <div class="customer-floating-chat__recording-bar">
-              <span><i></i> {{ 'SHARED.AUTO_STR_58' | translate }} {{ formatRecordingTime(recordingSeconds) }}</span>
-              <button type="button" (click)="stopRecording()">{{ 'SHARED.AUTO_STR_59' | translate }}</button>
+              <span class="customer-floating-chat__rec-indicator">
+                <i class="customer-floating-chat__rec-dot"></i>
+                جاري التسجيل {{ formatRecordingTime(recordingSeconds) }}
+              </span>
+              <button type="button" class="customer-floating-chat__rec-stop-btn" (click)="stopRecording()">إيقاف وإرسال</button>
             </div>
           }
 
+          <!-- Bottom Composer Form -->
           <form class="customer-floating-chat__composer" (submit)="sendTextMessage($event)">
             <input
               #imageInput
@@ -228,91 +305,96 @@ import { Subscription } from 'rxjs';
             />
             <button
               type="button"
-              class="customer-floating-chat__tool"
+              class="customer-floating-chat__tool-btn"
               (click)="imageInput.click()"
-              [attr.aria-label]="'SHARED.AUTO_STR_71' | translate"
+              title="إرفاق صورة"
+              aria-label="إرفاق صورة"
               [disabled]="isRecording"
             >
-              <lucide-icon name="image" [size]="19"></lucide-icon>
+              <lucide-icon name="image" [size]="19" [strokeWidth]="1.8"></lucide-icon>
             </button>
             <button
               type="button"
-              class="customer-floating-chat__tool"
+              class="customer-floating-chat__tool-btn"
               [class.is-recording]="isRecording"
               (click)="isRecording ? stopRecording() : startRecording()"
-              [attr.aria-label]="(isRecording ? 'SHARED.AUTO_STR_20' : 'SHARED.AUTO_STR_38') | translate"
+              [title]="isRecording ? 'إيقاف التسجيل' : 'تسجيل رسالة صوتية'"
+              [attr.aria-label]="isRecording ? 'إيقاف التسجيل' : 'تسجيل رسالة صوتية'"
             >
               @if (isRecording) {
                 <lucide-icon name="square" [size]="17" fill="currentColor"></lucide-icon>
               } @else {
-                <lucide-icon name="mic" [size]="19"></lucide-icon>
+                <lucide-icon name="mic" [size]="19" [strokeWidth]="1.8"></lucide-icon>
               }
             </button>
-            <textarea
-              #inputRef
-              [(ngModel)]="messageValue"
-              name="messageValue"
-              [placeholder]="(editMessage ? 'SHARED.AUTO_STR_60' : 'SHARED.AUTO_STR_45') | translate"
-              [attr.aria-label]="'DASHBOARD.AUTO_STR_348' | translate"
-              rows="1"
-              [disabled]="isRecording"
-              (keydown)="onTextareaKeyDown($event)"
-            ></textarea>
+            <div class="customer-floating-chat__input-wrapper">
+              <textarea
+                #inputRef
+                [(ngModel)]="messageValue"
+                name="messageValue"
+                [placeholder]="editMessage ? 'عدلي الرسالة...' : 'اكتب رسالتك هنا...'"
+                rows="1"
+                [disabled]="isRecording"
+                (keydown)="onTextareaKeyDown($event)"
+                aria-label="اكتب رسالتك هنا"
+              ></textarea>
+            </div>
             <button
               type="submit"
-              class="customer-floating-chat__send"
+              class="customer-floating-chat__send-btn"
               [disabled]="!messageValue.trim() || isRecording"
-              [attr.aria-label]="(editMessage ? 'SHARED.AUTO_STR_67' : 'SHARED.AUTO_STR_55') | translate"
+              [title]="editMessage ? 'حفظ التعديل' : 'إرسال الرسالة'"
+              [attr.aria-label]="editMessage ? 'حفظ التعديل' : 'إرسال الرسالة'"
             >
               @if (editMessage) {
-                <lucide-icon name="check-check" [size]="20"></lucide-icon>
+                <lucide-icon name="check-check" [size]="18"></lucide-icon>
               } @else {
-                <lucide-icon name="send" [size]="20" [strokeWidth]="2"></lucide-icon>
+                <lucide-icon name="send" [size]="18" [strokeWidth]="2.2"></lucide-icon>
               }
             </button>
           </form>
 
+          <!-- Delete Confirmation Dialog -->
           @if (deleteMessage) {
-            <div
-              class="customer-floating-chat__modal-backdrop customer-floating-chat__modal-backdrop--delete"
-              role="presentation"
-            >
+            <div class="customer-floating-chat__modal-backdrop" role="presentation">
               <section class="customer-floating-chat__delete-modal" role="dialog" aria-modal="true">
                 <button
                   type="button"
                   class="customer-floating-chat__modal-close"
                   (click)="deleteMessage = null"
-                  [attr.aria-label]="'SHARED.AUTO_STR_33' | translate"
+                  title="إلغاء"
                 >
                   <lucide-icon name="x" [size]="18"></lucide-icon>
                 </button>
-                <strong>{{ 'SHARED.AUTO_STR_61' | translate }}</strong>
-                <p>{{ 'SHARED.AUTO_STR_5' | translate }}</p>
-                <button type="button" class="is-danger" (click)="confirmDelete('me')">{{ 'SHARED.AUTO_STR_74' | translate }}</button>
-                <button type="button" class="is-danger" (click)="confirmDelete('everyone')">{{ 'SHARED.AUTO_STR_41' | translate }}</button>
-                <button type="button" (click)="deleteMessage = null">{{ 'COMMON.CANCEL' | translate }}</button>
+                <strong>حذف الرسالة؟</strong>
+                <p>هل ترغب في حذف الرسالة لديك فقط أم لدى الجميع؟</p>
+                <div class="customer-floating-chat__delete-actions">
+                  <button type="button" class="is-danger" (click)="confirmDelete('me')">الحذف لدي</button>
+                  <button type="button" class="is-danger-full" (click)="confirmDelete('everyone')">الحذف لدى الجميع</button>
+                  <button type="button" class="is-cancel" (click)="deleteMessage = null">إلغاء</button>
+                </div>
               </section>
             </div>
           }
-
         </section>
       }
 
+      <!-- Floating Trigger Button -->
       <button
         type="button"
         class="customer-floating-chat__trigger"
         [class.is-open]="isOpen"
         (click)="toggleChat()"
-        [attr.aria-label]="(isOpen ? 'SHARED.AUTO_STR_34' : 'SHARED.AUTO_STR_42') | translate"
+        [attr.aria-label]="isOpen ? 'إغلاق خدمة العملاء' : 'فتح خدمة العملاء'"
         [attr.aria-expanded]="isOpen"
       >
         @if (isOpen) {
-          <lucide-icon name="x" [size]="25" [strokeWidth]="2.2"></lucide-icon>
+          <lucide-icon name="x" [size]="24" [strokeWidth]="2.2"></lucide-icon>
         } @else {
-          <lucide-icon name="message-circle" [size]="27" [strokeWidth]="2.1"></lucide-icon>
+          <lucide-icon name="message-circle" [size]="26" [strokeWidth]="2"></lucide-icon>
         }
         @if (!isOpen && unreadCount > 0) {
-          <span>{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+          <span class="customer-floating-chat__badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
         }
       </button>
 
@@ -341,12 +423,16 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
   isRecording = false;
   recordingSeconds = 0;
   unreadCount = 0;
+  userTag = getOrCreateUserTag();
+  mediaRecorder: any = null;
+  audioChunks: Blob[] = [];
+  recordingTimer: any = null;
+  mediaStream: MediaStream | null = null;
 
   REACTION_OPTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
   messages: any[] = [];
   conversationId?: string;
   private messageSub?: Subscription;
-
   private refreshSub?: Subscription;
 
   ngOnInit() {
@@ -354,6 +440,9 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
     
     this.refreshSub = this.chatService.refreshConversation$.subscribe(() => {
       this.loadConversation();
+      if (!this.isOpen) {
+        this.unreadCount = Math.max(1, this.unreadCount);
+      }
     });
   }
 
@@ -361,6 +450,12 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
     this.messageSub?.unsubscribe();
     this.refreshSub?.unsubscribe();
     this.chatService.stopConnection();
+    if (this.mediaStream) {
+      this.mediaStream.getTracks().forEach(t => t.stop());
+    }
+    if (this.recordingTimer) {
+      clearInterval(this.recordingTimer);
+    }
   }
 
   loadConversation() {
@@ -369,39 +464,55 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
         if (res && res.id) {
           this.conversationId = res.id;
           
-          this.messages = (res.messages || []).map((m: any) => ({
-            id: m.id,
-            sender: (m.senderType || m.senderRole) === 'Staff' ? 'staff' : 'customer',
-            senderType: m.senderType || m.senderRole,
-            isRead: m.isRead,
-            text: m.message,
-            sentAt: m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
-          }));
+          this.messages = (res.messages || []).map((m: any) => {
+            const isStaff = (m.senderType || m.senderRole) === 'Staff' || m.guestName === 'Support';
+            const att = m.attachmentUrl;
+            const isAudio = !!(att && (/\.(webm|mp3|wav|ogg|m4a|mp4)$/i.test(att) || att.includes('/audio') || att.includes('chat/audio')));
+            const isImage = !!(att && (/\.(png|jpg|jpeg|webp|gif|svg)$/i.test(att) || att.includes('/images') || att.includes('chat/images') || att.startsWith('data:image')));
+            return {
+              id: m.id,
+              sender: isStaff ? 'staff' : 'customer',
+              senderName: isStaff ? (m.senderName || 'أستاذ سعيد (الدعم الفني)') : (m.senderName || this.userTag),
+              senderType: isStaff ? 'Staff' : 'Customer',
+              isRead: m.isRead,
+              text: (isAudio || isImage) && (!m.message || m.message === 'تسجيل صوتي' || m.message === 'صورة مرفقة' || m.message === 'Attachment') ? '' : m.message,
+              kind: isAudio ? 'audio' : (isImage ? 'image' : 'text'),
+              mediaUrl: att,
+              sentAt: m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+            };
+          });
 
           if (this.isOpen) {
             this.unreadCount = 0;
             this.chatService.markRead(this.conversationId).subscribe();
           } else {
             const unread = this.messages.filter(m => m.sender === 'staff' && !m.isRead);
-            this.unreadCount = unread.length;
+            this.unreadCount = Math.max(unread.length, this.unreadCount);
           }
 
           this.chatService.startConnection(this.conversationId);
           
           if (!this.messageSub) {
             this.messageSub = this.chatService.messageReceived$.subscribe((msg) => {
-              const isStaff = (msg.senderType || msg.senderRole) === 'Staff';
+              const isStaff = (msg.senderType || msg.senderRole) === 'Staff' || msg.guestName === 'Support';
               const targetSender = isStaff ? 'staff' : 'customer';
               const isDuplicate = (msg.id && this.messages.some(m => m.id === msg.id)) ||
                 (this.messages.length > 0 && this.messages[this.messages.length - 1].text === msg.message && this.messages[this.messages.length - 1].sender === targetSender);
               if (isDuplicate) return;
 
+              const att = msg.attachmentUrl;
+              const isAudio = !!(att && (/\.(webm|mp3|wav|ogg|m4a|mp4)$/i.test(att) || att.includes('/audio') || att.includes('chat/audio')));
+              const isImage = !!(att && (/\.(png|jpg|jpeg|webp|gif|svg)$/i.test(att) || att.includes('/images') || att.includes('chat/images') || att.startsWith('data:image')));
+
               this.messages.push({
                 id: msg.id || Date.now().toString(),
                 sender: targetSender,
-                senderType: msg.senderType || (isStaff ? 'Staff' : 'Customer'),
+                senderName: isStaff ? (msg.senderName || 'أستاذ سعيد (الدعم الفني)') : (msg.senderName || this.userTag),
+                senderType: isStaff ? 'Staff' : 'Customer',
                 isRead: this.isOpen,
-                text: msg.message,
+                text: (isAudio || isImage) && (!msg.message || msg.message === 'تسجيل صوتي' || msg.message === 'صورة مرفقة' || msg.message === 'Attachment') ? '' : msg.message,
+                kind: isAudio ? 'audio' : (isImage ? 'image' : 'text'),
+                mediaUrl: att,
                 sentAt: msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
               });
 
@@ -488,6 +599,10 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
   }
 
   scrollToMessage(id: string) {
+    const el = document.querySelector(`[data-message-id="${id}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
   openImage(url: string) {
@@ -500,6 +615,15 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
 
   reactToMessage(message: any, emoji: string) {
     this.reactionMessageId = '';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.customer-floating-chat__actions')) {
+      this.menuMessageId = '';
+      this.reactionMessageId = '';
+    }
   }
 
   toggleMenu(id: string) {
@@ -515,15 +639,25 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
   chooseReply(message: any) {
     this.replyMessage = message;
     this.menuMessageId = '';
+    this.inputRef?.nativeElement.focus();
   }
 
   chooseEdit(message: any) {
     this.editMessage = message;
+    this.messageValue = message.text || '';
     this.menuMessageId = '';
+    this.inputRef?.nativeElement.focus();
   }
 
-  copyMessage(message: any) {
-    this.menuMessageId = '';
+  async copyMessage(message: any) {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(message.text || '');
+      }
+      this.menuMessageId = '';
+    } catch {
+      this.menuMessageId = '';
+    }
   }
 
   prepareDelete(message: any) {
@@ -546,12 +680,98 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
     return `${minutes}:${remaining.toString().padStart(2, '0')}`;
   }
 
-  stopRecording() {
-    this.isRecording = false;
+  async startRecording() {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      this.errorMessage = 'التسجيل الصوتي غير مدعوم في هذا المتصفح';
+      setTimeout(() => this.errorMessage = '', 4000);
+      return;
+    }
+    try {
+      this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.audioChunks = [];
+      const options = typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? { mimeType: 'audio/webm;codecs=opus' }
+        : undefined;
+
+      this.mediaRecorder = options ? new MediaRecorder(this.mediaStream, options) : new MediaRecorder(this.mediaStream);
+
+      this.mediaRecorder.ondataavailable = (event: any) => {
+        if (event.data && event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.onstop = () => {
+        const mime = this.mediaRecorder?.mimeType || 'audio/webm';
+        const audioBlob = new Blob(this.audioChunks, { type: mime });
+        if (this.mediaStream) {
+          this.mediaStream.getTracks().forEach(track => track.stop());
+          this.mediaStream = null;
+        }
+        if (audioBlob.size > 100) {
+          this.sendAudioMessage(audioBlob);
+        }
+        this.recordingSeconds = 0;
+        clearInterval(this.recordingTimer);
+      };
+
+      this.mediaRecorder.start(250);
+      this.isRecording = true;
+      this.recordingSeconds = 0;
+      this.recordingTimer = setInterval(() => {
+        this.recordingSeconds++;
+      }, 1000);
+    } catch (err) {
+      console.error('Mic access error:', err);
+      this.errorMessage = 'يرجى السماح بالوصول إلى الميكروفون لتسجيل الصوت.';
+      setTimeout(() => this.errorMessage = '', 4000);
+    }
   }
 
-  startRecording() {
-    this.isRecording = true;
+  stopRecording() {
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+    }
+    this.isRecording = false;
+    clearInterval(this.recordingTimer);
+  }
+
+  sendAudioMessage(blob: Blob) {
+    let ext = 'webm';
+    if (blob.type.includes('mp4') || blob.type.includes('m4a')) ext = 'm4a';
+    else if (blob.type.includes('ogg')) ext = 'ogg';
+    else if (blob.type.includes('wav')) ext = 'wav';
+    const fileName = `voice_${Date.now()}.${ext}`;
+
+    this.chatService.uploadMedia(blob, fileName).subscribe({
+      next: (url) => {
+        if (url) {
+          this.chatService.sendMessage(this.conversationId || '', 'تسجيل صوتي', url, this.userTag).subscribe({
+            next: (res: any) => {
+              const data = res?.data ?? res;
+              if (data?.conversationId) this.conversationId = data.conversationId;
+              this.loadConversation();
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Failed to upload voice message:', err);
+        const localUrl = URL.createObjectURL(blob);
+        this.messages.push({
+          id: 'temp-audio-' + Date.now(),
+          sender: 'customer',
+          senderName: this.userTag,
+          senderType: 'Customer',
+          isRead: true,
+          text: '',
+          kind: 'audio',
+          mediaUrl: localUrl,
+          sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        setTimeout(() => this.scrollToBottom(), 100);
+      }
+    });
   }
 
   sendTextMessage(event: Event) {
@@ -561,7 +781,7 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
     const text = this.messageValue.trim();
     this.messageValue = '';
 
-    this.chatService.sendMessage(this.conversationId || '', text).subscribe({
+    this.chatService.sendMessage(this.conversationId || '', text, undefined, this.userTag).subscribe({
       next: (res: any) => {
         const data = res?.data ?? res;
         if (data?.conversationId) {
@@ -572,11 +792,49 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
     });
   }
 
-  handleImageSelected(event: any) {}
+  handleImageSelected(event: any) {
+    const file: File = event.target?.files?.[0];
+    if (!file) return;
+    event.target.value = '';
+
+    this.chatService.uploadMedia(file, file.name).subscribe({
+      next: (url) => {
+        if (url) {
+          this.chatService.sendMessage(this.conversationId || '', 'صورة مرفقة', url, this.userTag).subscribe({
+            next: (res: any) => {
+              const data = res?.data ?? res;
+              if (data?.conversationId) this.conversationId = data.conversationId;
+              this.loadConversation();
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Failed to upload image:', err);
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.messages.push({
+            id: 'temp-img-' + Date.now(),
+            sender: 'customer',
+            senderName: this.userTag,
+            senderType: 'Customer',
+            isRead: true,
+            text: '',
+            kind: 'image',
+            mediaUrl: reader.result as string,
+            sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+          setTimeout(() => this.scrollToBottom(), 100);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
 
   onTextareaKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
+      this.sendTextMessage(event);
     }
   }
 
