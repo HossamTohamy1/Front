@@ -78,7 +78,7 @@ export class AdminLoginPageComponent {
               email: profile?.email || this.email,
               role: role.toLowerCase(),
             });
-            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin';
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/store-customizer';
             this.router.navigateByUrl(returnUrl, { replaceUrl: true });
             this.loading = false;
           },

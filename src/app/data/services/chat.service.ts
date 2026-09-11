@@ -98,13 +98,15 @@ export class ChatService {
       .build();
 
     this.hubConnection.on('ReceiveMessage', (message: any) => {
+      const isStaff = message.isStaff === true || message.senderType === 'Staff' || message.senderRole === 'Staff';
       this.messageReceivedSource.next({
         message: message.message,
         createdAt: message.timestamp,
         senderId: message.userId,
-        senderRole: 'Staff',
-        senderType: 'Staff',
-        senderName: message.userName || 'Support'
+        senderRole: isStaff ? 'Staff' : 'Customer',
+        senderType: isStaff ? 'Staff' : 'Customer',
+        senderName: message.userName || (isStaff ? 'الدعم الفني' : 'أنت'),
+        attachmentUrl: message.attachmentUrl
       });
     });
 

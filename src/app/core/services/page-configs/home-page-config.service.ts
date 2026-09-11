@@ -93,9 +93,13 @@ export class HomePageConfigService {
   private updateSubject = new Subject<PageConfig>();
 
   private zone = inject(NgZone);
+  private isApplyingExternalUpdate = false;
+  private lastSavedJson = '';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
+      this.lastSavedJson = JSON.stringify(this.pageConfig());
+
       // 0. Setup debounced backend sync
       this.updateSubject.pipe(
         debounceTime(750)
@@ -120,9 +124,22 @@ export class HomePageConfigService {
         }
 
         if (e.key === this.storageKey && e.newValue) {
+          if (e.newValue === this.lastSavedJson) return; // Discard echo / identical payload
+
           try {
             const updated = JSON.parse(e.newValue);
-            this.zone.run(() => { this.pageConfig.set(this.mergeWithInitial(updated)); });
+            const merged = this.mergeWithInitial(updated);
+            const mergedJson = JSON.stringify(merged);
+            if (mergedJson === this.lastSavedJson) return;
+
+            this.zone.run(() => {
+              this.isApplyingExternalUpdate = true;
+              this.lastSavedJson = mergedJson;
+              this.pageConfig.set(merged);
+              queueMicrotask(() => {
+                this.isApplyingExternalUpdate = false;
+              });
+            });
           } catch (_) {}
         }
       });
@@ -130,14 +147,20 @@ export class HomePageConfigService {
       // 3. Keep local cache in sync and broadcast to preview iframes
       effect(() => {
         const config = this.pageConfig();
+        const stringified = JSON.stringify(config);
+
+        if (this.isApplyingExternalUpdate) return;
+        if (stringified === this.lastSavedJson) return;
+
+        this.lastSavedJson = stringified;
         try {
-          localStorage.setItem(this.storageKey, JSON.stringify(config));
+          localStorage.setItem(this.storageKey, stringified);
         } catch (_) {}
 
         try {
           const event = new StorageEvent('storage', {
             key: this.storageKey,
-            newValue: JSON.stringify(config),
+            newValue: stringified,
             storageArea: localStorage
           });
           (event as any).__sourceInstanceId = INSTANCE_ID;
@@ -148,6 +171,10 @@ export class HomePageConfigService {
   }
 
   updateConfig(newConfig: PageConfig) {
+    const stringified = JSON.stringify(newConfig);
+    if (stringified === this.lastSavedJson) return;
+
+    this.lastSavedJson = stringified;
     // 1. Optimistic local update
     this.zone.run(() => { this.pageConfig.set(newConfig); });
 
@@ -186,7 +213,17 @@ export class HomePageConfigService {
             const parsedSections = JSON.parse(data.sectionsJson);
             if (Array.isArray(parsedSections) && parsedSections.length > 0) {
               const merged = this.mergeWithInitial({ sections: parsedSections });
-              this.zone.run(() => { this.pageConfig.set(merged); });
+              const mergedJson = JSON.stringify(merged);
+              if (mergedJson === this.lastSavedJson) return;
+
+              this.zone.run(() => {
+                this.isApplyingExternalUpdate = true;
+                this.lastSavedJson = mergedJson;
+                this.pageConfig.set(merged);
+                queueMicrotask(() => {
+                  this.isApplyingExternalUpdate = false;
+                });
+              });
             }
           } catch (e) {
             console.error('Failed to parse sectionsJson from backend:', e);
