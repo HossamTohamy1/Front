@@ -465,17 +465,14 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
           this.conversationId = res.id;
           
           this.messages = (res.messages || []).map((m: any) => {
-            const isStaff = (m.senderType || m.senderRole) === 'Staff' 
-              || m.guestName === 'Support'
-              || (m.message && (m.message.includes('أستاذ سعيد') || m.message.includes('LOXXKING') || m.message.includes('الدعم للمساعدة')))
-              || (m.text && (m.text.includes('أستاذ سعيد') || m.text.includes('LOXXKING') || m.text.includes('الدعم للمساعدة')));
+            const isStaff = (m.senderType || m.senderRole) === 'Staff' || m.guestName === 'Support';
             const att = m.attachmentUrl;
-            const isAudio = att && (/\.(webm|mp3|wav|ogg|m4a)$/i.test(att) || att.includes('/audio'));
-            const isImage = att && (/\.(png|jpg|jpeg|webp|gif)$/i.test(att) || att.includes('/images') || att.startsWith('data:image'));
+            const isAudio = !!(att && (/\.(webm|mp3|wav|ogg|m4a|mp4)$/i.test(att) || att.includes('/audio') || att.includes('chat/audio')));
+            const isImage = !!(att && (/\.(png|jpg|jpeg|webp|gif|svg)$/i.test(att) || att.includes('/images') || att.includes('chat/images') || att.startsWith('data:image')));
             return {
               id: m.id,
               sender: isStaff ? 'staff' : 'customer',
-              senderName: isStaff ? 'أستاذ سعيد (الدعم الفني)' : ((m.senderName && m.senderName.toLowerCase().startsWith('user')) ? m.senderName : this.userTag),
+              senderName: isStaff ? (m.senderName || 'أستاذ سعيد (الدعم الفني)') : (m.senderName || this.userTag),
               senderType: isStaff ? 'Staff' : 'Customer',
               isRead: m.isRead,
               text: (isAudio || isImage) && (!m.message || m.message === 'تسجيل صوتي' || m.message === 'صورة مرفقة' || m.message === 'Attachment') ? '' : m.message,
@@ -497,22 +494,20 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
           
           if (!this.messageSub) {
             this.messageSub = this.chatService.messageReceived$.subscribe((msg) => {
-              const isStaff = (msg.senderType || msg.senderRole) === 'Staff' 
-                || msg.guestName === 'Support'
-                || (msg.message && (msg.message.includes('أستاذ سعيد') || msg.message.includes('LOXXKING') || msg.message.includes('الدعم للمساعدة')));
+              const isStaff = (msg.senderType || msg.senderRole) === 'Staff' || msg.guestName === 'Support';
               const targetSender = isStaff ? 'staff' : 'customer';
               const isDuplicate = (msg.id && this.messages.some(m => m.id === msg.id)) ||
                 (this.messages.length > 0 && this.messages[this.messages.length - 1].text === msg.message && this.messages[this.messages.length - 1].sender === targetSender);
               if (isDuplicate) return;
 
               const att = msg.attachmentUrl;
-              const isAudio = att && (/\.(webm|mp3|wav|ogg|m4a)$/i.test(att) || att.includes('/audio'));
-              const isImage = att && (/\.(png|jpg|jpeg|webp|gif)$/i.test(att) || att.includes('/images') || att.startsWith('data:image'));
+              const isAudio = !!(att && (/\.(webm|mp3|wav|ogg|m4a|mp4)$/i.test(att) || att.includes('/audio') || att.includes('chat/audio')));
+              const isImage = !!(att && (/\.(png|jpg|jpeg|webp|gif|svg)$/i.test(att) || att.includes('/images') || att.includes('chat/images') || att.startsWith('data:image')));
 
               this.messages.push({
                 id: msg.id || Date.now().toString(),
                 sender: targetSender,
-                senderName: isStaff ? 'أستاذ سعيد (الدعم الفني)' : ((msg.senderName && msg.senderName.toLowerCase().startsWith('user')) ? msg.senderName : this.userTag),
+                senderName: isStaff ? (msg.senderName || 'أستاذ سعيد (الدعم الفني)') : (msg.senderName || this.userTag),
                 senderType: isStaff ? 'Staff' : 'Customer',
                 isRead: this.isOpen,
                 text: (isAudio || isImage) && (!msg.message || msg.message === 'تسجيل صوتي' || msg.message === 'صورة مرفقة' || msg.message === 'Attachment') ? '' : msg.message,
@@ -713,14 +708,14 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
           this.mediaStream.getTracks().forEach(track => track.stop());
           this.mediaStream = null;
         }
-        if (this.recordingSeconds >= 1) {
+        if (audioBlob.size > 100) {
           this.sendAudioMessage(audioBlob);
         }
         this.recordingSeconds = 0;
         clearInterval(this.recordingTimer);
       };
 
-      this.mediaRecorder.start();
+      this.mediaRecorder.start(250);
       this.isRecording = true;
       this.recordingSeconds = 0;
       this.recordingTimer = setInterval(() => {
@@ -742,7 +737,12 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
   }
 
   sendAudioMessage(blob: Blob) {
-    const fileName = `voice_${Date.now()}.webm`;
+    let ext = 'webm';
+    if (blob.type.includes('mp4') || blob.type.includes('m4a')) ext = 'm4a';
+    else if (blob.type.includes('ogg')) ext = 'ogg';
+    else if (blob.type.includes('wav')) ext = 'wav';
+    const fileName = `voice_${Date.now()}.${ext}`;
+
     this.chatService.uploadMedia(blob, fileName).subscribe({
       next: (url) => {
         if (url) {
@@ -755,12 +755,16 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
           });
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error('Failed to upload voice message:', err);
         const localUrl = URL.createObjectURL(blob);
         this.messages.push({
           id: 'temp-audio-' + Date.now(),
           sender: 'customer',
           senderName: this.userTag,
+          senderType: 'Customer',
+          isRead: true,
+          text: '',
           kind: 'audio',
           mediaUrl: localUrl,
           sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -805,13 +809,17 @@ export class FloatingChatComponent implements OnInit, OnDestroy {
           });
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error('Failed to upload image:', err);
         const reader = new FileReader();
         reader.onload = () => {
           this.messages.push({
             id: 'temp-img-' + Date.now(),
             sender: 'customer',
             senderName: this.userTag,
+            senderType: 'Customer',
+            isRead: true,
+            text: '',
             kind: 'image',
             mediaUrl: reader.result as string,
             sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })

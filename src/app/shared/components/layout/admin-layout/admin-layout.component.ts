@@ -69,7 +69,6 @@ export class AdminLayoutComponent implements OnInit {
   @ViewChild('avatarInput') avatarInputRef!: ElementRef<HTMLInputElement>;
 
   navItems: NavItem[] = [
-    { key: 'dashboard', label: 'DASHBOARD.AUTO_STR_175', path: '/admin', icon: LayoutDashboard },
     { key: 'store-customizer', label: 'DASHBOARD.AUTO_STR_265', path: '/admin/store-customizer', icon: Store },
   ];
 

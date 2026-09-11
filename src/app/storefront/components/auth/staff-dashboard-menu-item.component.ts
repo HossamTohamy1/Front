@@ -48,6 +48,6 @@ export class StaffDashboardMenuItemComponent {
   knownStaffDevice = false;
 
   get destination(): string {
-    return this.isAdmin ? '/admin' : '/admin/login';
+    return this.isAdmin ? '/admin/store-customizer' : '/admin/login';
   }
 }
